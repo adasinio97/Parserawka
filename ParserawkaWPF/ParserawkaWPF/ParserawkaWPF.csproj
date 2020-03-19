@@ -55,6 +55,15 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IStatementList.cs" />
+    <Compile Include="IVariableList.cs" />
+    <Compile Include="PKB\classes\Parent.cs" />
+    <Compile Include="PKB\classes\ParentTable.cs" />
+    <Compile Include="PKB\Interfaces\IFollowsTable.cs" />
+    <Compile Include="PKB\Interfaces\IModifiesTable.cs" />
+    <Compile Include="PKB\Interfaces\IUsesTable.cs" />
+    <Compile Include="Statement.cs" />
+    <Compile Include="Variable.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -69,6 +78,8 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="PKB\Interfaces\IParentTable.cs" />
+    <Compile Include="PKB\Interfaces\IProgramKnowledgeBase.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
