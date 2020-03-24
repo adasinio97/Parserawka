@@ -2,7 +2,7 @@
 
 namespace ParserawkaWPF.Interfaces
 {
-    interface IModifiesTable
+    public interface IModifiesTable
     {
         void SetModifies(Statement statement, Variable variable);
         IStatementList GetModifies(Variable variable);

@@ -2,7 +2,7 @@
 
 namespace ParserawkaWPF.Interfaces
 {
-    interface IUsesTable
+    public interface IUsesTable
     {
         void SetUses(Statement statement, Variable variable);
         IStatementList GetUses(Variable variable);

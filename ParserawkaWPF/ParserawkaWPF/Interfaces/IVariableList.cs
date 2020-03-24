@@ -3,7 +3,7 @@ using ParserawkaWPF.Model;
 
 namespace ParserawkaWPF.Interfaces
 {
-    interface IVariableList
+    public interface IVariableList
     {
         int AddVariable(Variable variable);
         Variable GetVariableByIndex(int index);

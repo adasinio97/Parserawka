@@ -91,9 +91,15 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Model\Follows.cs" />
+    <Compile Include="Model\FollowsTable.cs" />
+    <Compile Include="Model\ModifiesTable.cs" />
+    <Compile Include="Model\Modify.cs" />
     <Compile Include="Model\Parent.cs" />
     <Compile Include="Model\ParentTable.cs" />
     <Compile Include="Model\Statement.cs" />
+    <Compile Include="Model\Uses.cs" />
+    <Compile Include="Model\UsesTable.cs" />
     <Compile Include="Model\Variable.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>

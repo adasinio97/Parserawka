@@ -1,21 +1,20 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using ParserawkaWPF.Interfaces;
-using ParserawkaWPF.Model;
 
-namespace ParserawkaWPF.PKB.Model
+namespace ParserawkaWPF.Model
 {
     class ParentTable : IParentTable
     {
-        List<Parent> parentList = new List<Parent>();
+        List<Parent> ParentList = new List<Parent>();
         public Statement GetParent(Statement statement)
         {
-            return parentList.Where(x => x.ChildStatement == statement).FirstOrDefault().ParentStatement;
+            return ParentList.Where(x => x.ChildStatement == statement).FirstOrDefault().ParentStatement;
         }
 
         public IStatementList GetParentedBy(Statement statement)
         {
-            return parentList.Where(x => x.ParentStatement == statement).FirstOrDefault().ChildStatement.StatementList;
+            return ParentList.Where(x => x.ParentStatement == statement).FirstOrDefault().ChildStatement.StatementList;
         }
     
 
@@ -62,7 +61,7 @@ namespace ParserawkaWPF.PKB.Model
 
         public void SetParent(Statement firstStatement, Statement secondStatement)
         {
-            parentList.Add(new Parent(firstStatement, secondStatement));
+            ParentList.Add(new Parent(firstStatement, secondStatement));
         }
     }
 }

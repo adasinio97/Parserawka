@@ -1,8 +1,11 @@
-﻿namespace ParserawkaWPF.Model
+﻿using ParserawkaWPF.Interfaces;
+
+namespace ParserawkaWPF.Model
 {
-    class Variable
+    public class Variable
     {
         public string Name { get; set; }
+        public IVariableList VariableList { get; set; }
         public Variable(string name)
         {
             Name = name;

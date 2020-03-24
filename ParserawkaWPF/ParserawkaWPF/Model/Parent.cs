@@ -1,6 +1,4 @@
-﻿using ParserawkaWPF.Model;
-
-namespace ParserawkaWPF.PKB.Model
+﻿namespace ParserawkaWPF.Model
 {
     class Parent
     {

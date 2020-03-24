@@ -2,7 +2,7 @@
 
 namespace ParserawkaWPF.Interfaces
 {
-    interface IFollowsTable
+    public interface IFollowsTable
     {
         void SetFollows(Statement firstStatement, Statement secondStatement);
         Statement GetFollows(Statement statement);

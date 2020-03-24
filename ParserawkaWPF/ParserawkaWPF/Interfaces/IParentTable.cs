@@ -2,7 +2,7 @@
 
 namespace ParserawkaWPF.Interfaces
 {
-    interface IParentTable
+    public interface IParentTable
     {
         void SetParent(Statement firstStatement, Statement secondStatement);
         Statement GetParent(Statement statement);

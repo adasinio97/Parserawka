@@ -1,6 +1,6 @@
 ﻿namespace ParserawkaWPF.Interfaces
 {
-    interface IProgramKnowledgeBase
+    public interface IProgramKnowledgeBase
     {
         //  public IAbstractSyntaxTree AbstractSyntaxTree { get; }
         IVariableList Variables { get; }

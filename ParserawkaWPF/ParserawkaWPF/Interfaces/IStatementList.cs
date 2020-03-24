@@ -2,7 +2,7 @@
 
 namespace ParserawkaWPF.Interfaces
 {
-    interface IStatementList
+    public interface IStatementList
     {
         int AddStatement(Statement statement);
         Statement GetStatementByIndex(int index);
