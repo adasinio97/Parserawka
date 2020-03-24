@@ -6,17 +6,17 @@ namespace ParserawkaWPF.Model
 {
     class ModifiesTable : IModifiesTable
     {
-        List<Modify> ModifyList = new List<Modify>();
+        List<Modify> modifyList = new List<Modify>();
         public IVariableList GetModifiedBy(Statement statement)
         {
-            return ModifyList.Where(x => x.Statement == statement).FirstOrDefault().Variable.VariableList;
+            return modifyList.Where(x => x.Statement == statement).FirstOrDefault().Variable.VariableList;
         }
-
+        
         public IStatementList GetModifies(Variable variable)
         {
-            return ModifyList.Where(x => x.Variable == variable).FirstOrDefault().Statement.StatementList;
+            return modifyList.Where(x => x.Variable == variable).FirstOrDefault().Statement.StatementList;
         }
-
+        
         public bool IsModified(Statement statement, Variable variable)
         {
             IStatementList statementList = GetModifies(variable);
@@ -30,7 +30,7 @@ namespace ParserawkaWPF.Model
 
         public void SetModifies(Statement statement, Variable variable)
         {
-            ModifyList.Add(new Modify(statement, variable));
+            modifyList.Add(new Modify(statement, variable));
         }
     }
 }
