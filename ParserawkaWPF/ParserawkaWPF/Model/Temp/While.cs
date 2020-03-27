@@ -7,8 +7,10 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Model
 {
-    public class Procedure
+    public class While : Statement
     {
-        public IStatementList StatementList { get; set; }
+        public While(int a) : base(a)
+        {
+        }
     }
 }

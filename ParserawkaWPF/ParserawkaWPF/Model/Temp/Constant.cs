@@ -1,5 +1,4 @@
-﻿using ParserawkaWPF.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -7,8 +6,8 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Model
 {
-    public class Procedure
+    public class Constant : Factor
     {
-        public IStatementList StatementList { get; set; }
+        public int Value { get; set; }
     }
 }

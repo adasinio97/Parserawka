@@ -2,7 +2,7 @@
 
 namespace ParserawkaWPF.Model
 {
-    public class Variable
+    public class Variable : Factor
     {
         public string Name { get; set; }
         public IVariableList VariableList { get; set; }

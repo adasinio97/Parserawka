@@ -1,4 +1,5 @@
 ﻿using ParserawkaWPF.Interfaces;
+using ParserawkaWPF.Utils;
 
 namespace ParserawkaWPF.Model
 {
@@ -9,6 +10,7 @@ namespace ParserawkaWPF.Model
         public Statement(int a)
         {
             ProgramLine = a;
+            StatementList = ImplementationFactory.CreateStatementList();
         }
     }
 }
