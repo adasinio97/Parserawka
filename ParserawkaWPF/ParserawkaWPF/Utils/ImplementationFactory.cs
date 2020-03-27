@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace ParserawkaWPF.Utils
 {
     /* Używajcie zamiast operatora new, kiedy potrzebna jest instancja typu interfejsowego.
-     * Łatwiej będzie ogarniać kod, kiedy nie ma jeszcze implementacji, albo jeśli okaże się, że jest kilka możliwych wariantów. */
+     * Łatwiej będzie ogarniać kod, kiedy nie ma jeszcze implementacji, albo jeśli okaże się, że wypadałoby przetestować kilka możliwych wariantów. */
     public class ImplementationFactory
     {
         public static IProgramKnowledgeBase CreateProgramKnowledgeBase()
@@ -25,14 +25,12 @@ namespace ParserawkaWPF.Utils
 
         public static IStatementList CreateStatementList()
         {
-            // TODO
-            return null;
+            return new StatementList();
         }
 
         public static IVariableList CreateVariableList()
         {
-            // TODO
-            return null;
+            return new VariableList();
         }
 
         public static IFollowsTable CreateFollowsTable()
