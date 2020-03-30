@@ -6,11 +6,11 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Parser.AstElements
 {
-    public class AstCompound : AST
+    public class AstStmtLst : AST
     {
         public List<AST> children;
 
-        public AstCompound()
+        public AstStmtLst()
         {
             children = new List<AST>();
         }

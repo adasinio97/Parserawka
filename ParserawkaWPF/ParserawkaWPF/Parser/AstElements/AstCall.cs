@@ -6,21 +6,18 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Parser.AstElements
 {
-    public class AstTest : AST
+    public class AstCall : AST
     {
-        public string testName { get; set; }
+        public Token ProcedureToken { get; set; }
 
-        public AST Body { get; set; }
-
-        public AstTest(string name, AST body)
+        public AstCall(Token proc)
         {
-            testName = name;
-            Body = body;
+            ProcedureToken = proc;
         }
 
         public override string ToString()
         {
-            return testName;
+            return "CALL" + ProcedureToken.Value;
         }
     }
 }

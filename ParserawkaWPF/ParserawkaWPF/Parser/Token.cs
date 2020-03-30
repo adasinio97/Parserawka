@@ -8,29 +8,18 @@ namespace ParserawkaWPF.Parser
 {
     public enum TokenType
     {
-        TEST,
-
-        TIMESET,
-        DATESET,
+        PROCEDURE,
+        CALL,
 
         INTEGER,
         ID,
-        FLOAT,
-        BIT,
         STRING,
-        TIME,
-        TYPE,
 
-        SET,
-        ASSERT,
-        IMPORT,
-        WAIT,
+        IF,
+        THEN,
+        ELSE,
+        WHILE,
 
-        //IF,
-        //ELSE,
-        //WHILE,
-
-        DOT,
         ASSIGN,
 
         LPAREN,
@@ -38,37 +27,11 @@ namespace ParserawkaWPF.Parser
         LBRACE,
         RBRACE,
 
-        EQ,
-        NEQ,
-        NEG,
-        LT,
-        GT,
-        LTEQ,
-        GTEQ,
-
         PLUS,
         MINUS,
         MUL,
-        DIV,
-        AND,
-        OR,
-        XOR,
-
-        PLUSEQ,
-        MINUSEQ,
-        MULEQ,
-        DIVEQ,
-
-        BNOT,
-        BOR,
-        BAND,
-        BXOR,
-        BANDEQ,
-        BOREQ,
-        BXOREQ,
 
         SEMI,
-        COLON,
         COMMA,
         EOL,
         EOF,
