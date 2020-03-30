@@ -9,6 +9,6 @@
         IParentTable ParentTable { get; }
         IModifiesTable ModifiesTable { get; }
         IUsesTable UsesTable { get; }
-        void LoadData();
+        void LoadData(string programName);
     }
 }

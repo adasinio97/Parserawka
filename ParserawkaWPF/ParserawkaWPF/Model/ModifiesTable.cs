@@ -4,6 +4,7 @@ using System.Linq;
 
 namespace ParserawkaWPF.Model
 {
+
     class ModifiesTable : IModifiesTable
     {
         List<Modify> modifyList = new List<Modify>();
@@ -28,9 +29,12 @@ namespace ParserawkaWPF.Model
             return false;
         }
 
+        
         public void SetModifies(Statement statement, Variable variable)
         {
             modifyList.Add(new Modify(statement, variable));
         }
+
+
     }
 }
