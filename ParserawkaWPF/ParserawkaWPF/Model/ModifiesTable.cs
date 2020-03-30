@@ -3,10 +3,8 @@ using ParserawkaWPF.Utils;
 using System.Collections.Generic;
 using System.Linq;
 
-
 namespace ParserawkaWPF.Model
 {
-
     class ModifiesTable : IModifiesTable
     {
         List<Modify> modifyList = new List<Modify>();
@@ -49,7 +47,6 @@ namespace ParserawkaWPF.Model
         {
             modifyList.Add(new Modify(statement, variable));
         }
-
 
     }
 }

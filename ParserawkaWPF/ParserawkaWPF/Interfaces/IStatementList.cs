@@ -1,8 +1,9 @@
-﻿using ParserawkaWPF.Model;
+﻿using System.Collections.Generic;
+using ParserawkaWPF.Model;
 
 namespace ParserawkaWPF.Interfaces
 {
-    public interface IStatementList
+    public interface IStatementList : IEnumerable<Statement>
     {
         int AddStatement(Statement statement);
         Statement GetStatementByIndex(int index);

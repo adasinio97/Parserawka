@@ -1,9 +1,6 @@
 ﻿using ParserawkaWPF.Interfaces;
-using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Model
 {
@@ -33,6 +30,11 @@ namespace ParserawkaWPF.Model
             return index;
         }
 
+        public IEnumerator GetEnumerator()
+        {
+            throw new System.NotImplementedException();
+        }
+
         public int GetIndex(Statement statement)
         {
             return list.IndexOf(statement);
@@ -58,6 +60,11 @@ namespace ParserawkaWPF.Model
             Statement output = null;
             dictionary.TryGetValue(programLine, out output);
             return output;
+        }
+
+        IEnumerator<Statement> IEnumerable<Statement>.GetEnumerator()
+        {
+            return list.GetEnumerator();
         }
     }
 }
