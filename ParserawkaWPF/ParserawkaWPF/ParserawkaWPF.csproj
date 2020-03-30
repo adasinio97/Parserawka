@@ -69,6 +69,28 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Parser\AstElements\AST.cs" />
+    <Compile Include="Parser\AstElements\AstAssert.cs" />
+    <Compile Include="Parser\AstElements\AstAssign.cs" />
+    <Compile Include="Parser\AstElements\AstBinOp.cs" />
+    <Compile Include="Parser\AstElements\AstCompound.cs" />
+    <Compile Include="Parser\AstElements\AstCondition.cs" />
+    <Compile Include="Parser\AstElements\AstDateSet.cs" />
+    <Compile Include="Parser\AstElements\AstDeclaration.cs" />
+    <Compile Include="Parser\AstElements\AstEmpty.cs" />
+    <Compile Include="Parser\AstElements\AstEquation.cs" />
+    <Compile Include="Parser\AstElements\AstIfStatement.cs" />
+    <Compile Include="Parser\AstElements\AstNum.cs" />
+    <Compile Include="Parser\AstElements\AstSetParam.cs" />
+    <Compile Include="Parser\AstElements\AstSleep.cs" />
+    <Compile Include="Parser\AstElements\AstTest.cs" />
+    <Compile Include="Parser\AstElements\AstTimeSet.cs" />
+    <Compile Include="Parser\AstElements\AstUnOp.cs" />
+    <Compile Include="Parser\AstElements\AstVariable.cs" />
+    <Compile Include="Parser\AstElements\AstWait.cs" />
+    <Compile Include="Parser\Lexer.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
