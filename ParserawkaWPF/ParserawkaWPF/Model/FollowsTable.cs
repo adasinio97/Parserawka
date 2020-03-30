@@ -1,4 +1,5 @@
 ﻿using ParserawkaWPF.Interfaces;
+using ParserawkaWPF.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +14,15 @@ namespace ParserawkaWPF.Model
             return FollowsList.Where(x => x.SecondStatement == statement).FirstOrDefault().FirstStatement;
         }
 
-        public IStatementList GetFollowedByT(Statement statement)
+        public IStatementList GetFollowedByT(Statement statement, IStatementList statementList)
         {
-            throw new NotImplementedException();
+            Statement tmp = GetFollowedBy(statement);
+            if (tmp != null)
+            {
+                GetFollowedByT(tmp, statementList);
+                statementList.AddStatement(tmp);
+            }
+            return statementList;
         }
 
         public Statement GetFollows(Statement statement)
@@ -23,19 +30,34 @@ namespace ParserawkaWPF.Model
             return FollowsList.Where(x => x.FirstStatement == statement).FirstOrDefault().SecondStatement;
         }
 
-        public IStatementList GetFollowsT(Statement statement)
+        public IStatementList GetFollowsT(Statement statement,IStatementList statementList)
         {
-            throw new NotImplementedException();
+            Statement tmp = GetFollowedBy(statement);
+            if(tmp != null)
+            {
+                GetFollowedByT(tmp, statementList);
+                statementList.AddStatement(tmp);
+            }
+            return statementList;
+
         }
 
         public bool IsFollows(Statement firstStatement, Statement secondStatement)
         {
-            throw new NotImplementedException();
+           return firstStatement == GetFollowedBy(secondStatement);
         }
 
         public bool IsFollowsT(Statement firstStatement, Statement secondStatement)
         {
-            throw new NotImplementedException();
+            IStatementList statementList = ImplementationFactory.CreateStatementList();
+            GetFollowedByT(secondStatement,statementList);
+            for(int i = 0; i < statementList.GetSize(); i++)
+            {
+                if (statementList.GetStatementByIndex(i) == firstStatement)
+                    return true;
+            }
+            return false;
+
         }
 
         public void SetFollows(Statement firstStatement, Statement secondStatement)

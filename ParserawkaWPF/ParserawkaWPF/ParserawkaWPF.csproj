@@ -70,6 +70,17 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Interfaces\IDesignExtractor.cs" />
+    <Compile Include="Model\ProgramKnowledgeBase.cs" />
+    <Compile Include="Model\StatementList.cs" />
+    <Compile Include="Model\Temp\Assign.cs" />
+    <Compile Include="Model\Temp\Constant.cs" />
+    <Compile Include="Model\DesignExtractor.cs" />
+    <Compile Include="Model\Temp\Expression.cs" />
+    <Compile Include="Model\Temp\Factor.cs" />
+    <Compile Include="Model\Temp\While.cs" />
+    <Compile Include="Model\VariableList.cs" />
+    <Compile Include="Utils\ImplementationFactory.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -97,6 +108,7 @@
     <Compile Include="Model\Modify.cs" />
     <Compile Include="Model\Parent.cs" />
     <Compile Include="Model\ParentTable.cs" />
+    <Compile Include="Model\Procedure.cs" />
     <Compile Include="Model\Statement.cs" />
     <Compile Include="Model\Uses.cs" />
     <Compile Include="Model\UsesTable.cs" />
