@@ -1,5 +1,4 @@
-﻿
-namespace ParserawkaWPF.Model
+﻿namespace ParserawkaWPF.Model
 {
     public class Uses
     {
