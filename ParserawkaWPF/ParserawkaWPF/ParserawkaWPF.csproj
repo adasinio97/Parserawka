@@ -113,6 +113,24 @@
     <Compile Include="Model\Uses.cs" />
     <Compile Include="Model\UsesTable.cs" />
     <Compile Include="Model\Variable.cs" />
+    <Compile Include="Parser\AstElements\AST.cs" />
+    <Compile Include="Parser\AstElements\AstAssign.cs" />
+    <Compile Include="Parser\AstElements\AstBinOp.cs" />
+    <Compile Include="Parser\AstElements\AstCall.cs" />
+    <Compile Include="Parser\AstElements\AstStmtLst.cs" />
+    <Compile Include="Parser\AstElements\AstEmpty.cs" />
+    <Compile Include="Parser\AstElements\AstIfStatement.cs" />
+    <Compile Include="Parser\AstElements\AstNum.cs" />
+    <Compile Include="Parser\AstElements\AstProcedure.cs" />
+    <Compile Include="Parser\AstElements\AstUnOp.cs" />
+    <Compile Include="Parser\AstElements\AstVariable.cs" />
+    <Compile Include="Parser\AstElements\AstWhileStatement.cs" />
+    <Compile Include="Parser\Exceptions\LexerException.cs" />
+    <Compile Include="Parser\Exceptions\ParserException.cs" />
+    <Compile Include="Parser\Exceptions\TreeBuildingException.cs" />
+    <Compile Include="Parser\Lexer.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\Token.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
