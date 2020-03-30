@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParserawkaWPF.Parser.AstElements;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,6 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Interfaces
 {
-    /* Do wyrzucenia, jak już będzie AST. */
-    public interface ITmpAst { }
-
     public interface IDesignExtractor
     {
         IVariableList Variables { get; }
@@ -17,6 +15,6 @@ namespace ParserawkaWPF.Interfaces
         IParentTable ParentTable { get; }
         IModifiesTable ModifiesTable { get; }
         IUsesTable UsesTable { get; }
-        void ExtractData(ITmpAst abstractSyntaxTree);
+        void ExtractData(AST root);
     }
 }

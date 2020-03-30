@@ -73,13 +73,14 @@
     <Compile Include="Interfaces\IDesignExtractor.cs" />
     <Compile Include="Model\ProgramKnowledgeBase.cs" />
     <Compile Include="Model\StatementList.cs" />
-    <Compile Include="Model\Temp\Assign.cs" />
-    <Compile Include="Model\Temp\Constant.cs" />
+    <Compile Include="Model\Design Elements\Assign.cs" />
+    <Compile Include="Model\Design Elements\Constant.cs" />
     <Compile Include="Model\DesignExtractor.cs" />
-    <Compile Include="Model\Temp\Expression.cs" />
-    <Compile Include="Model\Temp\Factor.cs" />
-    <Compile Include="Model\Temp\While.cs" />
+    <Compile Include="Model\Design Elements\Expression.cs" />
+    <Compile Include="Model\Design Elements\Factor.cs" />
+    <Compile Include="Model\Design Elements\While.cs" />
     <Compile Include="Model\VariableList.cs" />
+    <Compile Include="Parser\AstElements\AstStatement.cs" />
     <Compile Include="Utils\ImplementationFactory.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

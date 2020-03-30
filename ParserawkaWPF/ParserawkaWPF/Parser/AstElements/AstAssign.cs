@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Parser.AstElements
 {
-    public class AstAssign : AST
+    public class AstAssign : AstStatement
     {
         public AstVariable Left { get; set; }
         public AST Right { get; set; }

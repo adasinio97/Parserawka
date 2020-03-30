@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Parser.AstElements
 {
-    public class AstWhileStatement : AST
+    public class AstWhileStatement : AstStatement
     {
         public AST condition;
         public AST body;

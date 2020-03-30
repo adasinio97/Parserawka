@@ -1,4 +1,5 @@
 ﻿using ParserawkaWPF.Interfaces;
+using ParserawkaWPF.Parser.AstElements;
 using ParserawkaWPF.Utils;
 
 namespace ParserawkaWPF.Model
@@ -10,6 +11,11 @@ namespace ParserawkaWPF.Model
         public Statement(int a)
         {
             ProgramLine = a;
+            StatementList = ImplementationFactory.CreateStatementList();
+        }
+        public Statement(AstStatement ast)
+        {
+            ProgramLine = ast.ProgramLine;
             StatementList = ImplementationFactory.CreateStatementList();
         }
     }

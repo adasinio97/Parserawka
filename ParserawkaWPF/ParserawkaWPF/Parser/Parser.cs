@@ -92,6 +92,7 @@ namespace ParserawkaWPF.Parser
         public List<AST> Statements()
         {
             AST statement = SingleStatement();
+            (statement as AstStatement).ProgramLine = lexer.lineCounter;
             List<AST> retList = new List<AST>();
             retList.Add(statement);
 

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParserawkaWPF.Parser.AstElements;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,8 +12,7 @@ namespace ParserawkaWPF.Model
         public Variable LeftSide { get; set; }
         public Expression RightSide { get; set; }
 
-        public Assign(int a) : base(a)
-        {
-        }
+        public Assign(int a) : base(a) { }
+        public Assign(AstAssign ast) : base(ast) { }
     }
 }

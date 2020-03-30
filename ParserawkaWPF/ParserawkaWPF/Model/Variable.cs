@@ -1,4 +1,5 @@
 ﻿using ParserawkaWPF.Interfaces;
+using ParserawkaWPF.Parser.AstElements;
 
 namespace ParserawkaWPF.Model
 {
@@ -9,6 +10,11 @@ namespace ParserawkaWPF.Model
         public Variable(string name)
         {
             Name = name;
+        }
+
+        public Variable(AstVariable ast)
+        {
+            this.Name = ast.name;
         }
     }
 }
