@@ -9,23 +9,34 @@ namespace ParserawkaWPF.Model
 {
     public class VariableList : IVariableList
     {
+        /* Lista do wyszukiwania po indeksach, słownik do wyszukiwania po nazwach. */
+        private List<Variable> list;
         private Dictionary<string, Variable> dictionary;
 
         public VariableList()
         {
             dictionary = new Dictionary<string, Variable>();
+            list = new List<Variable>();
         }
 
         public int AddVariable(Variable variable)
         {
-            int index = dictionary.Count;
-            dictionary.Add(variable.Name, variable);
+            int index;
+            Variable existingVariable = GetVariableByName(variable.Name);
+            if (existingVariable != null)
+                index = GetIndex(existingVariable);
+            else
+            {
+                index = list.Count;
+                dictionary.Add(variable.Name, variable);
+                list.Add(variable);
+            }
             return index;
         }
 
         public int GetIndex(Variable variable)
         {
-            return dictionary.Keys.ToList().IndexOf(variable.Name);
+            return list.IndexOf(variable);
         }
 
         public int GetIndexByName(string name)
@@ -35,12 +46,12 @@ namespace ParserawkaWPF.Model
 
         public int GetSize()
         {
-            return dictionary.Keys.Count;
+            return list.Count;
         }
 
         public Variable GetVariableByIndex(int index)
         {
-            return dictionary.Values.ToList()[index];
+            return list[index];
         }
 
         public Variable GetVariableByName(string name)

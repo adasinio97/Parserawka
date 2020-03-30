@@ -9,23 +9,33 @@ namespace ParserawkaWPF.Model
 {
     public class StatementList : IStatementList
     {
+        private List<Statement> list;
         private Dictionary<int, Statement> dictionary;
 
         public StatementList()
         {
+            list = new List<Statement>();
             dictionary = new Dictionary<int, Statement>();
         }
 
         public int AddStatement(Statement statement)
         {
-            int index = dictionary.Count;
-            dictionary.Add(statement.ProgramLine, statement);
+            int index;
+            Statement existingStatement = GetStatementByProgramLine(statement.ProgramLine);
+            if (existingStatement != null)
+                index = GetIndex(existingStatement);
+            else
+            {
+                index = list.Count;
+                list.Add(statement);
+                dictionary.Add(statement.ProgramLine, statement);
+            }
             return index;
         }
 
         public int GetIndex(Statement statement)
         {
-            return dictionary.Keys.ToList().IndexOf(statement.ProgramLine);
+            return list.IndexOf(statement);
         }
 
         public int GetIndexByProgramLine(int programLine)
@@ -35,12 +45,12 @@ namespace ParserawkaWPF.Model
 
         public int GetSize()
         {
-            return dictionary.Count;
+            return list.Count;
         }
 
         public Statement GetStatementByIndex(int index)
         {
-            return dictionary.Values.ToList()[index];
+            return list[index];
         }
 
         public Statement GetStatementByProgramLine(int programLine)
