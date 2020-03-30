@@ -14,7 +14,7 @@ namespace ParserawkaWPF.Model
 
         public IStatementList GetParentedBy(Statement statement)
         {
-            return ParentList.Where(x => x.ParentStatement == statement).FirstOrDefault().ChildStatement.StatementList;
+            return ParentList.Where(x => x.ParentStatement == statement).FirstOrDefault().ParentStatement.StatementList;
         }
     
 

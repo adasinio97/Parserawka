@@ -71,6 +71,7 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Interfaces\IDesignExtractor.cs" />
+    <Compile Include="Model\ProgramKnowledgeBase.cs" />
     <Compile Include="Model\StatementList.cs" />
     <Compile Include="Model\Temp\Assign.cs" />
     <Compile Include="Model\Temp\Constant.cs" />
