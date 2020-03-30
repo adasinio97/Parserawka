@@ -10,8 +10,9 @@ namespace ParserawkaWPF.Parser.AstElements
     {
         public Token ProcedureToken { get; set; }
 
-        public AstCall(Token proc)
+        public AstCall(Token proc, int line)
         {
+            //todo zapisanie linii po dziedziczeniu ze statementa
             ProcedureToken = proc;
         }
 

@@ -67,7 +67,7 @@ namespace ParserawkaWPF.Parser
 
         public void SkipWhiteSpace()
         {
-            while (currentChar != '\0' && char.IsWhiteSpace(currentChar) && currentChar != '\n')
+            while (currentChar != '\0' && char.IsWhiteSpace(currentChar))
             {
                 Advance();
             }

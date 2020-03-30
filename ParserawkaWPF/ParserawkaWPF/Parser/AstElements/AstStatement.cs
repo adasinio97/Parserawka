@@ -9,5 +9,9 @@ namespace ParserawkaWPF.Parser.AstElements
     public abstract class AstStatement : AST
     {
         public int ProgramLine { get; set; }
+        public AstStatement(int line) 
+        {
+            this.ProgramLine = line;
+        }
     }
 }

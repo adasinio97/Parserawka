@@ -11,7 +11,7 @@ namespace ParserawkaWPF.Parser.AstElements
         public AST condition;
         public AST body;
 
-        public AstWhileStatement(AST condition, AST body)
+        public AstWhileStatement(AST condition, AST body, int line) : base(line)
         {
             this.condition = condition;
             this.body = body;

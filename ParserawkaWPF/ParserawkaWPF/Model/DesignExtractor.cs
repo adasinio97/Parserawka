@@ -32,8 +32,8 @@ namespace ParserawkaWPF.Model
         {
             // Na tę chwilę, zakładam, że korzeń drzewa to procedura.
             // TODO: W późniejszych iteracjach trzeba będzie zmienić na program.
-            if (root is AstProcedure)
-                ExtractProcedure(root as AstProcedure);
+            if (root is AstStmtLst)
+                ExtractProcedure((root as AstStmtLst).children.FirstOrDefault() as AstProcedure);
         }
 
         private void ExtractProcedure(AstProcedure procedure)

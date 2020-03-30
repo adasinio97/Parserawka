@@ -92,6 +92,7 @@ namespace ParserawkaWPF.Parser
         public List<AST> Statements()
         {
             AST statement = SingleStatement();
+            //TODO numer wiersza do poprawki
             (statement as AstStatement).ProgramLine = lexer.lineCounter;
             List<AST> retList = new List<AST>();
             retList.Add(statement);
@@ -149,7 +150,7 @@ namespace ParserawkaWPF.Parser
             Eat(TokenType.THEN);
             AST body = StmtLst();
 
-            return new AstWhileStatement(var, body);
+            return new AstWhileStatement(var, body, lexer.lineCounter);
         }
 
         public AST Assignment()
@@ -160,7 +161,7 @@ namespace ParserawkaWPF.Parser
             AST right = Expression();
             Eat(TokenType.SEMI);
 
-            return new AstAssign(left, token, right);
+            return new AstAssign(left, token, right, lexer.lineCounter);
         }
 
         public AST CallStatement()
@@ -169,7 +170,7 @@ namespace ParserawkaWPF.Parser
             Eat(TokenType.ID);
             Eat(TokenType.SEMI);
 
-            return new AstCall(token);
+            return new AstCall(token, lexer.lineCounter);
         }
 
         public AstVariable Var()

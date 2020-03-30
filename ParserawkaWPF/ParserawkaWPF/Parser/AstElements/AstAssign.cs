@@ -13,7 +13,7 @@ namespace ParserawkaWPF.Parser.AstElements
 
         public Token Operation { get; set; }
 
-        public AstAssign(AstVariable left, Token op, AST right)
+        public AstAssign(AstVariable left, Token op, AST right, int line) : base(line)
         {
             Left = left;
             Right = right;
