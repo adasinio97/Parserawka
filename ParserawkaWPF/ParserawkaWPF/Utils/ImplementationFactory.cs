@@ -14,8 +14,7 @@ namespace ParserawkaWPF.Utils
     {
         public static IProgramKnowledgeBase CreateProgramKnowledgeBase()
         {
-            // TODO: Stworzyć klasę implementacji.
-            return null;
+            return ProgramKnowledgeBase.GetInstance();
         }
 
         public static IDesignExtractor CreateDesignExtractor()

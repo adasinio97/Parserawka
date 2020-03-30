@@ -5,11 +5,25 @@ using System.Text;
 using System.Threading.Tasks;
 using System.IO;
 using ParserawkaWPF.Interfaces;
+using ParserawkaWPF.Parser;
+using ParserawkaWPF.Parser.AstElements;
+using ParserawkaWPF.Utils;
 
 namespace ParserawkaWPF.Model
 {
     class ProgramKnowledgeBase : IProgramKnowledgeBase
     {
+        private static ProgramKnowledgeBase instance;
+
+        private ProgramKnowledgeBase() { }
+
+        public static ProgramKnowledgeBase GetInstance()
+        {
+            if (instance == null)
+                instance = new ProgramKnowledgeBase();
+            return instance;
+        }
+
         public IVariableList Variables { get; set; }
 
         public IStatementList Statements { get; set; }
@@ -22,11 +36,20 @@ namespace ParserawkaWPF.Model
 
         public IUsesTable UsesTable { get; set; }
 
-        public void LoadData(string ProgramName)
+        public void LoadData(string programCode)
         {
-            StreamReader sr = new StreamReader(ProgramName);
-            char [] buffor = new char[sr.BaseStream.Length];
-            sr.ReadBlock(buffor, 0, (int)sr.BaseStream.Length);
+            Lexer lexer = new Lexer(programCode);
+            Parser.Parser parser = new Parser.Parser(lexer);
+            AST root = parser.Parse();
+            IDesignExtractor designExtractor = ImplementationFactory.CreateDesignExtractor();
+            designExtractor.ExtractData(root);
+
+            Variables = designExtractor.Variables;
+            Statements = designExtractor.Statements;
+            FollowsTable = designExtractor.FollowsTable;
+            ParentTable = designExtractor.ParentTable;
+            ModifiesTable = designExtractor.ModifiesTable;
+            UsesTable = designExtractor.UsesTable;
         }
     }
 }

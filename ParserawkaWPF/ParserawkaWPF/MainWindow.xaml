@@ -5,8 +5,29 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ParserawkaWPF"
         mc:Ignorable="d"
-        Title="Projekt" Height="450" Width="800">
+        Title="Projekt" SizeToContent="Height" Width="800">
     <Grid>
-        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
+        </Grid.RowDefinitions>
+        <Grid Margin="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="auto" />
+                <ColumnDefinition Width="auto" />
+            </Grid.ColumnDefinitions>
+            <TextBlock Name="FileNameTextBlock" Margin="0 0 5 0" Padding="5" />
+            <Button Grid.Column="1" Margin="0 0 5 0" Padding="5" Click="BrowseButton_Click">Przeglądaj</Button>
+            <Button Grid.Column="2" Padding="5" Click="AnalyzeButton_Click">Analizuj</Button>
+        </Grid>
+        <TextBox Grid.Row="2" Name="QueryTextBox" Margin="10" Padding="5" />
+        <Button Grid.Row="3" Margin="10" Padding="5" HorizontalAlignment="Right" Click="ResultButton_Click">Wyświetl wynik</Button>
+        <TextBlock Grid.Row="4" Margin="10" Padding="5" Name="ResultTextBox" />
     </Grid>
 </Window>
