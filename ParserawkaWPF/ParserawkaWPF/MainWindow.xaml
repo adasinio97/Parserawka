@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ParserawkaWPF"
         mc:Ignorable="d"
-        Title="Projekt" SizeToContent="Height" Width="800">
+        Title="Projekt" SizeToContent="Height" Width="500">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="*" />

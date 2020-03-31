@@ -131,9 +131,16 @@ namespace ParserawkaWPF.Model
 
         private void ExtractAssignWithContext(AstAssign assign, While context)
         {
+            Assign convertedAssign = new Assign(assign);
+            Statements.AddStatement(convertedAssign);
+
             ExtractVariable(assign.Left);
+            if (assign.Right is AstVariable)
+                ExtractVariable(assign.Right as AstVariable);
+            else if (assign.Right is AstBinOp)
+                ExtractExpressionWithContext(assign.Right as AstBinOp, convertedAssign);
+
             Variable convertedVariable = Variables.GetVariableByName(assign.Left.name);
-            Statement convertedAssign = Statements.GetStatementByProgramLine(assign.ProgramLine);
             ModifiesTable.SetModifies(convertedAssign, convertedVariable);
             ModifiesTable.SetModifies(context, convertedVariable);
         }
