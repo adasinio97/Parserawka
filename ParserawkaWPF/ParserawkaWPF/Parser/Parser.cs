@@ -10,6 +10,7 @@ namespace ParserawkaWPF.Parser
 {
     public class Parser
     {
+        private int statementCounter;
         public Lexer lexer { get; set; }
 
         public bool isTestFile;
@@ -21,6 +22,7 @@ namespace ParserawkaWPF.Parser
             this.lexer = lexer;
             currentToken = lexer.GetNextToken();
             isTestFile = false;
+            statementCounter = 0;
         }
 
         public void Reset()
@@ -92,8 +94,6 @@ namespace ParserawkaWPF.Parser
         public List<AST> Statements()
         {
             AST statement = SingleStatement();
-            //TODO numer wiersza do poprawki
-            (statement as AstStatement).ProgramLine = lexer.lineCounter;
             List<AST> retList = new List<AST>();
             retList.Add(statement);
 
@@ -145,12 +145,13 @@ namespace ParserawkaWPF.Parser
 
         public AST WhileStatement()
         {
+            int programLine = ++statementCounter;
             Eat(TokenType.WHILE);
             AST var = Var();
             Eat(TokenType.THEN);
             AST body = StmtLst();
 
-            return new AstWhileStatement(var, body, lexer.lineCounter);
+            return new AstWhileStatement(var, body, programLine);
         }
 
         public AST Assignment()
@@ -161,7 +162,7 @@ namespace ParserawkaWPF.Parser
             AST right = Expression();
             Eat(TokenType.SEMI);
 
-            return new AstAssign(left, token, right, lexer.lineCounter);
+            return new AstAssign(left, token, right, ++statementCounter);
         }
 
         public AST CallStatement()
