@@ -1,9 +1,11 @@
 ﻿using ParserawkaWPF.Interfaces;
+using ParserawkaWPF.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Collections;
 
 namespace ParserawkaWPF.Model
 {
@@ -11,13 +13,15 @@ namespace ParserawkaWPF.Model
     {
         /* Lista do wyszukiwania po indeksach, słownik do wyszukiwania po nazwach. */
         private List<Variable> list;
-        private Dictionary<string, Variable> dictionary;
+        private SortedDictionary<string, Variable> dictionary;
 
         public VariableList()
         {
-            dictionary = new Dictionary<string, Variable>();
+            dictionary = new SortedDictionary<string, Variable>();
             list = new List<Variable>();
         }
+
+        public Variable this[int i] { get { return GetVariableByIndex(i); } }
 
         public int AddVariable(Variable variable)
         {
@@ -56,9 +60,40 @@ namespace ParserawkaWPF.Model
 
         public Variable GetVariableByName(string name)
         {
-            Variable output = null;
-            dictionary.TryGetValue(name, out output);
-            return output;
+            Variable variable;
+            dictionary.TryGetValue(name, out variable);
+            return variable;
+        }
+
+        public bool Contains(Variable variable)
+        {
+            return dictionary.ContainsKey(variable.Name);
+        }
+
+        public bool Contains(string name)
+        {
+            return dictionary.ContainsKey(name);
+        }
+
+        public IVariableList Intersection(IVariableList otherVariableList)
+        {
+            IVariableList intersection = ImplementationFactory.CreateVariableList();
+            foreach (Variable variable in list)
+            {
+                if (otherVariableList.Contains(variable))
+                    intersection.AddVariable(variable);
+            }
+            return intersection;
+        }
+
+        public IEnumerator<Variable> GetEnumerator()
+        {
+            return list.GetEnumerator();
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return list.GetEnumerator();
         }
     }
 }

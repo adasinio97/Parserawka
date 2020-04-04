@@ -1,4 +1,5 @@
 ﻿using ParserawkaWPF.Interfaces;
+using ParserawkaWPF.Parser;
 using ParserawkaWPF.Parser.AstElements;
 
 namespace ParserawkaWPF.Model
@@ -6,15 +7,22 @@ namespace ParserawkaWPF.Model
     public class Variable : Factor
     {
         public string Name { get; set; }
-        public IVariableList VariableList { get; set; }
+        
+        public Token Token { get; set; }
+
         public Variable(string name)
         {
             Name = name;
         }
 
-        public Variable(AstVariable ast)
+        public Variable(Token token)
         {
-            this.Name = ast.name;
+            Name = token.Value.ToString();
+        }
+
+        public override string ToString()
+        {
+            return Name;
         }
     }
 }

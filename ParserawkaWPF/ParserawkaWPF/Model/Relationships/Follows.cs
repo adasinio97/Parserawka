@@ -5,10 +5,10 @@
         public Statement FirstStatement { get; set; }
         public Statement SecondStatement { get; set; }
 
-        public Follows(Statement s1, Statement s2)
+        public Follows(Statement firstStatement, Statement secondStatement)
         {
-            this.FirstStatement = s1;
-            this.SecondStatement = s2;
+            FirstStatement = firstStatement;
+            SecondStatement = secondStatement;
         }
     }
 }

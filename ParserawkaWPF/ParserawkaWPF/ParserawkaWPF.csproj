@@ -71,16 +71,20 @@
       <SubType>Designer</SubType>
     </ApplicationDefinition>
     <Compile Include="Interfaces\IDesignExtractor.cs" />
+    <Compile Include="Interfaces\IParser.cs" />
+    <Compile Include="Interfaces\IProcedureList.cs" />
+    <Compile Include="Model\Design Elements\Call.cs" />
+    <Compile Include="Model\Design Elements\If.cs" />
+    <Compile Include="Model\Design Elements\ProcedureList.cs" />
     <Compile Include="Model\ProgramKnowledgeBase.cs" />
-    <Compile Include="Model\StatementList.cs" />
+    <Compile Include="Model\Design Elements\StatementList.cs" />
     <Compile Include="Model\Design Elements\Assign.cs" />
     <Compile Include="Model\Design Elements\Constant.cs" />
     <Compile Include="Model\DesignExtractor.cs" />
     <Compile Include="Model\Design Elements\Expression.cs" />
     <Compile Include="Model\Design Elements\Factor.cs" />
     <Compile Include="Model\Design Elements\While.cs" />
-    <Compile Include="Model\VariableList.cs" />
-    <Compile Include="Parser\AstElements\AstStatement.cs" />
+    <Compile Include="Model\Design Elements\VariableList.cs" />
     <Compile Include="Utils\ImplementationFactory.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -103,29 +107,18 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\Follows.cs" />
-    <Compile Include="Model\FollowsTable.cs" />
-    <Compile Include="Model\ModifiesTable.cs" />
-    <Compile Include="Model\Modify.cs" />
-    <Compile Include="Model\Parent.cs" />
-    <Compile Include="Model\ParentTable.cs" />
-    <Compile Include="Model\Procedure.cs" />
-    <Compile Include="Model\Statement.cs" />
-    <Compile Include="Model\Uses.cs" />
-    <Compile Include="Model\UsesTable.cs" />
-    <Compile Include="Model\Variable.cs" />
+    <Compile Include="Model\Relationships\Follows.cs" />
+    <Compile Include="Model\Relationships\FollowsTable.cs" />
+    <Compile Include="Model\Relationships\ModifiesTable.cs" />
+    <Compile Include="Model\Relationships\Modify.cs" />
+    <Compile Include="Model\Relationships\Parent.cs" />
+    <Compile Include="Model\Relationships\ParentTable.cs" />
+    <Compile Include="Model\Design Elements\Procedure.cs" />
+    <Compile Include="Model\Design Elements\Statement.cs" />
+    <Compile Include="Model\Relationships\Uses.cs" />
+    <Compile Include="Model\Relationships\UsesTable.cs" />
+    <Compile Include="Model\Design Elements\Variable.cs" />
     <Compile Include="Parser\AstElements\AST.cs" />
-    <Compile Include="Parser\AstElements\AstAssign.cs" />
-    <Compile Include="Parser\AstElements\AstBinOp.cs" />
-    <Compile Include="Parser\AstElements\AstCall.cs" />
-    <Compile Include="Parser\AstElements\AstStmtLst.cs" />
-    <Compile Include="Parser\AstElements\AstEmpty.cs" />
-    <Compile Include="Parser\AstElements\AstIfStatement.cs" />
-    <Compile Include="Parser\AstElements\AstNum.cs" />
-    <Compile Include="Parser\AstElements\AstProcedure.cs" />
-    <Compile Include="Parser\AstElements\AstUnOp.cs" />
-    <Compile Include="Parser\AstElements\AstVariable.cs" />
-    <Compile Include="Parser\AstElements\AstWhileStatement.cs" />
     <Compile Include="Parser\Exceptions\LexerException.cs" />
     <Compile Include="Parser\Exceptions\ParserException.cs" />
     <Compile Include="Parser\Exceptions\TreeBuildingException.cs" />
@@ -169,5 +162,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

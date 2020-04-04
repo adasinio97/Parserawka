@@ -5,7 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParserawkaWPF.Model
+namespace ParserawkaWPF.Interfaces
 {
-    public abstract class Factor : AST { }
+    public interface IParser
+    {
+        AST Parse();
+    }
 }

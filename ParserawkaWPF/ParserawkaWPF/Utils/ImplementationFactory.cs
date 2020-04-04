@@ -32,6 +32,11 @@ namespace ParserawkaWPF.Utils
             return new VariableList();
         }
 
+        public static IProcedureList CreateProcedureList()
+        {
+            return new ProcedureList();
+        }
+
         public static IFollowsTable CreateFollowsTable()
         {
             return new FollowsTable();

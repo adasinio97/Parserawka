@@ -39,7 +39,7 @@ namespace ParserawkaWPF.Model
         public void LoadData(string programCode)
         {
             Lexer lexer = new Lexer(programCode);
-            Parser.Parser parser = new Parser.Parser(lexer);
+            IParser parser = new Parser.Parser(lexer);
             AST root = parser.Parse();
             IDesignExtractor designExtractor = ImplementationFactory.CreateDesignExtractor();
             designExtractor.ExtractData(root);

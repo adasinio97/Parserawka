@@ -1,19 +1,24 @@
 ﻿using ParserawkaWPF.Interfaces;
 using System.Collections;
 using System.Collections.Generic;
+using System;
+using ParserawkaWPF.Utils;
+using ParserawkaWPF.Parser.AstElements;
 
 namespace ParserawkaWPF.Model
 {
-    public class StatementList : IStatementList
+    public class StatementList : AST, IStatementList
     {
         private List<Statement> list;
-        private Dictionary<int, Statement> dictionary;
+        private SortedDictionary<int, Statement> dictionary;
 
         public StatementList()
         {
             list = new List<Statement>();
-            dictionary = new Dictionary<int, Statement>();
+            dictionary = new SortedDictionary<int, Statement>();
         }
+
+        public Statement this[int i] { get { return GetStatementByIndex(i); } }
 
         public int AddStatement(Statement statement)
         {
@@ -28,11 +33,6 @@ namespace ParserawkaWPF.Model
                 dictionary.Add(statement.ProgramLine, statement);
             }
             return index;
-        }
-
-        public IEnumerator GetEnumerator()
-        {
-            throw new System.NotImplementedException();
         }
 
         public int GetIndex(Statement statement)
@@ -57,9 +57,35 @@ namespace ParserawkaWPF.Model
 
         public Statement GetStatementByProgramLine(int programLine)
         {
-            Statement output = null;
-            dictionary.TryGetValue(programLine, out output);
-            return output;
+            Statement statement = null;
+            dictionary.TryGetValue(programLine, out statement);
+            return statement;
+        }
+
+        public bool Contains(Statement statement)
+        {
+            return dictionary.ContainsKey(statement.ProgramLine);
+        }
+
+        public bool Contains(int programLine)
+        {
+            return dictionary.ContainsKey(programLine);
+        }
+
+        public IStatementList Intersection(IStatementList otherStatementList)
+        {
+            IStatementList intersection = ImplementationFactory.CreateStatementList();
+            foreach (Statement statement in list)
+            {
+                if (otherStatementList.Contains(statement))
+                    intersection.AddStatement(statement);
+            }
+            return intersection;
+        }
+
+        public IEnumerator GetEnumerator()
+        {
+            return list.GetEnumerator();
         }
 
         IEnumerator<Statement> IEnumerable<Statement>.GetEnumerator()

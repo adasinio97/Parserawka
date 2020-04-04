@@ -1,5 +1,8 @@
-﻿using ParserawkaWPF.Parser.AstElements;
+﻿using ParserawkaWPF.Interfaces;
+using ParserawkaWPF.Model;
+using ParserawkaWPF.Parser.AstElements;
 using ParserawkaWPF.Parser.Exceptions;
+using ParserawkaWPF.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Parser
 {
-    public class Parser
+    public class Parser : IParser
     {
-        private int statementCounter;
         public Lexer lexer { get; set; }
 
-        public bool isTestFile;
+        private int statementCounter;
+        private bool isTestFile;
 
         private Token currentToken;
 
@@ -25,14 +28,14 @@ namespace ParserawkaWPF.Parser
             statementCounter = 0;
         }
 
-        public void Reset()
+        private void Reset()
         {
             lexer.Reset();
             currentToken = lexer.GetNextToken();
             isTestFile = false;
         }
 
-        public void Eat(TokenType type)
+        private void Eat(TokenType type)
         {
             if (currentToken.Type == type)
             {
@@ -44,67 +47,63 @@ namespace ParserawkaWPF.Parser
             }
         }
 
-        public AST Root()
+        private IProcedureList Root()
         {
-            List<AST> declarations = Procedures();
-            AstStmtLst root = new AstStmtLst();
-            foreach (AST node in declarations)
-            {
-                root.children.Add(node);
-            }
+            IProcedureList root = Procedures();
             return root;
         }
 
-        public List<AST> Procedures()
+        private IProcedureList Procedures()
         {
-            AST procedure = Procedure();
-            List<AST> retList = new List<AST>();
-            retList.Add(procedure);
+            Procedure procedure = Procedure();
+            IProcedureList procedures = ImplementationFactory.CreateProcedureList();
+            procedures.AddProcedure(procedure);
 
             while (currentToken.Type == TokenType.PROCEDURE)
             {
-                retList.Add(Procedure());
+                procedures.AddProcedure(Procedure());
             }
-            return retList;
+            return procedures;
         }
 
-        public AST Procedure()
+        private Procedure Procedure()
         {
             Eat(TokenType.PROCEDURE);
             string name = currentToken.Value.ToString();
             Eat(TokenType.ID); //nazwa testu
 
-            AstProcedure test = new AstProcedure(name, StmtLst());
+            Procedure test = new Procedure(name, StmtLst());
             isTestFile = true;
             return test;
         }
 
-        public AST StmtLst()
+        private IStatementList StmtLst()
         {
             Eat(TokenType.LBRACE);
-            List<AST> statements = Statements();
+            IStatementList statements = Statements();
             Eat(TokenType.RBRACE);
 
-            AstStmtLst root = new AstStmtLst();
-            root.children.AddRange(statements);
+            IStatementList root = ImplementationFactory.CreateStatementList();
+            foreach (Statement statement in statements)
+                root.AddStatement(statement);
 
             return root;
         }
 
-        public List<AST> Statements()
+        private IStatementList Statements()
         {
-            AST statement = SingleStatement();
-            List<AST> retList = new List<AST>();
-            retList.Add(statement);
+            Statement statement = SingleStatement();
+            IStatementList statements = ImplementationFactory.CreateStatementList();
+            statements.AddStatement(statement);
 
             while (currentToken.Type != TokenType.RBRACE )
             {
-                retList.Add(SingleStatement());
+                statements.AddStatement(SingleStatement());
             }
-            return retList;
+            return statements;
         }
 
-        public AST SingleStatement()
+        private Statement SingleStatement()
         {
             if (currentToken.Type == TokenType.ID)
                 return Assignment();
@@ -117,10 +116,10 @@ namespace ParserawkaWPF.Parser
             else if (currentToken.Type == TokenType.ID)
                 throw new ParserException("Nie rozpoznano instrukcji \"" + currentToken.Value.ToString() + "\"", lexer.lineCounter, lexer.rowCounter);
             else
-                return new AstEmpty();
+                return null;
         }
 
-        public Token GetAssignType()
+        private Token GetAssignType()
         {
             Token operation = currentToken;
             if (currentToken.Type == TokenType.ASSIGN)
@@ -128,88 +127,80 @@ namespace ParserawkaWPF.Parser
             return operation;
         }
 
-        public AST IfStatement()
+        private If IfStatement()
         {
+            int programLine = ++statementCounter;
+
             Eat(TokenType.IF);
-            AST var = Var();
+            Variable var = Var();
             Eat(TokenType.THEN);
-            AST body = StmtLst();
-            AST elseBody = new AstEmpty();
+
+            IStatementList body = StmtLst();
+            IStatementList elseBody = null;
             if (currentToken.Type == TokenType.ELSE)
             {
                 elseBody = StmtLst();
             }
-
-            return new AstIfStatement(var, body, elseBody);
+            return new If(var, body, elseBody, programLine);
         }
 
-        public AST WhileStatement()
+        private While WhileStatement()
         {
             int programLine = ++statementCounter;
-            Eat(TokenType.WHILE);
-            AST var = Var();
-            Eat(TokenType.THEN);
-            AST body = StmtLst();
 
-            return new AstWhileStatement(var, body, programLine);
+            Eat(TokenType.WHILE);
+            Variable var = Var();
+            Eat(TokenType.THEN);
+
+            IStatementList body = StmtLst();
+
+            return new While(var, body, programLine);
         }
 
-        public AST Assignment()
+        private Assign Assignment()
         {
-            AstVariable left = Var();
+            Variable left = Var();
             Token token = currentToken;
             Eat(TokenType.ASSIGN);
-            AST right = Expression();
+            Factor right = Expression();
             Eat(TokenType.SEMI);
 
-            return new AstAssign(left, token, right, ++statementCounter);
+            return new Assign(left, token, right, ++statementCounter);
         }
 
-        public AST CallStatement()
+        private Call CallStatement()
         {
             Token token = currentToken;
             Eat(TokenType.ID);
             Eat(TokenType.SEMI);
 
-            return new AstCall(token, lexer.lineCounter);
+            return new Call(token, ++statementCounter);
         }
 
-        public AstVariable Var()
+        private Variable Var()
         {
-            AstVariable variable = new AstVariable(currentToken);
+            Variable variable = new Variable(currentToken);
             Eat(TokenType.ID);
             return variable;
         }
 
-        public AST Factor()
+        private Factor Factor()
         {
             Token token = currentToken;
             if (token.Type == TokenType.ID)
             {
                 return Var();
             }
-            else if (token.Type == TokenType.PLUS)
-            {
-                Eat(TokenType.PLUS);
-
-                return new AstUnOp(token, Factor());
-            }
-            else if (token.Type == TokenType.MINUS)
-            {
-                Eat(TokenType.MINUS);
-
-                return new AstUnOp(token, Factor());
-            }
             else if (token.Type == TokenType.INTEGER)
             {
                 Eat(TokenType.INTEGER);
 
-                return new AstNum(token);
+                return new Constant(token);
             }
             else if (token.Type == TokenType.LPAREN)
             {
                 Eat(TokenType.LPAREN);
-                AST expr = Expression();
+                Factor expr = Expression();
                 Eat(TokenType.RPAREN);
 
                 return expr;
@@ -217,23 +208,23 @@ namespace ParserawkaWPF.Parser
             throw new ParserException("Nieprawidłowe określenie \"" + token.Value.ToString() + "\"", lexer.lineCounter, lexer.rowCounter);
         }
 
-        public AST Term()
+        private Factor Term()
         {
-            AST node = Factor();
+            Factor node = Factor();
             while (currentToken.Type == TokenType.MUL)
             {
                 Token Operator = currentToken;
                 Eat(TokenType.MUL);
 
-                node = new AstBinOp(node, Operator, Factor());
+                node = new Expression(node, Operator, Factor());
             }
 
             return node;
         }
 
-        public AST Expression()
+        private Factor Expression()
         {
-            AST node = Term();
+            Factor node = Term();
             while (currentToken.Type == TokenType.PLUS
                 || currentToken.Type == TokenType.MINUS)
             {
@@ -246,7 +237,7 @@ namespace ParserawkaWPF.Parser
                 {
                     Eat(TokenType.MINUS);
                 }
-                node = new AstBinOp(node, Operator, Term());
+                node = new Expression(node, Operator, Term());
             }
 
             return node;
@@ -254,7 +245,7 @@ namespace ParserawkaWPF.Parser
 
         public AST Parse()
         {
-            AST root = Root();
+            AST root = Root() as AST;
             if (currentToken.Type != TokenType.EOF)
                 throw new ParserException("Plik nie został przetworzony do końca", lexer.lineCounter, lexer.rowCounter);
             return root;

@@ -4,10 +4,11 @@
     {
         public Statement Statement { get; set; }
         public Variable Variable { get; set; }
-        public Modify(Statement a, Variable v)
+
+        public Modify(Statement statement, Variable variable)
         {
-            this.Statement = a;
-            this.Variable = v;
+            Statement = statement;
+            Variable = variable;
         }
     }
 }

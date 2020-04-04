@@ -6,10 +6,10 @@ namespace ParserawkaWPF.Interfaces
     {
         void SetParent(Statement firstStatement, Statement secondStatement);
         Statement GetParent(Statement statement);
-        IStatementList GetParentT(Statement statement, IStatementList statementList);
+        IStatementList GetParentT(Statement statement);
         IStatementList GetParentedBy(Statement statement);
-        IStatementList GetParentedByT(Statement statement, IStatementList statementList);
+        IStatementList GetParentedByT(Statement statement);
         bool IsParent(Statement firstStatement, Statement secondStatement);
-        bool IsParentT(Statement firstStatement, Statement secondStatement, IStatementList statementList);
+        bool IsParentT(Statement firstStatement, Statement secondStatement);
     }
 }

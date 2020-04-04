@@ -1,15 +1,21 @@
 ﻿using System;
 using ParserawkaWPF.Model;
+using System.Collections.Generic;
 
 namespace ParserawkaWPF.Interfaces
 {
-    public interface IVariableList
+    public interface IVariableList : IEnumerable<Variable>
     {
+        Variable this[int i] { get; }
+
         int AddVariable(Variable variable);
         Variable GetVariableByIndex(int index);
-        Variable GetVariableByName(String name);
+        Variable GetVariableByName(string name);
         int GetIndex(Variable variable);
-        int GetIndexByName(String name);
+        int GetIndexByName(string name);
         int GetSize();
+        bool Contains(Variable variable);
+        bool Contains(string name);
+        IVariableList Intersection(IVariableList otherVariableList);
     }
 }

@@ -7,12 +7,14 @@ namespace ParserawkaWPF.Model
 {
     class ModifiesTable : IModifiesTable
     {
-        List<Modify> modifyList = new List<Modify>();
+        private List<Modify> modifyList = new List<Modify>();
+
         public IVariableList GetModifiedBy(Statement statement)
         {
             List<Modify> list = modifyList.Where(x => x.Statement == statement).ToList();
             IVariableList variableList = ImplementationFactory.CreateVariableList();
-            for(int i = 0; i < list.Count; i++)
+
+            for (int i = 0; i < list.Count; i++)
             {
                 variableList.AddVariable(list[i].Variable);
             }
@@ -34,19 +36,12 @@ namespace ParserawkaWPF.Model
         public bool IsModified(Statement statement, Variable variable)
         {
             IStatementList statementList = GetModifies(variable);
-            for(int i = 0; i < statementList.GetSize(); i++)
-            {
-                if (statementList.GetStatementByIndex(i) == statement)
-                    return true;
-            }
-            return false;
+            return statementList.Contains(statement);
         }
-
         
         public void SetModifies(Statement statement, Variable variable)
         {
             modifyList.Add(new Modify(statement, variable));
         }
-
     }
 }

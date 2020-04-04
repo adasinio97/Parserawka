@@ -1,4 +1,5 @@
-﻿using ParserawkaWPF.Parser.AstElements;
+﻿using ParserawkaWPF.Parser;
+using ParserawkaWPF.Parser.AstElements;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,10 +10,21 @@ namespace ParserawkaWPF.Model
 {
     public class Assign : Statement
     {
-        public Variable LeftSide { get; set; }
-        public Expression RightSide { get; set; }
+        public Variable Left { get; set; }
+        public Factor Right { get; set; }
 
-        public Assign(int a) : base(a) { }
-        public Assign(AstAssign ast) : base(ast) { }
+        public Token Operation { get; set; }
+
+        public Assign(Variable left, Token operation, Factor right, int programLine) : base(programLine)
+        {
+            Left = left;
+            Operation = operation;
+            Right = right;
+        }
+
+        public override string ToString()
+        {
+            return base.ToString() + " " + Left.Name + Operation.Value.ToString() + Right.ToString();
+        }
     }
 }

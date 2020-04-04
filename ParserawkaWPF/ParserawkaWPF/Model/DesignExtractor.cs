@@ -32,141 +32,141 @@ namespace ParserawkaWPF.Model
         {
             // Na tę chwilę, zakładam, że korzeń drzewa to procedura.
             // TODO: W późniejszych iteracjach trzeba będzie zmienić na program.
-            if (root is AstStmtLst)
-                ExtractProcedure((root as AstStmtLst).children.FirstOrDefault() as AstProcedure);
+            if (root is IProcedureList)
+            {
+                foreach (Procedure procedure in root as IProcedureList)
+                    ExtractProcedure(procedure);
+            }
         }
 
-        private void ExtractProcedure(AstProcedure procedure)
+        private void ExtractProcedure(Procedure procedure)
         {
-            List<AST> children = (procedure.Body as AstStmtLst).children;
+            IStatementList children = procedure.Body;
 
             // TODO: Bardziej szczegółowa analiza procedury w późniejszych iteracjach.
-            for (int i = 0; i < children.Count; i++)
+            for (int i = 0; i < children.GetSize(); i++)
             {
-                AstStatement child = children[i] as AstStatement;
+                Statement child = children[i];
                 ExtractStatement(child);
                 if (i > 0)
                 {
-                    AstStatement previousChild = children[i - 1] as AstStatement;
-                    Statement convertedChild = Statements.GetStatementByProgramLine(child.ProgramLine);
-                    Statement convertedPreviousChild = Statements.GetStatementByProgramLine(previousChild.ProgramLine);
-                    FollowsTable.SetFollows(convertedPreviousChild, convertedChild);
+                    Statement previousChild = children[i - 1];
+                    FollowsTable.SetFollows(previousChild, child);
                 }
             }
         }
         
-        private void ExtractStatement(AstStatement statement)
+        private void ExtractStatement(Statement statement)
         {
-            if (statement is AstWhileStatement)
-                ExtractWhile(statement as AstWhileStatement);
-            else if (statement is AstAssign)
-                ExtractAssign(statement as AstAssign);
+            Statements.AddStatement(statement);
+            if (statement is While)
+                ExtractWhile(statement as While);
+            else if (statement is Assign)
+                ExtractAssign(statement as Assign);
         }
 
-        private void ExtractStatementWithContext(AstStatement statement, While context)
+        private void ExtractStatementWithContext(Statement statement, While context)
         {
-            if (statement is AstWhileStatement)
-                ExtractWhile(statement as AstWhileStatement);
-            else if (statement is AstAssign)
-                ExtractAssignWithContext(statement as AstAssign, context);
+            Statements.AddStatement(statement);
+            if (statement is While)
+                ExtractWhile(statement as While);
+            else if (statement is Assign)
+                ExtractAssignWithContext(statement as Assign, context);
         }
 
-        private void ExtractWhile(AstWhileStatement loop)
+        private void ExtractWhile(While loop)
         {
-            While convertedLoop = new While(loop);
-            Statements.AddStatement(convertedLoop);
-            List<AST> children = (loop.body as AstStmtLst).children;
+            IStatementList children = loop.Body;
 
-            for (int i = 0; i < children.Count; i++)
+            for (int i = 0; i < children.GetSize(); i++)
             {
-                AstStatement child = children[i] as AstStatement;
-                ExtractStatementWithContext(child, convertedLoop);
+                Statement child = children[i];
+                ExtractStatementWithContext(child, loop);
 
-                Statement convertedChild = Statements.GetStatementByProgramLine(child.ProgramLine);
-                ParentTable.SetParent(convertedLoop, convertedChild);
+                ParentTable.SetParent(loop, child);
                 if (i > 0)
                 {
-                    AstStatement previousChild = children[i - 1] as AstStatement;
-                    Statement convertedPreviousChild = Statements.GetStatementByProgramLine(previousChild.ProgramLine);
-                    FollowsTable.SetFollows(convertedPreviousChild, convertedChild);
+                    Statement previousChild = children[i - 1];
+                    FollowsTable.SetFollows(previousChild, child);
                 }
             }
         }
 
-        private void ExtractAssign(AstAssign assign)
+        private void ExtractAssign(Assign assign)
         {
-            Assign convertedAssign = new Assign(assign);
-            Statements.AddStatement(convertedAssign);
-
             ExtractVariable(assign.Left);
-            if (assign.Right is AstVariable)
-                ExtractVariable(assign.Right as AstVariable);
-            else if (assign.Right is AstBinOp)
-                ExtractExpressionWithContext(assign.Right as AstBinOp, convertedAssign);
-
-            Variable convertedVariable = Variables.GetVariableByName(assign.Left.name);
-            ModifiesTable.SetModifies(convertedAssign, convertedVariable);
+            ExtractFactorWithContext(assign.Right, assign);
+            
+            ModifiesTable.SetModifies(assign, assign.Left);
         }
 
-        private void ExtractVariable(AstVariable variable)
+        private void ExtractVariable(Variable variable)
         {
-            Variable convertedVariable = new Variable(variable);
-            Variables.AddVariable(convertedVariable);
+            Variables.AddVariable(variable);
         }
 
-        private void ExtractVariableWithContext(AstVariable variable, Assign context)
+        private void ExtractVariableWithContext(Variable variable, Assign context)
         {
             ExtractVariable(variable);
-            Variable convertedVariable = Variables.GetVariableByName(variable.name);
-            UsesTable.SetUses(context, convertedVariable);
+            UsesTable.SetUses(context, variable);
         }
 
-        private void ExtractVariableWithContext(AstVariable variable, Assign context1, While context2)
+        private void ExtractVariableWithContext(Variable variable, Assign context1, While context2)
         {
             ExtractVariable(variable);
-            Variable convertedVariable = Variables.GetVariableByName(variable.name);
-            UsesTable.SetUses(context1, convertedVariable);
-            UsesTable.SetUses(context2, convertedVariable);
+            UsesTable.SetUses(context1, variable);
+            UsesTable.SetUses(context2, variable);
         }
 
-        private void ExtractAssignWithContext(AstAssign assign, While context)
+        private void ExtractAssignWithContext(Assign assign, While context)
         {
-            Assign convertedAssign = new Assign(assign);
-            Statements.AddStatement(convertedAssign);
-
             ExtractVariable(assign.Left);
-            if (assign.Right is AstVariable)
-                ExtractVariable(assign.Right as AstVariable);
-            else if (assign.Right is AstBinOp)
-                ExtractExpressionWithContext(assign.Right as AstBinOp, convertedAssign);
-
-            Variable convertedVariable = Variables.GetVariableByName(assign.Left.name);
-            ModifiesTable.SetModifies(convertedAssign, convertedVariable);
-            ModifiesTable.SetModifies(context, convertedVariable);
+            ExtractFactorWithContext(assign.Right, assign, context);
+            
+            ModifiesTable.SetModifies(assign, assign.Left);
+            ModifiesTable.SetModifies(context, assign.Left);
         }
 
-        private void ExtractExpressionWithContext(AstBinOp expression, Assign context)
+        private void ExtractFactorWithContext(Factor factor, Assign context)
         {
-            if (expression.Left is AstVariable)
-                ExtractVariableWithContext(expression.Left as AstVariable, context);
-            else if (expression.Left is AstBinOp)
-                ExtractExpressionWithContext(expression.Left as AstBinOp, context);
-            if (expression.Right is AstVariable)
-                ExtractVariableWithContext(expression.Right as AstVariable, context);
-            else if (expression.Right is AstBinOp)
-                ExtractExpressionWithContext(expression.Right as AstBinOp, context);              
+            if (factor is Variable)
+                ExtractVariableWithContext(factor as Variable, context);
+            else if (factor is Expression)
+                ExtractExpressionWithContext(factor as Expression, context);
         }
 
-        private void ExtractExpressionWithContext(AstBinOp expression, Assign context1, While context2)
+        private void ExtractFactorWithContext(Factor factor, Assign context1, While context2)
         {
-            if (expression.Left is AstVariable)
-                ExtractVariableWithContext(expression.Left as AstVariable, context1, context2);
-            else if (expression.Left is AstBinOp)
-                ExtractExpressionWithContext(expression.Left as AstBinOp, context1, context2);
-            if (expression.Right is AstVariable)
-                ExtractVariableWithContext(expression.Right as AstVariable, context1, context2);
-            else if (expression.Right is AstBinOp)
-                ExtractExpressionWithContext(expression.Right as AstBinOp, context1, context2);
+            if (factor is Variable)
+                ExtractVariableWithContext(factor as Variable, context1, context2);
+            else if (factor is Expression)
+                ExtractExpressionWithContext(factor as Expression, context1, context2);
+        }
+
+        private void ExtractExpressionWithContext(Expression expression, Assign context)
+        {
+            if (expression.Left is Variable)
+                ExtractVariableWithContext(expression.Left as Variable, context);
+            else if (expression.Left is Expression)
+                ExtractExpressionWithContext(expression.Left as Expression, context);
+
+            if (expression.Right is Variable)
+                ExtractVariableWithContext(expression.Right as Variable, context);
+            else if (expression.Right is Expression)
+                ExtractExpressionWithContext(expression.Right as Expression, context);              
+        }
+
+        private void ExtractExpressionWithContext(Expression expression, Assign context1, While context2)
+        {
+            if (expression.Left is Expression)
+                ExtractVariableWithContext(expression.Left as Variable, context1, context2);
+            else if (expression.Left is Expression)
+                ExtractExpressionWithContext(expression.Left as Expression, context1, context2);
+
+            if (expression.Right is Variable)
+                ExtractVariableWithContext(expression.Right as Variable, context1, context2);
+            else if (expression.Right is Expression)
+                ExtractExpressionWithContext(expression.Right as Expression, context1, context2);
         }
     }
 }
