@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ParserawkaWPF.Parser.Exceptions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -209,7 +210,7 @@ namespace ParserawkaWPF.Parser
                     return new Token(TokenType.ASSIGN, "=");
                 }
 
-                //throw new LexerException("Nie rozpoznano znaku '" + currentChar + "'", lineCounter, rowCounter);
+                throw new LexerException("Nie rozpoznano znaku '" + currentChar + "'", lineCounter, rowCounter);
             }
             return new Token(TokenType.EOF, null);
         }
