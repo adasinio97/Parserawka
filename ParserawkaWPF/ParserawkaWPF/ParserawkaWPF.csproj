@@ -85,6 +85,16 @@
     <Compile Include="Model\Design Elements\Factor.cs" />
     <Compile Include="Model\Design Elements\While.cs" />
     <Compile Include="Model\Design Elements\VariableList.cs" />
+    <Compile Include="PQL\AstElements\PqlAst.cs" />
+    <Compile Include="PQL\AstElements\PqlAttrRef.cs" />
+    <Compile Include="PQL\AstElements\PqlBoolean.cs" />
+    <Compile Include="PQL\AstElements\PqlDeclaration.cs" />
+    <Compile Include="PQL\AstElements\PqlSelect.cs" />
+    <Compile Include="PQL\AstElements\PqlSynonym.cs" />
+    <Compile Include="PQL\AstElements\PqlTuple.cs" />
+    <Compile Include="PQL\PqlLexer.cs" />
+    <Compile Include="PQL\PqlToken.cs" />
+    <Compile Include="PQL\PqlParser.cs" />
     <Compile Include="Utils\ImplementationFactory.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -162,6 +172,8 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Folder Include="PQL\Exceptions\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -25,10 +25,7 @@ namespace ParserawkaWPF.PQL
         PROG_LINE,
 
         //atrybuty
-        PROCNAMEATTR,
-        VARNAMEATTR,
-        VALUEATTR,
-        STMTATTR,
+        ATTRIBUTE,
 
         //polecenia
         SELECT,

@@ -27,10 +27,10 @@ namespace ParserawkaWPF.PQL
                 { "constant", new PqlToken(PqlTokenType.CONSTANT, "CONSTANT") },
                 { "prog_line", new PqlToken(PqlTokenType.PROG_LINE, "PROG_LINE") },
 
-                { "procName", new PqlToken(PqlTokenType.PROCNAMEATTR, "PROCNAMEATTR") },
-                { "valueName", new PqlToken(PqlTokenType.VARNAMEATTR, "VARNAMEATTR") },
-                { "value", new PqlToken(PqlTokenType.VALUEATTR, "VALUEATTR") },
-                { "stmt#", new PqlToken(PqlTokenType.STMTATTR, "STMTATTR") },
+                { "procName", new PqlToken(PqlTokenType.ATTRIBUTE, "procName") },
+                { "varName", new PqlToken(PqlTokenType.ATTRIBUTE, "varName") },
+                { "value", new PqlToken(PqlTokenType.ATTRIBUTE, "value") },
+                { "stmt#", new PqlToken(PqlTokenType.ATTRIBUTE, "stmt") },
 
                 { "Select", new PqlToken(PqlTokenType.SELECT, "SELECT") },
                 { "such", new PqlToken(PqlTokenType.SUCH, "SUCH") },

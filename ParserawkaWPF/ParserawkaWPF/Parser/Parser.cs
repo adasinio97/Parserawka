@@ -150,7 +150,6 @@ namespace ParserawkaWPF.Parser
 
             Eat(TokenType.WHILE);
             Variable var = Var();
-            Eat(TokenType.THEN);
 
             IStatementList body = StmtLst();
 
@@ -170,6 +169,7 @@ namespace ParserawkaWPF.Parser
 
         private Call CallStatement()
         {
+            Eat(TokenType.CALL);
             Token token = currentToken;
             Eat(TokenType.ID);
             Eat(TokenType.SEMI);
