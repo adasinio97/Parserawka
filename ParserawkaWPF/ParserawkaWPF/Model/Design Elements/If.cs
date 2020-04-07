@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Model
 {
-    public class If : Statement
+    public class If : Container
     {
         public Variable Condition { get; set; }
         public IStatementList IfBody { get; set; }

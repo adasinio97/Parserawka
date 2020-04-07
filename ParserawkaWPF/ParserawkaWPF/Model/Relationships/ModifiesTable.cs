@@ -2,12 +2,18 @@
 using ParserawkaWPF.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace ParserawkaWPF.Model
 {
     class ModifiesTable : IModifiesTable
     {
         private List<Modify> modifyList = new List<Modify>();
+
+        public IVariableList GetModifiedBy(Procedure procedure)
+        {
+            throw new NotImplementedException();
+        }
 
         public IVariableList GetModifiedBy(Statement statement)
         {
@@ -20,8 +26,13 @@ namespace ParserawkaWPF.Model
             }
             return variableList;
         }
-        
-        public IStatementList GetModifies(Variable variable)
+
+        public IProcedureList GetModifiesProcedures(Variable variable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IStatementList GetModifiesStatements(Variable variable)
         {
             List<Modify> lista = modifyList.Where(x => x.Variable == variable).ToList();
             IStatementList statementList = ImplementationFactory.CreateStatementList(); 
@@ -35,13 +46,19 @@ namespace ParserawkaWPF.Model
         
         public bool IsModified(Statement statement, Variable variable)
         {
-            IStatementList statementList = GetModifies(variable);
+            IStatementList statementList = GetModifiesStatements(variable);
             return statementList.Contains(statement);
         }
-        
+
+        public void SetModifies(Procedure procedure, Variable variable)
+        {
+            throw new NotImplementedException();
+        }
+
         public void SetModifies(Statement statement, Variable variable)
         {
-            modifyList.Add(new Modify(statement, variable));
+            if (!IsModified(statement, variable))
+                modifyList.Add(new Modify(statement, variable));
         }
     }
 }

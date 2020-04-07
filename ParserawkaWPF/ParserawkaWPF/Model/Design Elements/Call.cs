@@ -10,8 +10,9 @@ namespace ParserawkaWPF.Model
     public class Call : Statement
     {
         public Procedure Procedure { get; set; }
+        public string ProcedureName { get; }
 
-        public Token ProcedureToken { get; set; }
+        public Token ProcedureToken { get; }
 
         public Call(Procedure procedure, int programLine) : base(programLine)
         {
@@ -21,11 +22,12 @@ namespace ParserawkaWPF.Model
         public Call(Token procedureToken, int programLine) : base(programLine)
         {
             ProcedureToken = procedureToken;
+            ProcedureName = procedureToken.Value.ToString();
         }
 
         public override string ToString()
         {
-            return base.ToString() + " Call " + ProcedureToken.Value;
+            return base.ToString() + " Call " + ProcedureName;
         }
     }
 }
