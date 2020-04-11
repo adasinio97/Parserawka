@@ -8,9 +8,9 @@ namespace ParserawkaWPF.PQL.AstElements
 {
     public class PqlSelect : PqlAst
     {
-        List<PqlAst> Declarations;
-        PqlAst Result;
-        List<PqlAst> Clauses;
+        public List<PqlAst> Declarations;
+        public PqlAst Result;
+        public List<PqlAst> Clauses;
 
         public PqlSelect(List<PqlAst> declarations, PqlAst result, List<PqlAst> clauses)
         {
