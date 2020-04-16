@@ -6,13 +6,13 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.PQL.AstElements
 {
-    public class PqlTuple : PqlAst
+    public class PqlTuple : PqlResult
     {
-        public List<PqlAst> Elems;
+        public List<PqlElem> Elems;
 
-        public PqlTuple(params PqlAst[] elems)
+        public PqlTuple(params PqlElem[] elems)
         {
-            Elems = new List<PqlAst>();
+            Elems = new List<PqlElem>();
             Elems.AddRange(elems);
         }
     }

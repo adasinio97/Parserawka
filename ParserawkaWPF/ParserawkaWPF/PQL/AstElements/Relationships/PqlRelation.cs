@@ -6,12 +6,12 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.PQL.AstElements
 {
-    public class PqlCompare : PqlAst
+    public abstract class PqlRelation : PqlAst
     {
-        public PqlAttrRef LeftRef { get; set; }
-        public PqlArgument RightRef { get; set; }
+        public PqlAst LeftRef;
+        public PqlAst RightRef;
 
-        public PqlCompare(PqlAttrRef leftRef, PqlArgument rightRef)
+        public PqlRelation(PqlAst leftRef, PqlAst rightRef)
         {
             LeftRef = leftRef;
             RightRef = rightRef;

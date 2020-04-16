@@ -4,9 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ParserawkaWPF.PQL.AstElements
+namespace ParserawkaWPF.PQL
 {
-    public class PqlBoolean : PqlResult
+    public class PqlEvaluator
     {
+
     }
 }
