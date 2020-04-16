@@ -2,12 +2,19 @@
 using ParserawkaWPF.Utils;
 using System.Collections.Generic;
 using System.Linq;
+using System;
 
 namespace ParserawkaWPF.Model
 {
     class UsesTable : IUsesTable
     {
         List<Uses> UsesList = new List<Uses>();
+
+        public IVariableList GetUsedBy(Procedure procedure)
+        {
+            throw new NotImplementedException();
+        }
+
         public IVariableList GetUsedBy(Statement statement)
         {
             List<Uses> list = UsesList.Where(x => x.Statement == statement).ToList();
@@ -20,7 +27,12 @@ namespace ParserawkaWPF.Model
             return variableList;
         }
 
-        public IStatementList GetUses(Variable variable)
+        public IProcedureList GetUsesProcedures(Variable variable)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IStatementList GetUsesStatements(Variable variable)
         {
             List<Uses> list =  UsesList.Where(x => x.Variable == variable).ToList();
             IStatementList statementList = ImplementationFactory.CreateStatementList();
@@ -34,13 +46,19 @@ namespace ParserawkaWPF.Model
 
         public bool IsUses(Statement statement, Variable variable)
         {
-            IStatementList statementList = GetUses(variable);
+            IStatementList statementList = GetUsesStatements(variable);
             return statementList.Contains(statement);
+        }
+
+        public void SetUses(Procedure procedure, Variable variable)
+        {
+            throw new NotImplementedException();
         }
 
         public void SetUses(Statement statement, Variable variable)
         {
-            UsesList.Add(new Uses(statement, variable));
+            if (!IsUses(statement, variable))
+                UsesList.Add(new Uses(statement, variable));
         }
     }
 }

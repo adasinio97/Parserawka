@@ -70,10 +70,12 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Interfaces\ICallsTable.cs" />
     <Compile Include="Interfaces\IDesignExtractor.cs" />
     <Compile Include="Interfaces\IParser.cs" />
     <Compile Include="Interfaces\IProcedureList.cs" />
     <Compile Include="Model\Design Elements\Call.cs" />
+    <Compile Include="Model\Design Elements\Container.cs" />
     <Compile Include="Model\Design Elements\If.cs" />
     <Compile Include="Model\Design Elements\ProcedureList.cs" />
     <Compile Include="Model\ProgramKnowledgeBase.cs" />

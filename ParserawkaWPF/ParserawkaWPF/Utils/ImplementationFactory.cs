@@ -56,5 +56,11 @@ namespace ParserawkaWPF.Utils
         {
             return new UsesTable();
         }
+
+        public static ICallsTable CreateCallsTable()
+        {
+            // TODO
+            return null;
+        }
     }
 }

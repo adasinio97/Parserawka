@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.Model
 {
-    public class While : Statement
+    public class While : Container
     {
         public Variable Condition { get; set; }
         public IStatementList Body { get; set; }

@@ -11,10 +11,12 @@ namespace ParserawkaWPF.Interfaces
     {
         IVariableList Variables { get; }
         IStatementList Statements { get; }
+        IProcedureList Procedures { get; }
         IFollowsTable FollowsTable { get; }
         IParentTable ParentTable { get; }
         IModifiesTable ModifiesTable { get; }
         IUsesTable UsesTable { get; }
+        ICallsTable CallsTable { get; }
         void ExtractData(AST root);
     }
 }
