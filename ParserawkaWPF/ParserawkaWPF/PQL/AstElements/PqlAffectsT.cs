@@ -10,7 +10,6 @@ namespace ParserawkaWPF.PQL.AstElements
     {
 		public PqlAst LeftRef;
 		public PqlAst RightRef;
-		
 		public PqlAffectsT(PqlAst leftRef, PqlAst rightRef)
 		{
 			LeftRef = leftRef;
