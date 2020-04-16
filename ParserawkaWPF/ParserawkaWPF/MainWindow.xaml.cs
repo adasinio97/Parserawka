@@ -1,9 +1,8 @@
 ﻿using Microsoft.Win32;
-using ParserawkaWPF.Interfaces;
-using ParserawkaWPF.PQL;
-using ParserawkaWPF.PQL.AstElements;
-using ParserawkaWPF.Utils;
-using System;
+using ParserawkaCore.Interfaces;
+using ParserawkaCore.PQL;
+using ParserawkaCore.PQL.AstElements;
+using ParserawkaCore.Utils;
 using System.Diagnostics;
 using System.IO;
 using System.Windows;

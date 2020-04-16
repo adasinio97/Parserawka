@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ParserawkaWPF.Properties
+namespace ParserawkaCore.Properties
 {
 
 
