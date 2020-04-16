@@ -6,7 +6,8 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.PQL.AstElements
 {
-    public class PqlBoolean : PqlResult
+    public class PqlNextT : PqlRelation
     {
+		public PqlNextT(PqlAst leftRef, PqlAst rightRef) : base(leftRef, rightRef) { }
     }
 }

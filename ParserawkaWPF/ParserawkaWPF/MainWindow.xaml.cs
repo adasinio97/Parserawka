@@ -1,7 +1,10 @@
 ﻿using Microsoft.Win32;
 using ParserawkaWPF.Interfaces;
+using ParserawkaWPF.PQL;
+using ParserawkaWPF.PQL.AstElements;
 using ParserawkaWPF.Utils;
 using System;
+using System.Diagnostics;
 using System.IO;
 using System.Windows;
 
@@ -36,7 +39,11 @@ namespace ParserawkaWPF
 
         private void ResultButton_Click(object sender, RoutedEventArgs e)
         {
-
+            string query = QueryTextBox.Text;
+            Debug.WriteLine(query);
+            PqlLexer lexer = new PqlLexer(query);
+            PqlParser parser = new PqlParser(lexer);
+            PqlAst pqlAst = parser.Parse();
         }
     }
 }

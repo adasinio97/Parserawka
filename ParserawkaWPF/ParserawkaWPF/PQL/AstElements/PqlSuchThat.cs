@@ -6,12 +6,13 @@ using System.Threading.Tasks;
 
 namespace ParserawkaWPF.PQL.AstElements
 {
-    public class PqlSynonym : PqlArgument, PqlElem
+    public class PqlSuchThat : PqlClause
     {
-        public PqlToken Ident;
-        public PqlSynonym(PqlToken ident)
+        public List<PqlRelation> RelCond { get; set; }
+
+        public PqlSuchThat(List<PqlRelation> relCond)
         {
-            Ident = ident;
+            RelCond = relCond;
         }
     }
 }

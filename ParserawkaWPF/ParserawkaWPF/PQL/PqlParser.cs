@@ -45,7 +45,7 @@ namespace ParserawkaWPF.PQL
 
         public PqlAst Parse()
         {
-            PqlAst root = Root() as PqlAst;
+            PqlAst root = Root();
             //if (currentToken.Type != PqlTokenType.EOF)
             //throw new PqlParserException("Plik nie został przetworzony do końca", lexer.lineCounter, lexer.rowCounter);
             return root;
@@ -53,14 +53,14 @@ namespace ParserawkaWPF.PQL
 
         private PqlAst Root()
         {
-            throw new NotImplementedException();
+            return SelectCl();
         }
 
-        private PqlAst Tuple()
+        private PqlTuple Tuple()
         {
+            List<PqlElem> elems = new List<PqlElem>();
             if (currentToken.Type == PqlTokenType.LTRIAN)
             {
-                List<PqlAst> elems = new List<PqlAst>();
                 Eat(PqlTokenType.LTRIAN);
                 elems.Add(Elem());
                 while (currentToken.Type == PqlTokenType.COMMA)
@@ -74,29 +74,33 @@ namespace ParserawkaWPF.PQL
             }
             else
             {
-                return Elem();
+                elems.Add(Elem());
+                return new PqlTuple(elems.ToArray());
             }
         }
 
-        private PqlAst Elem()
+        private PqlElem Elem()
         {
             PqlToken id = currentToken;
             Eat(PqlTokenType.IDENT);
             if (currentToken.Type == PqlTokenType.DOT)
             {
-                return AttrRef();
+                Eat(PqlTokenType.DOT);
+                PqlToken attrRef = currentToken;
+                Eat(PqlTokenType.ATTRIBUTE);
+                return new PqlAttrRef(id, attrRef);
             }
             return new PqlSynonym(id);
         }
 
-        private PqlAst SelectCl()
+        private PqlSelect SelectCl()
         {
-            List<PqlAst> declarations = Declarations();
+            List<PqlDeclaration> declarations = Declarations();
 
             Eat(PqlTokenType.SELECT);
-            PqlAst result = ResultCl();
+            PqlResult result = ResultCl();
 
-            List<PqlAst> clauses = new List<PqlAst>();
+            List<PqlClause> clauses = new List<PqlClause>();
 
             while (currentToken.Type == PqlTokenType.SUCH
                 || currentToken.Type == PqlTokenType.WITH
@@ -121,18 +125,50 @@ namespace ParserawkaWPF.PQL
             return new PqlSelect(declarations, result, clauses);
         }
 
-        private List<PqlAst> Declarations()
+        private List<PqlDeclaration> Declarations()
         {
-            List<PqlAst> declarations = new List<PqlAst>();
-            while (currentToken.Type != PqlTokenType.)
+            List<PqlDeclaration> declarations = new List<PqlDeclaration>();
+            PqlToken declarationType;
+
+            while (currentToken.Type != PqlTokenType.SELECT)
             {
-                declarations.Add(Declaration());
+                switch (currentToken.Type)
+                {
+                    case PqlTokenType.PROCEDURE:
+                    case PqlTokenType.STMTLST:
+                    case PqlTokenType.STMT:
+                    case PqlTokenType.ASSIGN:
+                    case PqlTokenType.CALL:
+                    case PqlTokenType.WHILE:
+                    case PqlTokenType.IF:
+                    case PqlTokenType.VARIABLE:
+                    case PqlTokenType.CONSTANT:
+                    case PqlTokenType.PROG_LINE:
+                        declarationType = currentToken;
+                        Eat(currentToken.Type);
+                        while (currentToken.Type != PqlTokenType.SEMI)
+                            declarations.Add(Declaration(declarationType));
+                        Eat(PqlTokenType.SEMI);
+                        break;
+                    default:
+                        throw new Exception();
+                }
             }
 
             return declarations;
         }
+
+        private PqlDeclaration Declaration(PqlToken declarationType)
+        {
+            PqlToken id = currentToken;
+            PqlSynonym synonym = new PqlSynonym(id);
+            Eat(PqlTokenType.IDENT);
+            if (currentToken.Type == PqlTokenType.COMMA)
+                Eat(PqlTokenType.COMMA);
+            return new PqlDeclaration(declarationType, synonym);
+        }
 		
-		private PqlAst ResultCl()
+		private PqlResult ResultCl()
 		{
 			if(currentToken.Type == PqlTokenType.BOOLEAN)
 			{
@@ -142,28 +178,28 @@ namespace ParserawkaWPF.PQL
 			return Tuple();
 		}
 		
-		private PqlAst WithCl()
+		private PqlWith WithCl()
 		{
 			Eat(PqlTokenType.WITH);
-			return AttrCond();
+			return new PqlWith(AttrCond());
 		}
 		
-		private PqlAst SuchThatCl()
+		private PqlSuchThat SuchThatCl()
 		{
 			Eat(PqlTokenType.SUCH);
 			Eat(PqlTokenType.THAT);
-			return RelCond();
+			return new PqlSuchThat(RelCond());
 		}
 		
-		private PqlAst PatternCl()
+		private PqlPattern PatternCl()
 		{
 			Eat(PqlTokenType.PATTERN);
-			return PatternCond();
+			return new PqlPattern(PatternCond());
 		}
 		
-		private List<PqlAst> AttrCond()
+		private List<PqlCompare> AttrCond()
 		{
-			List<PqlAst> attrCompare = new List<PqlAst>();
+			List<PqlCompare> attrCompare = new List<PqlCompare>();
 			attrCompare.Add(AttrCompare());
 			while (currentToken.Type == PqlTokenType.AND)
 			{
@@ -174,54 +210,67 @@ namespace ParserawkaWPF.PQL
 			return attrCompare;
 		}
 		
-		private PqlAst AttrCompare()
+		private PqlCompare AttrCompare()
 		{
-			PqlAst left = Ref();
+			PqlAttrRef left = AttrRef();
 			Eat(PqlTokenType.EQ);
-			PqlAst right = Ref();
+			PqlArgument right = Ref();
 			return new PqlCompare(left, right);
 		}
 		
-		private PqlAst Ref()
+		private PqlArgument Ref()
 		{
 			PqlToken id = currentToken;
-			if(currentToken.Type == PqlTokenType.IDENT)
-			{
-				return new PqlSynonym(id);
-			} else if(currentToken.Type == PqlTokenType.INTEGER)
-			{
-				return new PqlInteger(id);
-			} else if(currentToken.Type == PqlTokenType.QUOT)
-			{
-				Eat(PqlTokenType.QUOT);
-				id = currentToken();
-				Eat(PqlTokenType.QUOT);
-				return id;
-			} 
-			return AttRef();
+            if (currentToken.Type == PqlTokenType.IDENT)
+            {
+                Eat(PqlTokenType.IDENT);
+                return new PqlSynonym(id);
+            }
+            else if (currentToken.Type == PqlTokenType.INTEGER)
+            {
+                Eat(PqlTokenType.INTEGER);
+                return new PqlInteger(id);
+            }
+            else if (currentToken.Type == PqlTokenType.QUOT)
+            {
+                Eat(PqlTokenType.QUOT);
+                id = currentToken;
+                Eat(currentToken.Type);
+                Eat(PqlTokenType.QUOT);
+                return new PqlString(id);
+            }
+            else if (currentToken.Type == PqlTokenType.FLOOR)
+            {
+                Eat(PqlTokenType.FLOOR);
+                return new PqlEmptyArg();
+            }
+            throw new Exception();
 		}
 		
-		private PqlAst AttrRef()
+		private PqlAttrRef AttrRef()
 		{
-			PqlToken attrRef = currentToken;
+            PqlToken id = currentToken;
+            Eat(PqlTokenType.IDENT);
+            Eat(PqlTokenType.DOT);
+            PqlToken attrRef = currentToken;
             Eat(PqlTokenType.ATTRIBUTE);
             return new PqlAttrRef(id, attrRef);
 		}
 		
-		private List<PqlAst> RelCond()
+		private List<PqlRelation> RelCond()
 		{
-			List<PqlAst> relRef = new List<PqlAst>();
+			List<PqlRelation> relRef = new List<PqlRelation>();
 			relRef.Add(RelRef());
 			while (currentToken.Type == PqlTokenType.AND)
 			{
 				Eat(PqlTokenType.AND);
-				relRef.Add(AttrCompare());
+				relRef.Add(RelRef());
 			}
 			
 			return relRef;
 		}
 		
-		private PqlAst RelRef()
+		private PqlRelation RelRef()
 		{
 			switch (currentToken.Type)
             {
@@ -254,7 +303,7 @@ namespace ParserawkaWPF.PQL
             }
 		}
 		
-		private PqlAst Modifies()
+		private PqlModifies Modifies()
 		{
 			Eat(PqlTokenType.MODIFIES);
 			Eat(PqlTokenType.LPAREN);
@@ -266,9 +315,9 @@ namespace ParserawkaWPF.PQL
 			return new PqlModifies(leftRef, rightRef);
 		}
 		
-		private PqlAst Uses()
+		private PqlUses Uses()
 		{
-			Eat(PqlTokenType.Uses);
+			Eat(PqlTokenType.USES);
 			Eat(PqlTokenType.LPAREN);
 			PqlAst leftRef = Ref();
 			Eat(PqlTokenType.COMMA);
@@ -278,7 +327,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlUses(leftRef, rightRef);
 		}
 		
-		private PqlAst Calls()
+		private PqlCalls Calls()
 		{
 			Eat(PqlTokenType.CALLS);
 			Eat(PqlTokenType.LPAREN);
@@ -290,7 +339,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlCalls(leftRef, rightRef);
 		}
 		
-		private PqlAst CallsT()
+		private PqlCallsT CallsT()
 		{
 			Eat(PqlTokenType.CALLST);
 			Eat(PqlTokenType.LPAREN);
@@ -302,7 +351,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlCallsT(leftRef, rightRef);
 		}
 		
-		private PqlAst Parent()
+		private PqlParent Parent()
 		{
 			Eat(PqlTokenType.PARENT);
 			Eat(PqlTokenType.LPAREN);
@@ -314,7 +363,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlParent(leftRef, rightRef);
 		}
 		
-		private PqlAst ParentT()
+		private PqlParentT ParentT()
 		{
 			Eat(PqlTokenType.PARENTT);
 			Eat(PqlTokenType.LPAREN);
@@ -326,7 +375,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlParentT(leftRef, rightRef);
 		}
 		
-		private PqlAst Follows()
+		private PqlFollows Follows()
 		{
 			Eat(PqlTokenType.FOLLOWS);
 			Eat(PqlTokenType.LPAREN);
@@ -338,7 +387,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlFollows(leftRef, rightRef);
 		}
 		
-		private PqlAst FollowsT()
+		private PqlFollowsT FollowsT()
 		{
 			Eat(PqlTokenType.FOLLOWST);
 			Eat(PqlTokenType.LPAREN);
@@ -350,7 +399,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlFollowsT(leftRef, rightRef);
 		}
 		
-		private PqlAst Next()
+		private PqlNext Next()
 		{
 			Eat(PqlTokenType.NEXT);
 			Eat(PqlTokenType.LPAREN);
@@ -362,7 +411,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlNext(leftRef, rightRef);
 		}
 		
-		private PqlAst NextT()
+		private PqlNextT NextT()
 		{
 			Eat(PqlTokenType.NEXTT);
 			Eat(PqlTokenType.LPAREN);
@@ -374,7 +423,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlNextT(leftRef, rightRef);
 		}
 		
-		private PqlAst Affects()
+		private PqlAffects Affects()
 		{
 			Eat(PqlTokenType.AFFECTS);
 			Eat(PqlTokenType.LPAREN);
@@ -387,7 +436,7 @@ namespace ParserawkaWPF.PQL
 			return new PqlAffects(leftRef, rightRef);
 		}
 		
-		private PqlAst AffectsT()
+		private PqlAffectsT AffectsT()
 		{
 			Eat(PqlTokenType.AFFECTST);
 			Eat(PqlTokenType.LPAREN);
@@ -399,21 +448,24 @@ namespace ParserawkaWPF.PQL
 			return new PqlAffectsT(leftRef, rightRef);
 		}
 		
-		private PqlAst patternCond()
+		private List<PqlPatternCond> PatternCond()
 		{
-			List<PqlAst> pattern = new List<PqlAst>();
+			List<PqlPatternCond> pattern = new List<PqlPatternCond>();
 			pattern.Add(Pattern());
 			while (currentToken.Type == PqlTokenType.AND)
 			{
 				Eat(PqlTokenType.AND);
-				attrCompare.Add(Pattern());
+				pattern.Add(Pattern());
 			}
 			
 			return pattern;
 		}
 		
-		private PqlAst Pattern()
+		private PqlPatternCond Pattern()
 		{
+            return null;
+            // Zostawmy to na później
+            /*
 			switch(currentToken.Type)
 			{
 				case PqlTokenType.ASSIGN:
@@ -424,7 +476,7 @@ namespace ParserawkaWPF.PQL
 					return If();
 				default:
                     throw new Exception();
-			}
+			} */
 		}	
     }
 }

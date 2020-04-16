@@ -9,9 +9,9 @@ namespace ParserawkaWPF.PQL.AstElements
     public class PqlDeclaration : PqlAst
     {
         PqlToken DesignEntity;
-        PqlAst Synonym;
+        PqlSynonym Synonym;
 
-        public PqlDeclaration(PqlToken designEntity, PqlAst synonym)
+        public PqlDeclaration(PqlToken designEntity, PqlSynonym synonym)
         {
             DesignEntity = designEntity;
             Synonym = synonym;
