@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParserawkaCore.Parser.AstElements
 {
-    public abstract class AST
+    public interface AST
     {
     }
 }

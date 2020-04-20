@@ -1,5 +1,7 @@
 ﻿using ParserawkaCore.Interfaces;
 using ParserawkaCore.Model;
+using ParserawkaCore.PQL.Interfaces;
+using ParserawkaCore.PQL.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +39,11 @@ namespace ParserawkaCore.Utils
             return new ProcedureList();
         }
 
+        public static IConstantList CreateConstantList()
+        {
+            return new ConstantList();
+        }
+
         public static IFollowsTable CreateFollowsTable()
         {
             return new FollowsTable();
@@ -59,8 +66,17 @@ namespace ParserawkaCore.Utils
 
         public static ICallsTable CreateCallsTable()
         {
-            // TODO
-            return null;
+            return new CallsTable();
+        }
+
+        public static IDeclarationList CreateDeclarationList()
+        {
+            return new DeclarationList();
+        }
+
+        public static IEntityList CreateEntityList()
+        {
+            return new EntityList();
         }
     }
 }

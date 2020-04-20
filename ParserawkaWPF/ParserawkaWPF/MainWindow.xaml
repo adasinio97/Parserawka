@@ -16,6 +16,7 @@
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
             <RowDefinition Height="auto" />
+            <RowDefinition Height="auto" />
         </Grid.RowDefinitions>
         <Grid Margin="10">
             <Grid.ColumnDefinitions>
@@ -25,10 +26,15 @@
             </Grid.ColumnDefinitions>
             <TextBlock Name="FileNameTextBlock" Margin="0 0 5 0" Padding="5" />
             <Button Grid.Column="1" Margin="0 0 5 0" Padding="5" Click="BrowseButton_Click">Przeglądaj</Button>
-            <Button Grid.Column="2" Padding="5" Click="AnalyzeButton_Click">Analizuj</Button>
+            <Button Grid.Column="2" Name="AnalyzeButton" Padding="5" Click="AnalyzeButton_Click" IsEnabled="False">Analizuj</Button>
         </Grid>
-        <TextBox Grid.Row="2" Name="QueryTextBox" Margin="10" Padding="5" />
-        <Button Grid.Row="3" Margin="10" Padding="5" HorizontalAlignment="Right" Click="ResultButton_Click">Wyświetl wynik</Button>
-        <TextBlock Grid.Row="4" Margin="10" Padding="5" Name="ResultTextBox" />
+        <ScrollViewer Grid.Row="2" Height="300" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+            <TextBlock Name="CodeTextBlock" Margin="10" Padding="5" />
+        </ScrollViewer>
+        <TextBox Grid.Row="3" Name="QueryTextBox" Margin="10" Padding="5" />
+        <Button Grid.Row="4" Name="ResultButton" Margin="10" Padding="5" HorizontalAlignment="Right" Click="ResultButton_Click" IsEnabled="False">Wyświetl wynik</Button>
+        <ScrollViewer Grid.Row="5" Height="100" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <TextBlock Margin="10" Padding="5" Name="ResultTextBlock" TextWrapping="Wrap" />
+        </ScrollViewer>
     </Grid>
 </Window>

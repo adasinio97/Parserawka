@@ -8,10 +8,13 @@ namespace ParserawkaCore.PQL.AstElements
 {
     public class PqlSynonym : PqlArgument, PqlElem
     {
-        public PqlToken Ident;
+        public PqlToken Ident { get; set; }
+        public string Name { get; set; }
+
         public PqlSynonym(PqlToken ident)
         {
             Ident = ident;
+            Name = ident.Value.ToString();
         }
     }
 }

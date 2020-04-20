@@ -10,6 +10,7 @@ namespace ParserawkaCore.Interfaces
         IProcedureList GetModifiesProcedures(Variable variable);
         IVariableList GetModifiedBy(Statement statement);
         IVariableList GetModifiedBy(Procedure procedure);
-        bool IsModified(Statement statement, Variable variable);
+        bool IsModifies(Statement statement, Variable variable);
+        bool IsModifies(Procedure procedure, Variable variable);
     }
 }

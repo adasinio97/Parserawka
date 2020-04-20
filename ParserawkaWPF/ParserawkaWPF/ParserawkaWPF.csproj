@@ -121,7 +121,6 @@
       <Install>false</Install>
     </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <ProjectReference Include="..\..\ParserawkaCore\ParserawkaCore\ParserawkaCore.csproj">
       <Project>{a51ade54-f5e8-4524-a5ed-80154e477b2e}</Project>

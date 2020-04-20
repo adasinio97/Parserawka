@@ -10,90 +10,61 @@ using ParserawkaCore.Utils;
 
 namespace ParserawkaCore.Model
 {
-    public class ProcedureList : AST, IProcedureList
+    public class ProcedureList : EntityList, IProcedureList, AST
     {
-        private List<Procedure> list;
-        private SortedDictionary<string, Procedure> dictionary;
+        public ProcedureList() : base() { }
 
-        public ProcedureList()
-        {
-            list = new List<Procedure>();
-            dictionary = new SortedDictionary<string, Procedure>();
-        }
-
-        public Procedure this[int i] { get { return GetProcedureByIndex(i); } }
+        public new Procedure this[int i] => base[i] as Procedure;
 
         public int AddProcedure(Procedure procedure)
         {
-            int index;
-            Procedure existingProcedure = GetProcedureByName(procedure.Name);
-            if (existingProcedure != null)
-                index = GetIndex(existingProcedure);
-            else
-            {
-                index = list.Count;
-                dictionary.Add(procedure.Name, procedure);
-                list.Add(procedure);
-            }
-            return index;
+            return AddEntity(procedure);
         }
 
-        public bool Contains(string name)
+        public override IEntityList CreateNewList()
         {
-            return dictionary.ContainsKey(name);
-        }
-
-        public bool Contains(Procedure procedure)
-        {
-            return dictionary.ContainsKey(procedure.Name);
-        }
-
-        public int GetIndex(Procedure procedure)
-        {
-            return list.IndexOf(procedure);
+            return ImplementationFactory.CreateProcedureList();
         }
 
         public int GetIndexByName(string name)
         {
-            return GetIndex(GetProcedureByName(name));
+            return GetIndexByAttribute(name);
         }
 
         public Procedure GetProcedureByIndex(int index)
         {
-            return list[index];
+            return GetEntityByIndex(index) as Procedure;
         }
 
         public Procedure GetProcedureByName(string name)
         {
-            Procedure procedure = null;
-            dictionary.TryGetValue(name, out procedure);
-            return procedure;
+            return GetEntityByAttribute(name) as Procedure;
         }
 
-        public int GetSize()
+        public new bool Contains(string name)
         {
-            return list.Count;
+            return base.Contains(name);
         }
 
-        public IProcedureList Intersection(IProcedureList otherProcedureList)
+        public bool Contains(Procedure procedure)
         {
-            IProcedureList intersection = ImplementationFactory.CreateProcedureList();
-            foreach (Procedure procedure in list)
-            {
-                if (otherProcedureList.Contains(procedure))
-                    intersection.AddProcedure(procedure);
-            }
-            return intersection;
+            return base.Contains(procedure);
         }
 
-        public IEnumerator<Procedure> GetEnumerator()
+        public int GetIndex(Procedure procedure)
         {
-            return list.GetEnumerator();
+            return base.GetIndex(procedure);
+        }
+
+        public new IEnumerator<Procedure> GetEnumerator()
+        {
+            foreach (IEntity entity in list)
+                yield return entity as Procedure;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return list.GetEnumerator();
+            return GetEnumerator();
         }
     }
 }

@@ -139,6 +139,7 @@ namespace ParserawkaCore.Parser
             IStatementList elseBody = null;
             if (currentToken.Type == TokenType.ELSE)
             {
+                Eat(TokenType.ELSE);
                 elseBody = StmtLst();
             }
             return new If(var, body, elseBody, programLine);

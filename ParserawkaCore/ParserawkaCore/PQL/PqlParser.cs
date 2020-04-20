@@ -1,4 +1,6 @@
 using ParserawkaCore.PQL.AstElements;
+using ParserawkaCore.PQL.Interfaces;
+using ParserawkaCore.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -95,12 +97,14 @@ namespace ParserawkaCore.PQL
 
         private PqlSelect SelectCl()
         {
-            List<PqlDeclaration> declarations = Declarations();
+            IDeclarationList declarations = Declarations();
 
             Eat(PqlTokenType.SELECT);
             PqlResult result = ResultCl();
 
-            List<PqlClause> clauses = new List<PqlClause>();
+            List<PqlWith> withClauses = new List<PqlWith>();
+            List<PqlSuchThat> suchThatClauses = new List<PqlSuchThat>();
+            List<PqlPattern> patternClauses = new List<PqlPattern>();
 
             while (currentToken.Type == PqlTokenType.SUCH
                 || currentToken.Type == PqlTokenType.WITH
@@ -109,25 +113,25 @@ namespace ParserawkaCore.PQL
                 switch (currentToken.Type)
                 {
                     case PqlTokenType.SUCH:
-                        clauses.Add(SuchThatCl());
+                        suchThatClauses.Add(SuchThatCl());
                         break;
                     case PqlTokenType.WITH:
-                        clauses.Add(WithCl());
+                        withClauses.Add(WithCl());
                         break;
                     case PqlTokenType.PATTERN:
-                        clauses.Add(PatternCl());
+                        patternClauses.Add(PatternCl());
                         break;
                     default:
                         throw new Exception();
                 }
             }
 
-            return new PqlSelect(declarations, result, clauses);
+            return new PqlSelect(declarations, result, withClauses, suchThatClauses, patternClauses);
         }
 
-        private List<PqlDeclaration> Declarations()
+        private IDeclarationList Declarations()
         {
-            List<PqlDeclaration> declarations = new List<PqlDeclaration>();
+            IDeclarationList declarations = ImplementationFactory.CreateDeclarationList();
             PqlToken declarationType;
 
             while (currentToken.Type != PqlTokenType.SELECT)
@@ -147,7 +151,7 @@ namespace ParserawkaCore.PQL
                         declarationType = currentToken;
                         Eat(currentToken.Type);
                         while (currentToken.Type != PqlTokenType.SEMI)
-                            declarations.Add(Declaration(declarationType));
+                            declarations.AddDeclaration(Declaration(declarationType));
                         Eat(PqlTokenType.SEMI);
                         break;
                     default:
@@ -251,10 +255,14 @@ namespace ParserawkaCore.PQL
 		{
             PqlToken id = currentToken;
             Eat(PqlTokenType.IDENT);
-            Eat(PqlTokenType.DOT);
-            PqlToken attrRef = currentToken;
-            Eat(PqlTokenType.ATTRIBUTE);
-            return new PqlAttrRef(id, attrRef);
+            if (currentToken.Type == PqlTokenType.DOT)
+            {
+                Eat(PqlTokenType.DOT);
+                PqlToken attrRef = currentToken;
+                Eat(PqlTokenType.ATTRIBUTE);
+                return new PqlAttrRef(id, attrRef);
+            }
+            return new PqlAttrRef(id);
 		}
 		
 		private List<PqlRelation> RelCond()
@@ -275,178 +283,33 @@ namespace ParserawkaCore.PQL
 			switch (currentToken.Type)
             {
 				case PqlTokenType.MODIFIES:
-                    return Modifies();
 				case PqlTokenType.USES:
-                    return Uses();
 				case PqlTokenType.CALLS:
-                    return Calls();
 				case PqlTokenType.CALLST:
-                    return CallsT();
 				case PqlTokenType.PARENT:
-                    return Parent();
 				case PqlTokenType.PARENTT:
-                    return ParentT();
 				case PqlTokenType.FOLLOWS:
-                    return Follows();
 				case PqlTokenType.FOLLOWST:
-                    return FollowsT();
 				case PqlTokenType.NEXT:
-                    return Next();
 				case PqlTokenType.NEXTT:
-                    return NextT();
 				case PqlTokenType.AFFECTS:
-                    return Affects();
 				case PqlTokenType.AFFECTST:
-                    return AffectsT();
+                    return Relation(currentToken.Type);
                 default:
                     throw new Exception();
             }
 		}
-		
-		private PqlModifies Modifies()
-		{
-			Eat(PqlTokenType.MODIFIES);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlModifies(leftRef, rightRef);
-		}
-		
-		private PqlUses Uses()
-		{
-			Eat(PqlTokenType.USES);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlUses(leftRef, rightRef);
-		}
-		
-		private PqlCalls Calls()
-		{
-			Eat(PqlTokenType.CALLS);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlCalls(leftRef, rightRef);
-		}
-		
-		private PqlCallsT CallsT()
-		{
-			Eat(PqlTokenType.CALLST);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlCallsT(leftRef, rightRef);
-		}
-		
-		private PqlParent Parent()
-		{
-			Eat(PqlTokenType.PARENT);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlParent(leftRef, rightRef);
-		}
-		
-		private PqlParentT ParentT()
-		{
-			Eat(PqlTokenType.PARENTT);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlParentT(leftRef, rightRef);
-		}
-		
-		private PqlFollows Follows()
-		{
-			Eat(PqlTokenType.FOLLOWS);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlFollows(leftRef, rightRef);
-		}
-		
-		private PqlFollowsT FollowsT()
-		{
-			Eat(PqlTokenType.FOLLOWST);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
 
-			return new PqlFollowsT(leftRef, rightRef);
-		}
-		
-		private PqlNext Next()
-		{
-			Eat(PqlTokenType.NEXT);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlNext(leftRef, rightRef);
-		}
-		
-		private PqlNextT NextT()
-		{
-			Eat(PqlTokenType.NEXTT);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlNextT(leftRef, rightRef);
-		}
-		
-		private PqlAffects Affects()
-		{
-			Eat(PqlTokenType.AFFECTS);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-
-			
-			return new PqlAffects(leftRef, rightRef);
-		}
-		
-		private PqlAffectsT AffectsT()
-		{
-			Eat(PqlTokenType.AFFECTST);
-			Eat(PqlTokenType.LPAREN);
-			PqlAst leftRef = Ref();
-			Eat(PqlTokenType.COMMA);
-			PqlAst rightRef = Ref();
-			Eat(PqlTokenType.RPAREN);
-			
-			return new PqlAffectsT(leftRef, rightRef);
-		}
+        private PqlRelation Relation(PqlTokenType relationType)
+        {
+            Eat(relationType);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlRelation(relationType, leftRef, rightRef);
+        }
 		
 		private List<PqlPatternCond> PatternCond()
 		{

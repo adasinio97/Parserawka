@@ -9,91 +9,61 @@ using System.Collections;
 
 namespace ParserawkaCore.Model
 {
-    public class VariableList : IVariableList
+    public class VariableList : EntityList, IVariableList
     {
-        /* Lista do wyszukiwania po indeksach, słownik do wyszukiwania po nazwach. */
-        private List<Variable> list;
-        private SortedDictionary<string, Variable> dictionary;
+        public VariableList() : base() { }
 
-        public VariableList()
-        {
-            dictionary = new SortedDictionary<string, Variable>();
-            list = new List<Variable>();
-        }
-
-        public Variable this[int i] { get { return GetVariableByIndex(i); } }
+        public new Variable this[int i] => base[i] as Variable;
 
         public int AddVariable(Variable variable)
         {
-            int index;
-            Variable existingVariable = GetVariableByName(variable.Name);
-            if (existingVariable != null)
-                index = GetIndex(existingVariable);
-            else
-            {
-                index = list.Count;
-                dictionary.Add(variable.Name, variable);
-                list.Add(variable);
-            }
-            return index;
+            return AddEntity(variable);
         }
 
-        public int GetIndex(Variable variable)
+        public override IEntityList CreateNewList()
         {
-            return list.IndexOf(variable);
+            return ImplementationFactory.CreateVariableList();
         }
 
         public int GetIndexByName(string name)
         {
-            return GetIndex(GetVariableByName(name));
-        }
-
-        public int GetSize()
-        {
-            return list.Count;
+            return GetIndexByAttribute(name);
         }
 
         public Variable GetVariableByIndex(int index)
         {
-            return list[index];
+            return GetEntityByIndex(index) as Variable;
         }
 
         public Variable GetVariableByName(string name)
         {
-            Variable variable;
-            dictionary.TryGetValue(name, out variable);
-            return variable;
+            return GetEntityByAttribute(name) as Variable;
+        }
+
+        public new bool Contains(string name)
+        {
+            return base.Contains(name);
         }
 
         public bool Contains(Variable variable)
         {
-            return dictionary.ContainsKey(variable.Name);
+            return base.Contains(variable);
         }
 
-        public bool Contains(string name)
+        public new IEnumerator<Variable> GetEnumerator()
         {
-            return dictionary.ContainsKey(name);
-        }
-
-        public IVariableList Intersection(IVariableList otherVariableList)
-        {
-            IVariableList intersection = ImplementationFactory.CreateVariableList();
-            foreach (Variable variable in list)
-            {
-                if (otherVariableList.Contains(variable))
-                    intersection.AddVariable(variable);
-            }
-            return intersection;
-        }
-
-        public IEnumerator<Variable> GetEnumerator()
-        {
-            return list.GetEnumerator();
+            foreach (IEntity entity in list)
+                yield return entity as Variable;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return list.GetEnumerator();
+            return GetEnumerator();
+        }
+
+        public int GetIndex(Variable variable)
+        {
+            return base.GetIndex(variable);
         }
     }
 }

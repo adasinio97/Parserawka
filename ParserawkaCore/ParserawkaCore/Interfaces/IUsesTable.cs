@@ -11,5 +11,6 @@ namespace ParserawkaCore.Interfaces
         IVariableList GetUsedBy(Statement statement);
         IVariableList GetUsedBy(Procedure procedure);
         bool IsUses(Statement statement, Variable variable);
+        bool IsUses(Procedure procedure, Variable variable);
     }
 }

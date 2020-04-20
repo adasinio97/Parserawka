@@ -29,7 +29,9 @@ namespace ParserawkaCore.Model
 
         public IProcedureList GetUsesProcedures(Variable variable)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            //TODO
+            return ImplementationFactory.CreateProcedureList();
         }
 
         public IStatementList GetUsesStatements(Variable variable)
@@ -50,9 +52,14 @@ namespace ParserawkaCore.Model
             return statementList.Contains(statement);
         }
 
-        public void SetUses(Procedure procedure, Variable variable)
+        public bool IsUses(Procedure procedure, Variable variable)
         {
             throw new NotImplementedException();
+        }
+
+        public void SetUses(Procedure procedure, Variable variable)
+        {
+            //throw new NotImplementedException();
         }
 
         public void SetUses(Statement statement, Variable variable)

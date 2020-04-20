@@ -24,9 +24,15 @@ namespace ParserawkaCore.Model
             return instance;
         }
 
+        public AST AbstractSyntaxTree { get; set; }
+
         public IVariableList Variables { get; set; }
 
         public IStatementList Statements { get; set; }
+
+        public IProcedureList Procedures { get; set; }
+
+        public IConstantList Constants { get; set; }
 
         public IFollowsTable FollowsTable { get; set; }
 
@@ -36,20 +42,26 @@ namespace ParserawkaCore.Model
 
         public IUsesTable UsesTable { get; set; }
 
+        public ICallsTable CallsTable { get; set; }
+
         public void LoadData(string programCode)
         {
             Lexer lexer = new Lexer(programCode);
             IParser parser = new Parser.Parser(lexer);
             AST root = parser.Parse();
+            AbstractSyntaxTree = root;
             IDesignExtractor designExtractor = ImplementationFactory.CreateDesignExtractor();
             designExtractor.ExtractData(root);
 
             Variables = designExtractor.Variables;
             Statements = designExtractor.Statements;
+            Procedures = designExtractor.Procedures;
+            Constants = designExtractor.Constants;
             FollowsTable = designExtractor.FollowsTable;
             ParentTable = designExtractor.ParentTable;
             ModifiesTable = designExtractor.ModifiesTable;
             UsesTable = designExtractor.UsesTable;
+            CallsTable = designExtractor.CallsTable;
         }
     }
 }

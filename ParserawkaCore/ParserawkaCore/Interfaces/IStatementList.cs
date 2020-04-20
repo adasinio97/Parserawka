@@ -3,18 +3,18 @@ using ParserawkaCore.Model;
 
 namespace ParserawkaCore.Interfaces
 {
-    public interface IStatementList : IEnumerable<Statement>
+    public interface IStatementList : IEntityList, IEnumerable<Statement>
     {
-        Statement this[int i] { get; }
+        new Statement this[int i] { get; }
 
         int AddStatement(Statement statement);
         Statement GetStatementByIndex(int index);
         Statement GetStatementByProgramLine(int programLine);
         int GetIndex(Statement statement);
         int GetIndexByProgramLine(int programLine);
-        int GetSize();
         bool Contains(Statement statement);
         bool Contains(int programLine);
-        IStatementList Intersection(IStatementList otherStatementList);
+
+        new IEnumerator<Statement> GetEnumerator();
     }
 }

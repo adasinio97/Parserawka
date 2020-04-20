@@ -12,6 +12,7 @@ namespace ParserawkaCore.Interfaces
         IVariableList Variables { get; }
         IStatementList Statements { get; }
         IProcedureList Procedures { get; }
+        IConstantList Constants { get; }
         IFollowsTable FollowsTable { get; }
         IParentTable ParentTable { get; }
         IModifiesTable ModifiesTable { get; }

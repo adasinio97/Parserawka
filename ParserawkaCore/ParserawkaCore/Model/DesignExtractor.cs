@@ -14,6 +14,7 @@ namespace ParserawkaCore.Model
         public IStatementList Statements { get; private set; }
         public IVariableList Variables { get; private set; }
         public IProcedureList Procedures { get; private set; }
+        public IConstantList Constants { get; private set; }
         public IFollowsTable FollowsTable { get; private set; }
         public IModifiesTable ModifiesTable { get; private set; }
         public IParentTable ParentTable { get; private set; }
@@ -27,6 +28,7 @@ namespace ParserawkaCore.Model
             Statements = ImplementationFactory.CreateStatementList();
             Variables = ImplementationFactory.CreateVariableList();
             Procedures = ImplementationFactory.CreateProcedureList();
+            Constants = ImplementationFactory.CreateConstantList();
             FollowsTable = ImplementationFactory.CreateFollowsTable();
             ModifiesTable = ImplementationFactory.CreateModifiesTable();
             ParentTable = ImplementationFactory.CreateParentTable();
@@ -45,12 +47,13 @@ namespace ParserawkaCore.Model
                 foreach (Procedure procedure in root as IProcedureList)
                     ExtractProcedure(procedure);
                 
+                /*
                 foreach (Procedure procedure in Procedures)
                 {
                     IProcedureList calledProcedures = CallsTable.GetCalledBy(procedure);
                     if (calledProcedures.GetSize() == 0)
                         ExtractProcedureCalls(procedure);
-                }
+                } */
             }
         }
 
@@ -130,8 +133,9 @@ namespace ParserawkaCore.Model
         {
             ExtractVariable(assign.Left);
             ExtractFactor(assign.Right, assign);
-            
-            ModifiesTable.SetModifies(assign, assign.Left);
+
+            Variable retrievedVariable = Variables.GetVariableByName(assign.Left.Name);
+            ModifiesTable.SetModifies(assign, retrievedVariable);
         }
 
         private void ExtractVariable(Variable variable)
@@ -142,13 +146,21 @@ namespace ParserawkaCore.Model
         private void ExtractVariable(Variable variable, Assign assignContext)
         {
             ExtractVariable(variable);
-            UsesTable.SetUses(assignContext, variable);
+            Variable retrievedVariable = Variables.GetVariableByName(variable.Name);
+            UsesTable.SetUses(assignContext, retrievedVariable);
+        }
+
+        private void ExtractConstant(Constant constant)
+        {
+            Constants.AddConstant(constant);
         }
 
         private void ExtractFactor(Factor factor, Assign assignContext)
         {
             if (factor is Variable)
                 ExtractVariable(factor as Variable, assignContext);
+            else if (factor is Constant)
+                ExtractConstant(factor as Constant);
             else if (factor is Expression)
                 ExtractExpression(factor as Expression, assignContext);
         }
@@ -165,8 +177,8 @@ namespace ParserawkaCore.Model
             call.Procedure = calledProcedure;
 
             CallsTable.SetCalls(procedureContext, calledProcedure);
-
-            if (calls[procedureContext] == null)
+            
+            if (!calls.ContainsKey(procedureContext)) 
                 calls[procedureContext] = new List<Call>();
             calls[procedureContext].Add(call);
         }

@@ -12,7 +12,7 @@ namespace ParserawkaCore.Model
 
         public Statement GetFollowedBy(Statement statement)
         {
-            return followsList.Where(x => x.SecondStatement == statement).FirstOrDefault().FirstStatement;
+            return followsList.Where(x => x.SecondStatement == statement).FirstOrDefault()?.FirstStatement;
         }
 
         public IStatementList GetFollowedByT(Statement statement)
@@ -22,7 +22,7 @@ namespace ParserawkaCore.Model
 
         public Statement GetFollows(Statement statement)
         {
-            return followsList.Where(x => x.FirstStatement == statement).FirstOrDefault().SecondStatement;
+            return followsList.Where(x => x.FirstStatement == statement).FirstOrDefault()?.SecondStatement;
         }
 
         public IStatementList GetFollowsT(Statement statement)

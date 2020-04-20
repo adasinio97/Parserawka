@@ -119,7 +119,7 @@ namespace ParserawkaCore.PQL
         public PqlToken Ident()
         {
             StringBuilder sb = new StringBuilder();
-            while (currentChar != '\0' && (char.IsLetterOrDigit(currentChar) || currentChar == '#'))
+            while (currentChar != '\0' && (char.IsLetterOrDigit(currentChar) || currentChar == '#' || currentChar == '*'))
             {
                 sb.Append(currentChar);
                 Advance();

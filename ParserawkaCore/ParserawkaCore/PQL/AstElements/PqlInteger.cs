@@ -8,11 +8,11 @@ namespace ParserawkaCore.PQL.AstElements
 {
     public class PqlInteger : PqlArgument
     {
-        public int Value { get; set; }
+        public string Value { get; set; }
 
         public PqlInteger(PqlToken token)
         {
-            Value = int.Parse(token.Value.ToString());
+            Value = token.Value.ToString();
         }
     }
 }

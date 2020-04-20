@@ -7,18 +7,18 @@ using System.Threading.Tasks;
 
 namespace ParserawkaCore.Interfaces
 {
-    public interface IProcedureList : IEnumerable<Procedure>
+    public interface IProcedureList : IEntityList, IEnumerable<Procedure>
     {
-        Procedure this[int i] { get; }
+        new Procedure this[int i] { get; }
 
         int AddProcedure(Procedure procedure);
         Procedure GetProcedureByIndex(int index);
         Procedure GetProcedureByName(string name);
         int GetIndex(Procedure procedure);
         int GetIndexByName(string name);
-        int GetSize();
         bool Contains(Procedure procedure);
-        bool Contains(string name);
-        IProcedureList Intersection(IProcedureList otherProcedureList);
+        new bool Contains(string name);
+
+        new IEnumerator<Procedure> GetEnumerator();
     }
 }

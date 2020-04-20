@@ -7,90 +7,61 @@ using ParserawkaCore.Parser.AstElements;
 
 namespace ParserawkaCore.Model
 {
-    public class StatementList : AST, IStatementList
+    public class StatementList : EntityList, IStatementList, AST
     {
-        private List<Statement> list;
-        private SortedDictionary<int, Statement> dictionary;
+        public StatementList() : base() { }
 
-        public StatementList()
-        {
-            list = new List<Statement>();
-            dictionary = new SortedDictionary<int, Statement>();
-        }
-
-        public Statement this[int i] { get { return GetStatementByIndex(i); } }
+        public new Statement this[int i] => base[i] as Statement;
 
         public int AddStatement(Statement statement)
         {
-            int index;
-            Statement existingStatement = GetStatementByProgramLine(statement.ProgramLine);
-            if (existingStatement != null)
-                index = GetIndex(existingStatement);
-            else
-            {
-                index = list.Count;
-                list.Add(statement);
-                dictionary.Add(statement.ProgramLine, statement);
-            }
-            return index;
+            return AddEntity(statement);
+        }
+
+        public override IEntityList CreateNewList()
+        {
+            return ImplementationFactory.CreateStatementList();
         }
 
         public int GetIndex(Statement statement)
         {
-            return list.IndexOf(statement);
+            return base.GetIndex(statement);
         }
 
         public int GetIndexByProgramLine(int programLine)
         {
-            return GetIndex(GetStatementByProgramLine(programLine));
-        }
-
-        public int GetSize()
-        {
-            return list.Count;
+            return GetIndexByAttribute(programLine.ToString());
         }
 
         public Statement GetStatementByIndex(int index)
         {
-            return list[index];
+            return GetEntityByIndex(index) as Statement;
         }
 
         public Statement GetStatementByProgramLine(int programLine)
         {
-            Statement statement = null;
-            dictionary.TryGetValue(programLine, out statement);
-            return statement;
-        }
-
-        public bool Contains(Statement statement)
-        {
-            return dictionary.ContainsKey(statement.ProgramLine);
+            return GetEntityByAttribute(programLine.ToString()) as Statement;
         }
 
         public bool Contains(int programLine)
         {
-            return dictionary.ContainsKey(programLine);
+            return Contains(programLine.ToString());
         }
 
-        public IStatementList Intersection(IStatementList otherStatementList)
+        public bool Contains(Statement statement)
         {
-            IStatementList intersection = ImplementationFactory.CreateStatementList();
-            foreach (Statement statement in list)
-            {
-                if (otherStatementList.Contains(statement))
-                    intersection.AddStatement(statement);
-            }
-            return intersection;
+            return base.Contains(statement);
         }
 
-        public IEnumerator GetEnumerator()
+        public new IEnumerator<Statement> GetEnumerator()
         {
-            return list.GetEnumerator();
+            foreach (IEntity entity in list)
+                yield return entity as Statement;
         }
 
-        IEnumerator<Statement> IEnumerable<Statement>.GetEnumerator()
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            return list.GetEnumerator();
+            return GetEnumerator();
         }
     }
 }

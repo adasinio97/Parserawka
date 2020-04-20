@@ -1,4 +1,5 @@
-﻿using ParserawkaCore.Parser;
+﻿using ParserawkaCore.Interfaces;
+using ParserawkaCore.Parser;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,16 +8,19 @@ using System.Threading.Tasks;
 
 namespace ParserawkaCore.Model
 {
-    public class Constant : Factor
+    public class Constant : Factor, IEntity
     {
         public int Value { get; set; }
 
         public Token Token { get; set; }
 
+        public Attribute Attribute { get; set; }
+
         public Constant(Token token)
         {
             Token = token;
             Value = int.Parse(token.Value.ToString());
+            Attribute = new Attribute("value", token.Value.ToString());
         }
 
         public override string ToString()

@@ -29,7 +29,9 @@ namespace ParserawkaCore.Model
 
         public IProcedureList GetModifiesProcedures(Variable variable)
         {
-            throw new NotImplementedException();
+            //throw new NotImplementedException();
+            //TODO
+            return ImplementationFactory.CreateProcedureList();
         }
 
         public IStatementList GetModifiesStatements(Variable variable)
@@ -44,20 +46,25 @@ namespace ParserawkaCore.Model
             return statementList;
         }
         
-        public bool IsModified(Statement statement, Variable variable)
+        public bool IsModifies(Statement statement, Variable variable)
         {
             IStatementList statementList = GetModifiesStatements(variable);
             return statementList.Contains(statement);
         }
 
-        public void SetModifies(Procedure procedure, Variable variable)
+        public bool IsModifies(Procedure procedure, Variable variable)
         {
             throw new NotImplementedException();
         }
 
+        public void SetModifies(Procedure procedure, Variable variable)
+        {
+            //throw new NotImplementedException();
+        }
+
         public void SetModifies(Statement statement, Variable variable)
         {
-            if (!IsModified(statement, variable))
+            if (!IsModifies(statement, variable))
                 modifyList.Add(new Modify(statement, variable));
         }
     }
