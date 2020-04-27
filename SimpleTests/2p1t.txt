@@ -1,0 +1,141 @@
+procedure p;
+Select p such that Calls ("Move", p)
+none
+procedure p;
+Select p such that Calls ("Clear", p)
+none
+procedure p;
+Select p such that Calls ("Fill", p)
+none
+procedure p;
+Select p such that Calls ("Rotate", p)
+Random, Show
+procedure p;
+Select p such that Calls* (p,"TT")
+PP, RR
+procedure p;
+Select p such that Calls* (p, "Clear")
+Main, Draw, Shrink
+procedure p;
+Select p such that Calls* (p, "XX")
+PP, RR, SS, TT, UU
+procedure p;
+Select p such that Calls* (p, "Fill")
+Main, Enlarge
+procedure p;
+Select p such that Modifies(p, "j")
+Main, Shrink
+procedure p;
+Select p such that Modifies(p, "dy")
+Main, Draw, Shrink
+procedure p;
+Select p such that Modifies(p, "PP")
+none
+procedure p;
+Select p such that Modifies(p, "cs6")
+PP, RR, SS, TT, UU, XX
+procedure p;
+Select p such that Uses(p, "x1")
+Main, Transform, Shift, Shear, Move, Draw, Shrink
+procedure p;
+Select p such that Uses(p, "edge")
+Main, Enlarge, Translate, Rotate
+procedure p;
+Select p such that Uses(p, "deph")
+none
+procedure p;
+Select p such that Uses(p, "dx")
+Main, Draw, Shrink, Translate, Rotate
+procedure p;
+Select p such that Uses(p, "x1") and Uses(p, "y1")
+Main, Transform, Shift, Shear, Draw, Shrink
+procedure p;
+Select p such that Uses(p, "edge") and Uses(p, "factor")
+Main
+procedure p;
+Select p such that Uses(p, "deph") and Uses(p, "semi")
+none
+procedure p;
+Select p such that Uses(p, "dx") and Uses(p, "location")
+none
+procedure p;
+Select p such that Calls (p, "Draw") and Modifies (p, "j") and Uses (p, "incre")
+Main, Shrink
+procedure p;
+Select p such that Calls (p, "Draw") and Modifies (p, "incre") and Uses (p, "factor")
+Main
+procedure p;
+Select p such that Calls (p, "Random") and Uses (p, "dy")
+Main, Draw, Rotate
+stmt s,s1;
+Select s such that Parent(s,s1) with s1.stmt# = 8
+6
+stmt s,s1;
+Select s such that Parent(s,s1) with s1.stmt# = 19
+16
+stmt s,s1;
+Select s such that Parent(s,s1) with s1.stmt# = 61
+59
+stmt s,s1;
+Select s such that Parent(s,s1) with s1.stmt# = 38
+34
+stmt s,s1;
+Select s such that Parent*(s,s1) with s1.stmt# = 47
+6,12,14,15,16
+stmt s,s1;
+Select s such that Parent*(s,s1) with s1.stmt# = 52
+6,12,14,15,16,47,51
+stmt s,s1;
+Select s such that Parent*(s,s1) with s1.stmt# = 66
+6,12,14,15
+stmt s,s1;
+Select s such that Parent*(s,s1) with s1.stmt# = 81
+6,12,14,15,79,80
+stmt s1,s2;
+Select s1 such that Follows(s1, s2) with s1.stmt# = 4
+4
+stmt s1,s2;
+Select s1 such that Follows(s1, s2) with s1.stmt# = 21
+21
+stmt s1,s2;
+Select s1 such that Follows(s1, s2) with s1.stmt# = 34
+34
+stmt s1,s2;
+Select s1 such that Follows(s1, s2) with s1.stmt# = 53
+none
+stmt s1,s2;
+Select s1 such that Follows*(s1, s2) with s1.stmt# = 54
+54
+stmt s1,s2;
+Select s1 such that Follows*(s1, s2) with s1.stmt# = 18
+18
+stmt s1,s2;
+Select s1 such that Follows*(s1, s2) with s1.stmt# = 39
+39
+stmt s1,s2;
+Select s1 such that Follows*(s1, s2) with s1.stmt# = 81
+81
+stmt s;variable v;
+Select s such that Modifies(s,v) with v.varName="x"
+6, 12, 105, 106, 107, 109, 116
+stmt s;variable v;
+Select s such that Modifies(s,v) with v.varName="tmp"
+4, 6, 12, 14, 15, 16, 17, 29, 33, 34, 38, 42, 47, 48, 59, 60, 63, 66, 76, 78, 79, 80, 81, 89, 90, 95, 96, 105, 107, 108, 133, 136, 137, 149, 180, 181, 187, 188
+stmt s;variable v;
+Select s such that Modifies(s,v) with v.varName="x5"
+6, 12, 14, 15, 16, 45, 55, 57, 64, 105, 107, 109, 113, 114, 154
+stmt s;variable v;
+Select s such that Modifies(s,v) with v.varName="y7"
+6, 12, 14, 94
+stmt s;variable v;
+Select s such that Uses(s,v) with v.varName="width"
+6, 7, 11, 12, 14, 15, 16, 29, 32, 34, 38, 40, 42, 63, 66, 76, 77, 79, 80, 83, 85, 105, 107, 109, 112, 180, 181, 186
+stmt s;variable v;
+Select s such that Uses(s,v) with v.varName="tmp"
+6, 12, 14, 15, 16, 23, 26, 28, 29, 33, 34, 38, 42, 47, 48, 50, 55, 57, 59, 61, 63, 66, 69, 72, 74, 76, 78, 79, 80, 89, 91, 95, 97, 101, 102, 103, 105, 107, 108, 136, 138, 139, 143, 144, 147, 180, 181, 186
+stmt s;variable v;
+Select s such that Uses(s,v) with v.varName="decrement"
+5, 6, 12, 14, 15, 16, 17, 22, 29, 33, 34, 38, 41, 42, 44, 45, 54, 63, 65, 66, 76, 78, 79, 80, 83, 84, 86, 87, 101, 103, 104, 105, 107, 108, 109, 113, 114, 117, 118, 131, 136, 143, 144, 146, 151, 159, 160, 163, 165, 170, 180, 181, 184, 185, 191, 192, 195, 244, 250, 256, 258, 259, 262, 264, 265, 266, 274
+stmt s;variable v;
+Select s such that Uses(s,v) with v.varName="y1"
+6, 10, 12, 14, 15, 16, 22, 23, 26, 27, 29, 31, 33, 34, 38, 41, 45, 47, 50, 66, 76, 78, 79, 80, 83, 84, 86, 87, 93, 105, 107, 108, 109, 113, 114, 118, 136, 140, 141, 143, 144, 146, 151, 152, 153, 154, 155, 156, 157, 158, 159, 160, 163, 166, 168, 169, 176, 178, 191, 204, 206, 247, 249, 259
