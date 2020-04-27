@@ -1,5 +1,8 @@
 ﻿using ParserawkaCore.Interfaces;
 using ParserawkaCore.Parser.Exceptions;
+using ParserawkaCore.PQL;
+using ParserawkaCore.PQL.AstElements;
+using ParserawkaCore.PQL.Model;
 using ParserawkaCore.Utils;
 using System;
 using System.IO;
@@ -23,7 +26,6 @@ namespace ParserawkaConsole
             string programCode;
             IProgramKnowledgeBase PKB;
             PKB = ImplementationFactory.CreateProgramKnowledgeBase();
-            // TODO implementacja PQL-a
             try
             {
                 programCode = File.ReadAllText(args[0]);
@@ -62,8 +64,20 @@ namespace ParserawkaConsole
             {
                 var declarations = Console.ReadLine();
                 var query = Console.ReadLine();
-                Console.WriteLine("TODO: RESULTS");
-                // TODO zwracanie odpowiednich wyników w try-catch bloku z wypisaniem exceptionów
+                var sqlStatement = declarations + " " + query;
+                try
+                {
+                    PqlLexer lexer = new PqlLexer(sqlStatement);
+                    PqlParser parser = new PqlParser(lexer);
+                    PqlAst pqlAst = parser.Parse();
+                    PqlEvaluator pqlEvaluator = new PqlEvaluator(PKB, pqlAst);
+                    PqlOutput pqlOutput = pqlEvaluator.Evaluate();
+                    Console.WriteLine(pqlOutput.ToString());
+                }
+                catch (Exception e)
+                {
+                    Console.Error.WriteLine($"#{e.StackTrace}");
+                }
             }
         }
     }
