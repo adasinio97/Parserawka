@@ -17,5 +17,9 @@ namespace ParserawkaCore.PQL.Model
         {
             return Value.ToString();
         }
+        public override string ToString(bool forConsole = false)
+        {
+            return ToString();
+        }
     }
 }

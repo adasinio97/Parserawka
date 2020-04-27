@@ -35,5 +35,31 @@ namespace ParserawkaCore.PQL.Model
             }
             return s;
         }
+        public override string ToString(bool forConsole = false)
+        {
+            if(!forConsole)
+            {
+                return ToString();
+            }
+            else
+            {
+                string s = "";
+                foreach (PqlDeclaration declaration in Declarations)
+                {
+                    string separator = "";
+                    foreach (IEntity entity in declaration.EntityList)
+                    {
+                        s += separator;
+                        s += entity.Attribute.AttributeValue.ToString();
+                        separator = ", ";
+                    }
+                }
+                if(String.IsNullOrEmpty(s))
+                {
+                    return "none";
+                }
+                return s;
+            }
+        }
     }
 }
