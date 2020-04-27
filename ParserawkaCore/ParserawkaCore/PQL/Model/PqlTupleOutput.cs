@@ -51,7 +51,7 @@ namespace ParserawkaCore.PQL.Model
                     {
                         s += separator;
                         s += entity.Attribute.AttributeValue.ToString();
-                        separator = ", ";
+                        separator = ",";
                     }
                 }
                 if(String.IsNullOrEmpty(s))
