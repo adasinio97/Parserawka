@@ -47,5 +47,5 @@ else  {
           call Init; }
 } }
 procedure Init {
-	while a{
+	while a {
   x1   = 0; } 	}

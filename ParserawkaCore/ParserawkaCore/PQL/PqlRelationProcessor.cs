@@ -392,7 +392,7 @@ namespace ParserawkaCore.PQL
         private IEntityList CallsTRelRight(IEntity arg)
         {
             Procedure procedure = arg as Procedure;
-            return PKB.CallsTable.GetCalling(procedure);
+            return PKB.CallsTable.GetCallingT(procedure);
         }
 
         private bool NextRelFull(IEntity arg1, IEntity arg2)

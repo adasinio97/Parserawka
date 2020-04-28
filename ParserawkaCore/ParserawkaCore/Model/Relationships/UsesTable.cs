@@ -8,41 +8,50 @@ namespace ParserawkaCore.Model
 {
     class UsesTable : IUsesTable
     {
-        List<Uses> UsesList = new List<Uses>();
+        private List<StatementUses> StatementUsesList = new List<StatementUses>();
+        private List<ProcedureUses> ProcedureUsesList = new List<ProcedureUses>();
 
         public IVariableList GetUsedBy(Procedure procedure)
         {
-            throw new NotImplementedException();
+            List<ProcedureUses> list = ProcedureUsesList.Where(x => x.Procedure == procedure).ToList();
+            IVariableList variableList = ImplementationFactory.CreateVariableList();
+            
+            foreach (ProcedureUses procedureUses in list)
+                variableList.AddVariable(procedureUses.Variable);
+
+            return variableList;
         }
 
         public IVariableList GetUsedBy(Statement statement)
         {
-            List<Uses> list = UsesList.Where(x => x.Statement == statement).ToList();
+            List<StatementUses> list = StatementUsesList.Where(x => x.Statement == statement).ToList();
             IVariableList variableList = ImplementationFactory.CreateVariableList();
 
-            for (int i = 0; i < list.Count; i++)
-            {
-                variableList.AddVariable(list[i].Variable);
-            }
+            foreach (StatementUses statementUses in list)
+                variableList.AddVariable(statementUses.Variable);
+            
             return variableList;
         }
 
         public IProcedureList GetUsesProcedures(Variable variable)
         {
-            //throw new NotImplementedException();
-            //TODO
-            return ImplementationFactory.CreateProcedureList();
+            List<ProcedureUses> list = ProcedureUsesList.Where(x => x.Variable == variable).ToList();
+            IProcedureList procedureList = ImplementationFactory.CreateProcedureList();
+
+            foreach (ProcedureUses procedureUses in list)
+                procedureList.AddProcedure(procedureUses.Procedure);
+
+            return procedureList;
         }
 
         public IStatementList GetUsesStatements(Variable variable)
         {
-            List<Uses> list =  UsesList.Where(x => x.Variable == variable).ToList();
+            List<StatementUses> list =  StatementUsesList.Where(x => x.Variable == variable).ToList();
             IStatementList statementList = ImplementationFactory.CreateStatementList();
 
-            for (int i = 0; i< list.Count; i++)
-            {
-                statementList.AddStatement(list[i].Statement);
-            }
+            foreach (StatementUses statementUses in list)
+                statementList.AddStatement(statementUses.Statement);
+            
             return statementList;
         }
 
@@ -54,18 +63,20 @@ namespace ParserawkaCore.Model
 
         public bool IsUses(Procedure procedure, Variable variable)
         {
-            throw new NotImplementedException();
+            IProcedureList procedureList = GetUsesProcedures(variable);
+            return procedureList.Contains(procedure);
         }
 
         public void SetUses(Procedure procedure, Variable variable)
         {
-            //throw new NotImplementedException();
+            if (!IsUses(procedure, variable))
+                ProcedureUsesList.Add(new ProcedureUses(procedure, variable));
         }
 
         public void SetUses(Statement statement, Variable variable)
         {
             if (!IsUses(statement, variable))
-                UsesList.Add(new Uses(statement, variable));
+                StatementUsesList.Add(new StatementUses(statement, variable));
         }
     }
 }

@@ -47,13 +47,12 @@ namespace ParserawkaCore.Model
                 foreach (Procedure procedure in root as IProcedureList)
                     ExtractProcedure(procedure);
                 
-                /*
                 foreach (Procedure procedure in Procedures)
                 {
                     IProcedureList calledProcedures = CallsTable.GetCalledBy(procedure);
                     if (calledProcedures.GetSize() == 0)
                         ExtractProcedureCalls(procedure);
-                } */
+                }
             }
         }
 
@@ -95,11 +94,17 @@ namespace ParserawkaCore.Model
 
         private void ExtractWhile(While loop, Procedure procedureContext)
         {
+            ExtractVariable(loop.Condition);
+            Variable retrievedVariable = Variables.GetVariableByName(loop.Condition.Name);
+            UsesTable.SetUses(loop, retrievedVariable);
             ExtractBody(loop, loop.Body, procedureContext);
         }
 
         private void ExtractIf(If check, Procedure procedureContext)
         {
+            ExtractVariable(check.Condition);
+            Variable retrievedVariable = Variables.GetVariableByName(check.Condition.Name);
+            UsesTable.SetUses(check, retrievedVariable);
             ExtractBody(check, check.IfBody, procedureContext);
             if (check.ElseBody != null)
                 ExtractBody(check, check.ElseBody, procedureContext);
@@ -188,27 +193,30 @@ namespace ParserawkaCore.Model
             IProcedureList callingProcedures = CallsTable.GetCalling(procedure);
             foreach (Procedure callingProcedure in callingProcedures)
             {
-                Call call = calls[callingProcedure].Where(x => x.Procedure == procedure).FirstOrDefault();
-                IStatementList callParents = ParentTable.GetParentT(call);
-
-                IVariableList modifiedVariables = ModifiesTable.GetModifiedBy(procedure);
-                IVariableList usedVariables = UsesTable.GetUsedBy(procedure);
-
-                foreach (Variable variable in modifiedVariables)
+                List<Call> procedureCalls = calls[callingProcedure].Where(x => x.Procedure == procedure).ToList();
+                foreach (Call call in procedureCalls)
                 {
-                    ModifiesTable.SetModifies(call, variable);
-                    ModifiesTable.SetModifies(callingProcedure, variable);
-                    foreach (Statement parent in callParents)
-                        ModifiesTable.SetModifies(parent, variable);
+                    IStatementList callParents = ParentTable.GetParentT(call);
+
+                    IVariableList modifiedVariables = ModifiesTable.GetModifiedBy(procedure);
+                    IVariableList usedVariables = UsesTable.GetUsedBy(procedure);
+
+                    foreach (Variable variable in modifiedVariables)
+                    {
+                        ModifiesTable.SetModifies(call, variable);
+                        ModifiesTable.SetModifies(callingProcedure, variable);
+                        foreach (Statement parent in callParents)
+                            ModifiesTable.SetModifies(parent, variable);
+                    }
+                    foreach (Variable variable in usedVariables)
+                    {
+                        UsesTable.SetUses(call, variable);
+                        UsesTable.SetUses(callingProcedure, variable);
+                        foreach (Statement parent in callParents)
+                            UsesTable.SetUses(parent, variable);
+                    }
+                    ExtractProcedureCalls(callingProcedure);
                 }
-                foreach (Variable variable in usedVariables)
-                {
-                    UsesTable.SetUses(call, variable);
-                    UsesTable.SetUses(callingProcedure, variable);
-                    foreach (Statement parent in callParents)
-                        UsesTable.SetUses(parent, variable);
-                }
-                ExtractProcedureCalls(callingProcedure);
             }
         }
     }
