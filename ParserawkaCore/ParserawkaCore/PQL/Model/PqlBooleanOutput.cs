@@ -21,7 +21,7 @@ namespace ParserawkaCore.PQL.Model
         {
             if (forConsole)
             {
-                return Value.ToString().ToUpper();
+                return Value.ToString().ToLower();
             }
             return ToString();
         }
