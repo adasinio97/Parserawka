@@ -397,38 +397,38 @@ namespace ParserawkaCore.PQL
 
         private bool NextRelFull(IEntity arg1, IEntity arg2)
         {
-            // TODO
-            throw new NotImplementedException();
+            Statement statement1 = arg1 as Statement, statement2 = arg2 as Statement;
+            return PKB.NextTable.IsNext(statement1, statement2);
         }
 
         private IEntityList NextRelLeft(IEntity arg)
         {
-            // TODO
-            throw new NotImplementedException();
+            Statement statement = arg as Statement;
+            return PKB.NextTable.GetNext(statement);
         }
 
         private IEntityList NextRelRight(IEntity arg)
         {
-            // TODO
-            throw new NotImplementedException();
+            Statement statement = arg as Statement;
+            return PKB.NextTable.GetNextedBy(statement);
         }
 
         private bool NextTRelFull(IEntity arg1, IEntity arg2)
         {
-            // TODO
-            throw new NotImplementedException();
+            Statement statement1 = arg1 as Statement, statement2 = arg2 as Statement;
+            return PKB.NextTable.IsNextT(statement1, statement2);
         }
 
         private IEntityList NextTRelLeft(IEntity arg)
         {
-            // TODO
-            throw new NotImplementedException();
+            Statement statement = arg as Statement;
+            return PKB.NextTable.GetNextT(statement);
         }
 
         private IEntityList NextTRelRight(IEntity arg)
         {
-            // TODO
-            throw new NotImplementedException();
+            Statement statement = arg as Statement;
+            return PKB.NextTable.GetNextedByT(statement);
         }
 
         private bool AffectsRelFull(IEntity arg1, IEntity arg2)

@@ -69,6 +69,11 @@ namespace ParserawkaCore.Utils
             return new CallsTable();
         }
 
+        public static INextTable CreateNextTable()
+        {
+            return new NextTable();
+        }
+
         public static IDeclarationList CreateDeclarationList()
         {
             return new DeclarationList();

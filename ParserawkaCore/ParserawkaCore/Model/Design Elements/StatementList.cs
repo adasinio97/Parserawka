@@ -63,5 +63,15 @@ namespace ParserawkaCore.Model
         {
             return GetEnumerator();
         }
+
+        public Statement GetFirst()
+        {
+            return list[0] as Statement;
+        }
+
+        public Statement GetLast()
+        {
+            return list[list.Count - 1] as Statement;
+        }
     }
 }

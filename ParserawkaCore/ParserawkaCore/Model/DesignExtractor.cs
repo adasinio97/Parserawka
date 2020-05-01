@@ -20,6 +20,7 @@ namespace ParserawkaCore.Model
         public IParentTable ParentTable { get; private set; }
         public IUsesTable UsesTable { get; private set; }
         public ICallsTable CallsTable { get; private set; }
+        public INextTable NextTable { get; private set; }
         
         private Dictionary<Procedure, List<Call>> calls;
 
@@ -34,6 +35,7 @@ namespace ParserawkaCore.Model
             ParentTable = ImplementationFactory.CreateParentTable();
             UsesTable = ImplementationFactory.CreateUsesTable();
             CallsTable = ImplementationFactory.CreateCallsTable();
+            NextTable = ImplementationFactory.CreateNextTable();
 
             calls = new Dictionary<Procedure, List<Call>>();
         }
@@ -67,6 +69,16 @@ namespace ParserawkaCore.Model
                 {
                     Statement previousChild = children[i - 1];
                     FollowsTable.SetFollows(previousChild, child);
+
+                    if (!(previousChild is If))
+                        NextTable.SetNext(previousChild, child);
+                    else
+                    {
+                        If ifChild = previousChild as If;
+                        NextTable.SetNext(ifChild.IfBody.GetLast(), child);
+                        if (ifChild.ElseBody != null)
+                            NextTable.SetNext(ifChild.ElseBody.GetLast(), child);
+                    }
                 }
 
                 IVariableList modifiedVariables = ModifiesTable.GetModifiedBy(child);
@@ -98,6 +110,8 @@ namespace ParserawkaCore.Model
             Variable retrievedVariable = Variables.GetVariableByName(loop.Condition.Name);
             UsesTable.SetUses(loop, retrievedVariable);
             ExtractBody(loop, loop.Body, procedureContext);
+            NextTable.SetNext(loop, loop.Body.GetFirst());
+            NextTable.SetNext(loop.Body.GetLast(), loop);
         }
 
         private void ExtractIf(If check, Procedure procedureContext)
@@ -106,8 +120,12 @@ namespace ParserawkaCore.Model
             Variable retrievedVariable = Variables.GetVariableByName(check.Condition.Name);
             UsesTable.SetUses(check, retrievedVariable);
             ExtractBody(check, check.IfBody, procedureContext);
+            NextTable.SetNext(check, check.IfBody.GetFirst());
             if (check.ElseBody != null)
+            {
                 ExtractBody(check, check.ElseBody, procedureContext);
+                NextTable.SetNext(check, check.ElseBody.GetFirst());
+            }
         }
 
         private void ExtractBody(Container container, IStatementList body, Procedure procedureContext)
@@ -122,6 +140,16 @@ namespace ParserawkaCore.Model
                 {
                     Statement previousChild = body[i - 1];
                     FollowsTable.SetFollows(previousChild, child);
+
+                    if (!(previousChild is If))
+                        NextTable.SetNext(previousChild, child);
+                    else
+                    {
+                        If ifChild = previousChild as If;
+                        NextTable.SetNext(ifChild.IfBody.GetLast(), child);
+                        if (ifChild.ElseBody != null)
+                            NextTable.SetNext(ifChild.ElseBody.GetLast(), child);
+                    }
                 }
 
                 IVariableList modifiedVariables = ModifiesTable.GetModifiedBy(child);

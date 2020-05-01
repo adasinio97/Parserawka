@@ -10,11 +10,13 @@ namespace ParserawkaCore.Interfaces
         int AddStatement(Statement statement);
         Statement GetStatementByIndex(int index);
         Statement GetStatementByProgramLine(int programLine);
+        Statement GetFirst();
+        Statement GetLast();
         int GetIndex(Statement statement);
         int GetIndexByProgramLine(int programLine);
         bool Contains(Statement statement);
         bool Contains(int programLine);
-
+ 
         new IEnumerator<Statement> GetEnumerator();
     }
 }
