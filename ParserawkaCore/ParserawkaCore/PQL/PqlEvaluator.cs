@@ -3,7 +3,6 @@ using ParserawkaCore.Model;
 using ParserawkaCore.PQL.AstElements;
 using ParserawkaCore.PQL.Interfaces;
 using ParserawkaCore.PQL.Model;
-using ParserawkaCore.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -94,73 +93,24 @@ namespace ParserawkaCore.PQL
 
         private void ProcessSuchThat(PqlSuchThat suchThat)
         {
-            PqlRelationProcessor rel = new PqlRelationProcessor(PKB);
             foreach (PqlRelation relation in suchThat.RelCond)
             {
-                PqlArgument leftArgDef = relation.LeftRef;
-                PqlArgument rightArgDef = relation.RightRef;
-                IEntityList leftArgs, rightArgs;
+                relation.LoadArgs(PKB, Declarations);
+                relation.Process(PKB); // Większość logiki z pętli przeniesiona do PqlRelation.Process()
 
-                if (leftArgDef is PqlInteger || leftArgDef is PqlString)
-                {
-                    IEntity leftArg = rel.SelectEntityFromPKBLeft(relation.RelationType, leftArgDef);
-                    leftArgs = ImplementationFactory.CreateEntityList();
-                    leftArgs.AddEntity(leftArg);
-                }
-                else if (leftArgDef is PqlEmptyArg)
-                    leftArgs = rel.SelectListFromPKBLeft(relation.RelationType);
-                else
-                {
-                    PqlDeclaration declaration = Declarations.GetDeclarationBySynonym((leftArgDef as PqlSynonym).Name);
-                    leftArgs = declaration.EntityList;
-                }
-
-                if (rightArgDef is PqlInteger || rightArgDef is PqlString)
-                {
-                    IEntity rightArg = rel.SelectEntityFromPKBRight(relation.RelationType, rightArgDef);
-                    rightArgs = ImplementationFactory.CreateEntityList();
-                    rightArgs.AddEntity(rightArg);
-                }
-                else if (rightArgDef is PqlEmptyArg)
-                    rightArgs = rel.SelectListFromPKBRight(relation.RelationType);
-                else
-                {
-                    PqlDeclaration declaration = Declarations.GetDeclarationBySynonym((rightArgDef as PqlSynonym).Name);
-                    rightArgs = declaration.EntityList;
-                }
-
-                if (leftArgs.GetSize() < rightArgs.GetSize())
-                {
-                    IEntityList rightBounds = ImplementationFactory.CreateEntityList();
-                    for (int i = 0; i < leftArgs.GetSize(); i++)
-                        rightBounds.Sum(rel.RelationLeft(relation.RelationType, leftArgs[i]));
-                    rightArgs.Intersection(rightBounds);
-
-                    IEntityList leftBounds = ImplementationFactory.CreateEntityList();
-                    for (int i = 0; i < rightArgs.GetSize(); i++)
-                        leftBounds.Sum(rel.RelationRight(relation.RelationType, rightArgs[i]));
-                    leftArgs.Intersection(leftBounds);
-                }
-                else
-                {
-                    IEntityList leftBounds = ImplementationFactory.CreateEntityList();
-                    for (int i = 0; i < rightArgs.GetSize(); i++)
-                        leftBounds.Sum(rel.RelationRight(relation.RelationType, rightArgs[i]));
-                    leftArgs.Intersection(leftBounds);
-
-                    IEntityList rightBounds = ImplementationFactory.CreateEntityList();
-                    for (int i = 0; i < leftArgs.GetSize(); i++)
-                        rightBounds.Sum(rel.RelationLeft(relation.RelationType, leftArgs[i]));
-                    rightArgs.Intersection(rightBounds);
-                }
-
-                if (leftArgs.GetSize() == 0 || rightArgs.GetSize() == 0)
+                if (relation.LeftArgs.GetSize() == 0 || relation.RightArgs.GetSize() == 0)
                 {
                     resultBoolean = false;
                     return;
                 }
             }
             resultBoolean = true;
+        }
+
+        private void ProcessPattern(PqlPattern pattern)
+        {
+            // TODO
+            throw new NotImplementedException();
         }
 
         private PqlOutput ProcessResult(PqlResult result)
