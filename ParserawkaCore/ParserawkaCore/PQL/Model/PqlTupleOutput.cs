@@ -35,7 +35,7 @@ namespace ParserawkaCore.PQL.Model
             }
             return s;
         }
-        public override string ToString(bool forConsole = false)
+        public override string ToString(bool forConsole)
         {
             if(!forConsole)
             {
