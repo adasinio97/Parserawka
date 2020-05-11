@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace ParserawkaCore.Model.Relationships
+namespace ParserawkaCore.Model
 {
     public class AffectsTable : IAffectsTable
     {
@@ -79,7 +79,8 @@ namespace ParserawkaCore.Model.Relationships
                 {
                     foreach (Statement affectedAssignment in affectedList)
                     {
-                        GetAffectedByT(affectedAssignment as Assign);
+                        if (affectedAssignment != assignment)
+                            GetAffectedByT(affectedAssignment as Assign);
                         statementList.AddStatement(affectedAssignment);
                     }
                 }
@@ -93,7 +94,8 @@ namespace ParserawkaCore.Model.Relationships
                 {
                     foreach (Statement affectingAssignment in affectingList)
                     {
-                        GetAffectsT(affectingAssignment as Assign);
+                        if (affectingAssignment != assignment)
+                            GetAffectsT(affectingAssignment as Assign);
                         statementList.AddStatement(affectingAssignment);
                     }
                 }

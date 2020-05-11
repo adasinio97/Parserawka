@@ -1,4 +1,5 @@
 ﻿using ParserawkaCore.Interfaces;
+using ParserawkaCore.Model;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -11,17 +12,20 @@ namespace ParserawkaCore.PQL.AstElements
 
         public override bool CheckFull(IProgramKnowledgeBase pkb, IEntity arg1, IEntity arg2)
         {
-            throw new NotImplementedException();
+            Assign assignment1 = arg1 as Assign, assignment2 = arg2 as Assign;
+            return pkb.AffectsTable.IsAffectsT(assignment1, assignment2);
         }
 
         protected override IEntityList ProcessLeftSide(IProgramKnowledgeBase pkb, IEntity arg)
         {
-            throw new NotImplementedException();
+            Assign assignment = arg as Assign;
+            return pkb.AffectsTable.GetAffectedByT(assignment);
         }
 
         protected override IEntityList ProcessRightSide(IProgramKnowledgeBase pkb, IEntity arg)
         {
-            throw new NotImplementedException();
+            Assign assignment = arg as Assign;
+            return pkb.AffectsTable.GetAffectsT(assignment);
         }
     }
 }

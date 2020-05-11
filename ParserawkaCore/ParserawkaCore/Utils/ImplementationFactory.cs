@@ -76,7 +76,7 @@ namespace ParserawkaCore.Utils
 
         public static IAffectsTable CreateAffectsTable()
         {
-            throw new NotImplementedException();
+            return new AffectsTable();
         }
 
         public static IDeclarationList CreateDeclarationList()

@@ -114,8 +114,17 @@ namespace ParserawkaCore.Model
             Variable retrievedVariable = Variables.GetVariableByName(loop.Condition.Name);
             UsesTable.SetUses(loop, retrievedVariable);
             ExtractBody(loop, loop.Body, procedureContext);
+
             NextTable.SetNext(loop, loop.Body.GetFirst());
-            NextTable.SetNext(loop.Body.GetLast(), loop);
+            if (loop.Body.GetLast() is If)
+            {
+                If check = loop.Body.GetLast() as If;
+                NextTable.SetNext(check.IfBody.GetLast(), loop);
+                if (check.ElseBody != null)
+                    NextTable.SetNext(check.ElseBody.GetLast(), loop);
+            }
+            else
+                NextTable.SetNext(loop.Body.GetLast(), loop);
         }
 
         private void ExtractIf(If check, Procedure procedureContext)
@@ -258,14 +267,14 @@ namespace ParserawkaCore.Model
             foreach (Statement assignStatement in assignStatements)
             {
                 Assign assignment = assignStatement as Assign;
-                Variable variable = assignment.Left;
+                Variable variable = ModifiesTable.GetModifiedBy(assignment).GetVariableByIndex(0);
 
                 IStatementList nextStatements = NextTable.GetNextT(assignStatement);
                 foreach (Statement nextStatement in nextStatements)
                 {
                     if (nextStatement is Assign && UsesTable.IsUses(nextStatement, variable))
                         AffectsTable.SetAffects(assignment, nextStatement as Assign);
-                    if ((nextStatement is Assign || nextStatement is Call) && ModifiesTable.IsModifies(nextStatement, variable))
+                    if (nextStatement != assignStatement && (nextStatement is Assign || nextStatement is Call) && ModifiesTable.IsModifies(nextStatement, variable))
                         break;
                 }
             }
