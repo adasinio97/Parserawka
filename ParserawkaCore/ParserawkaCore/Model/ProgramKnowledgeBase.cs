@@ -46,6 +46,8 @@ namespace ParserawkaCore.Model
 
         public INextTable NextTable { get; set; }
 
+        public IAffectsTable AffectsTable { get; set; }
+
         public void LoadData(string programCode)
         {
             Lexer lexer = new Lexer(programCode);
@@ -65,6 +67,7 @@ namespace ParserawkaCore.Model
             UsesTable = designExtractor.UsesTable;
             CallsTable = designExtractor.CallsTable;
             NextTable = designExtractor.NextTable;
+            AffectsTable = designExtractor.AffectsTable;
         }
     }
 }

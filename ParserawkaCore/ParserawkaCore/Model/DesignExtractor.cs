@@ -21,6 +21,7 @@ namespace ParserawkaCore.Model
         public IUsesTable UsesTable { get; private set; }
         public ICallsTable CallsTable { get; private set; }
         public INextTable NextTable { get; private set; }
+        public IAffectsTable AffectsTable { get; private set; }
         
         private Dictionary<Procedure, List<Call>> calls;
 
@@ -36,6 +37,7 @@ namespace ParserawkaCore.Model
             UsesTable = ImplementationFactory.CreateUsesTable();
             CallsTable = ImplementationFactory.CreateCallsTable();
             NextTable = ImplementationFactory.CreateNextTable();
+            AffectsTable = ImplementationFactory.CreateAffectsTable();
 
             calls = new Dictionary<Procedure, List<Call>>();
         }
@@ -55,6 +57,8 @@ namespace ParserawkaCore.Model
                     if (calledProcedures.GetSize() == 0)
                         ExtractProcedureCalls(procedure);
                 }
+
+                ExtractAffects();
             }
         }
 
@@ -244,6 +248,25 @@ namespace ParserawkaCore.Model
                             UsesTable.SetUses(parent, variable);
                     }
                     ExtractProcedureCalls(callingProcedure);
+                }
+            }
+        }
+
+        private void ExtractAffects()
+        {
+            IStatementList assignStatements = Statements.Copy().FilterByType(typeof(Assign)) as IStatementList;
+            foreach (Statement assignStatement in assignStatements)
+            {
+                Assign assignment = assignStatement as Assign;
+                Variable variable = assignment.Left;
+
+                IStatementList nextStatements = NextTable.GetNextT(assignStatement);
+                foreach (Statement nextStatement in nextStatements)
+                {
+                    if (nextStatement is Assign && UsesTable.IsUses(nextStatement, variable))
+                        AffectsTable.SetAffects(assignment, nextStatement as Assign);
+                    if ((nextStatement is Assign || nextStatement is Call) && ModifiesTable.IsModifies(nextStatement, variable))
+                        break;
                 }
             }
         }
