@@ -46,3 +46,6 @@ none
 stmt s1, s2, s3;
 Select s1 such that Follows(s1, s2) and Affects(s3, s3)
 1, 2, 3, 4, 5, 6, 7, 9, 11, 10, 14, 15, 8, 19, 20, 18, 23
+stmt s1, s2, s3;
+Select s2 such that Follows(s1, s2) and Affects(s1, s3)
+2, 3, 12, 20

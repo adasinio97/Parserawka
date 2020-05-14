@@ -18,8 +18,7 @@ namespace ParserawkaCore.Interfaces
         int GetSize();
         bool Contains(IEntity entity);
         bool Contains(string attributeValue);
-
-        void CreateBindings(IEntity bindingEntity, IEntityList entitySource, IEntityList bindingTarget);
+        
         IEntityList Copy();
         IEntityList Intersection(IEntityList otherEntityList);
         IEntityList Intersection(IEntityList otherEntityList, BindingsManager bindingsManager);
