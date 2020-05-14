@@ -1,8 +1,11 @@
 ﻿using ParserawkaCore.Interfaces;
+using ParserawkaCore.PQL;
+using ParserawkaCore.PQL.Model;
 using ParserawkaCore.Utils;
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace ParserawkaCore.Model
@@ -11,11 +14,15 @@ namespace ParserawkaCore.Model
     {
         protected List<IEntity> list;
         private SortedDictionary<string, IEntity> dictionary;
+        private SortedDictionary<string, Dictionary<IEntityList, IEntityList>> bindingsDictionary;
+
+        public string ListName { get; set; }
 
         public EntityList()
         {
             list = new List<IEntity>();
             dictionary = new SortedDictionary<string, IEntity>();
+            bindingsDictionary = new SortedDictionary<string, Dictionary<IEntityList, IEntityList>>();
         }
 
         public IEntity this[int i] { get { return GetEntityByIndex(i); } }
@@ -37,7 +44,7 @@ namespace ParserawkaCore.Model
             return index;
         }
 
-        private void RemoveEntity(IEntity entity)
+        public void RemoveEntity(IEntity entity)
         {
             list.Remove(entity);
             dictionary.Remove(entity.Attribute.AttributeValue.ToString());
@@ -106,6 +113,21 @@ namespace ParserawkaCore.Model
             return this;
         }
 
+        public IEntityList Intersection(IEntityList otherEntityList, BindingsManager bindingsManager)
+        {
+            EntityList entityList = otherEntityList as EntityList;
+            for (int i = 0; i < list.Count; i++)
+            {
+                IEntity entity = GetEntityByIndex(i);
+                if (!entityList.Contains(entity))
+                {
+                    bindingsManager.RemoveBoundEntity(entity, this);
+                    i--;
+                }
+            }
+            return this;
+        }
+
         public IEntityList Sum(IEntityList otherEntityList)
         {
             EntityList entityList = otherEntityList as EntityList;
@@ -137,6 +159,20 @@ namespace ParserawkaCore.Model
             return this;
         }
 
+        public IEntityList FilterByAttributes(List<string> attributeValues)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                IEntity entity = GetEntityByIndex(i);
+                if (!attributeValues.Contains(entity.Attribute.AttributeValue))
+                {
+                    RemoveEntity(entity);
+                    i--;
+                }
+            }
+            return this;
+        }
+
         public virtual IEntityList CreateNewList()
         {
             return ImplementationFactory.CreateEntityList();
@@ -150,6 +186,27 @@ namespace ParserawkaCore.Model
         IEnumerator IEnumerable.GetEnumerator()
         {
             return list.GetEnumerator();
+        }
+
+        public void CreateBindings(IEntity bindingEntity, IEntityList entitySource, IEntityList bindingTarget)
+        {
+            if (!Contains(bindingEntity))
+                return;
+            string attribute = bindingEntity.Attribute.AttributeValue;
+
+            if (!bindingsDictionary.ContainsKey(attribute))
+                bindingsDictionary[attribute] = new Dictionary<IEntityList, IEntityList>();
+            Dictionary<IEntityList, IEntityList> bindings = bindingsDictionary[attribute];
+            if (!bindings.ContainsKey(bindingTarget))
+                bindings[bindingTarget] = CreateNewList();
+            IEntityList binding = bindings[bindingTarget];
+
+            binding.Sum(entitySource);
+        }
+
+        public override string ToString()
+        {
+            return ListName;
         }
     }
 }

@@ -36,6 +36,7 @@ namespace ParserawkaCore.PQL.AstElements
             {
                 PqlDeclaration declaration = declarations.GetDeclarationBySynonym((LeftRef as PqlSynonym).Name);
                 LeftArgs = declaration.EntityList;
+                LeftArgs.ListName = (LeftRef as PqlSynonym).Name;
             }
 
             if (RightRef is PqlInteger || RightRef is PqlString)
@@ -46,35 +47,68 @@ namespace ParserawkaCore.PQL.AstElements
             {
                 PqlDeclaration declaration = declarations.GetDeclarationBySynonym((RightRef as PqlSynonym).Name);
                 RightArgs = declaration.EntityList;
+                RightArgs.ListName = (RightRef as PqlSynonym).Name;
             }
         }
 
-        public void Process(IProgramKnowledgeBase pkb)
+        public void Process(IProgramKnowledgeBase pkb, BindingsManager bindingsManager)
         {
             if (LeftArgs.GetSize() < RightArgs.GetSize())
             {
                 IEntityList rightBounds = ImplementationFactory.CreateEntityList();
                 for (int i = 0; i < LeftArgs.GetSize(); i++)
-                    rightBounds.Sum(ProcessLeftSide(pkb, LeftArgs[i]));
-                RightArgs.Intersection(rightBounds);
+                {
+                    IEntity arg = LeftArgs[i];
+                    IEntityList result = ProcessLeftSide(pkb, arg);
+                    if (LeftRef is PqlSynonym && RightRef is PqlSynonym)
+                        bindingsManager.CreateMultipleBindings(arg, result, LeftArgs, RightArgs, this);
+                    rightBounds.Sum(result);
+                }
+                RightArgs.Intersection(rightBounds, bindingsManager);
 
                 IEntityList leftBounds = ImplementationFactory.CreateEntityList();
                 for (int i = 0; i < RightArgs.GetSize(); i++)
-                    leftBounds.Sum(ProcessRightSide(pkb, RightArgs[i]));
-                LeftArgs.Intersection(leftBounds);
+                {
+                    IEntity arg = RightArgs[i];
+                    IEntityList result = ProcessRightSide(pkb, arg);
+                    leftBounds.Sum(result);
+                }
+                LeftArgs.Intersection(leftBounds, bindingsManager);
             }
             else
             {
                 IEntityList leftBounds = ImplementationFactory.CreateEntityList();
                 for (int i = 0; i < RightArgs.GetSize(); i++)
-                    leftBounds.Sum(ProcessRightSide(pkb, RightArgs[i]));
-                LeftArgs.Intersection(leftBounds);
+                {
+                    IEntity arg = RightArgs[i];
+                    IEntityList result = ProcessRightSide(pkb, arg);
+                    leftBounds.Sum(result);
+                }
+                LeftArgs.Intersection(leftBounds, bindingsManager);
 
                 IEntityList rightBounds = ImplementationFactory.CreateEntityList();
                 for (int i = 0; i < LeftArgs.GetSize(); i++)
-                    rightBounds.Sum(ProcessLeftSide(pkb, LeftArgs[i]));
-                RightArgs.Intersection(rightBounds);
+                {
+                    IEntity arg = LeftArgs[i];
+                    IEntityList result = ProcessLeftSide(pkb, arg);
+                    if (LeftRef is PqlSynonym && RightRef is PqlSynonym)
+                        bindingsManager.CreateMultipleBindings(arg, result, LeftArgs, RightArgs, this);
+                    rightBounds.Sum(result);
+                }
+                RightArgs.Intersection(rightBounds, bindingsManager);
             }
+            
+            if (LeftArgs == RightArgs)
+            {
+                List<IEntity> toRemove = new List<IEntity>();
+                for (int i = 0; i < LeftArgs.GetSize(); i++)
+                {
+                    if (!CheckFull(pkb, LeftArgs[i], LeftArgs[i]))
+                        toRemove.Add(LeftArgs[i]);
+                }
+                foreach (IEntity arg in toRemove)
+                    bindingsManager.RemoveBoundEntity(arg, LeftArgs);
+            } 
         }
 
         protected abstract IEntityList LoadSingleLeftArg(IProgramKnowledgeBase pkb);

@@ -1,0 +1,48 @@
+stmt s; assign a1, a2; 
+Select s such that Parent(s, a1) and Next(a1, a2) and Uses(a2, "d")
+10
+assign a1, a2, a3, a4;
+Select a1 such that Affects(a1, a2) and Affects(a2, a3) and Affects(a3, a4)
+11, 25, 26
+stmt s1, s2, s3, s4;
+Select s1 such that Follows(s1, s2) and Follows(s2, s3) and Follows(s3, s4)
+1, 2, 3, 4, 5, 6
+stmt s; assign a1, a2; 
+Select <s, a1, a2> such that Parent(s, a1) and Next(a1, a2) and Uses(a2, "d")
+10 11 12
+stmt s;
+Select s such that Affects(s, s)
+11, 26
+stmt s;
+Select s such that Next*(s, s)
+10, 11, 12, 18, 19, 20, 21, 23, 24, 25, 26
+stmt s;
+Select s such that Affects*(s, s)
+11, 26
+stmt s1, s2;
+Select s1 such that Next*(s1, s2) and Next*(s2, s1)
+10, 11, 12, 18, 19, 20, 21, 23, 24, 25, 26
+stmt s;
+Select s such that Affects(s, s) and Uses(s, "a")
+26
+stmt s; constant c;
+Select s with s.stmt#=c.value
+1, 10, 2, 3, 20
+stmt s; variable v;
+Select s such that Parent(s, _) with v.varName="test"
+none
+stmt s; variable v;
+Select BOOLEAN such that Parent(s, _) with v.varName="test"
+false
+stmt s; procedure p;
+Select s such that Parent(s, _) and Modifies(p, "test")
+none
+stmt s1, s2, s3;
+Select s1 such that Follows(s1, s2) and Modifies(s3, "test")
+none
+stmt s1, s2, s3;
+Select s1 such that Follows(s1, s2) and Next(s3, s3)
+none
+stmt s1, s2, s3;
+Select s1 such that Follows(s1, s2) and Affects(s3, s3)
+1, 2, 3, 4, 5, 6, 7, 9, 11, 10, 14, 15, 8, 19, 20, 18, 23

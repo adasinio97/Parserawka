@@ -24,6 +24,7 @@ namespace ParserawkaCore.PQL
         {
             PKB = pkb;
             QueryTree = queryTree;
+            resultBoolean = true;
         }
 
         public PqlOutput Evaluate()
@@ -39,8 +40,11 @@ namespace ParserawkaCore.PQL
             foreach (PqlWith with in select.WithClauses)
                 ProcessWith(with);
             ProcessTypes();
-            foreach (PqlSuchThat suchThat in select.SuchThatClauses)
-                ProcessSuchThat(suchThat);
+            if (resultBoolean)
+            {
+                foreach (PqlSuchThat suchThat in select.SuchThatClauses)
+                    ProcessSuchThat(suchThat);
+            }
             Output = ProcessResult(select.Result);
         }
 
@@ -73,15 +77,31 @@ namespace ParserawkaCore.PQL
             {
                 PqlAttrRef left = compare.LeftRef;
                 PqlArgument right = compare.RightRef;
-                string attributeValue = null;
-
-                if (right is PqlString)
-                    attributeValue = (right as PqlString).Value;
-                else if (right is PqlInteger)
-                    attributeValue = (right as PqlInteger).Value;
-
                 PqlDeclaration declaration = Declarations.GetDeclarationBySynonym(left.SynonymName);
-                declaration.EntityList.FilterByAttribute(attributeValue);
+
+                if (right is PqlString || right is PqlInteger)
+                {
+                    string attributeValue = null;
+                    if (right is PqlString)
+                        attributeValue = (right as PqlString).Value;
+                    else
+                        attributeValue = (right as PqlInteger).Value;
+                    declaration.EntityList.FilterByAttribute(attributeValue);
+                }
+                else if (right is PqlAttrRef)
+                {
+                    List<string> attributeValues = new List<string>();
+                    PqlDeclaration argumentDeclaration = Declarations.GetDeclarationBySynonym((right as PqlAttrRef).SynonymName);
+                    foreach (IEntity entity in argumentDeclaration.EntityList)
+                        attributeValues.Add(entity.Attribute.AttributeValue);
+                    declaration.EntityList.FilterByAttributes(attributeValues);
+                }
+
+                if (declaration.EntityList.GetSize() == 0)
+                {
+                    resultBoolean = false;
+                    return;
+                }
             }
         }
 
@@ -93,10 +113,11 @@ namespace ParserawkaCore.PQL
 
         private void ProcessSuchThat(PqlSuchThat suchThat)
         {
+            BindingsManager bindingsManager = new BindingsManager();
             foreach (PqlRelation relation in suchThat.RelCond)
             {
                 relation.LoadArgs(PKB, Declarations);
-                relation.Process(PKB); // Większość logiki z pętli przeniesiona do PqlRelation.Process()
+                relation.Process(PKB, bindingsManager);
 
                 if (relation.LeftArgs.GetSize() == 0 || relation.RightArgs.GetSize() == 0)
                 {
@@ -104,7 +125,6 @@ namespace ParserawkaCore.PQL
                     return;
                 }
             }
-            resultBoolean = true;
         }
 
         private void ProcessPattern(PqlPattern pattern)
@@ -119,17 +139,20 @@ namespace ParserawkaCore.PQL
                 return new PqlBooleanOutput(resultBoolean);
             else
             {
-                PqlTuple tuple = result as PqlTuple;
                 PqlTupleOutput output = new PqlTupleOutput();
-                foreach (PqlElem elem in tuple.Elems)
+                if (resultBoolean)
                 {
-                    string synonym;
-                    if (elem is PqlAttrRef)
-                        synonym = (elem as PqlAttrRef).SynonymName;
-                    else
-                        synonym = (elem as PqlSynonym).Name;
-                    PqlDeclaration declaration = Declarations.GetDeclarationBySynonym(synonym);
-                    output.Declarations.AddDeclaration(declaration);
+                    PqlTuple tuple = result as PqlTuple;
+                    foreach (PqlElem elem in tuple.Elems)
+                    {
+                        string synonym;
+                        if (elem is PqlAttrRef)
+                            synonym = (elem as PqlAttrRef).SynonymName;
+                        else
+                            synonym = (elem as PqlSynonym).Name;
+                        PqlDeclaration declaration = Declarations.GetDeclarationBySynonym(synonym);
+                        output.Declarations.AddDeclaration(declaration);
+                    }
                 }
                 return output;
             }

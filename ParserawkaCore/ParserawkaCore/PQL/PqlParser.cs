@@ -228,6 +228,13 @@ namespace ParserawkaCore.PQL
             if (currentToken.Type == PqlTokenType.IDENT)
             {
                 Eat(PqlTokenType.IDENT);
+                if (currentToken.Type == PqlTokenType.DOT)
+                {
+                    Eat(PqlTokenType.DOT);
+                    PqlToken attrRef = currentToken;
+                    Eat(PqlTokenType.ATTRIBUTE);
+                    return new PqlAttrRef(id, attrRef);
+                }
                 return new PqlSynonym(id);
             }
             else if (currentToken.Type == PqlTokenType.INTEGER)
