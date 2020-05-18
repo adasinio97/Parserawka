@@ -4,6 +4,7 @@ using ParserawkaCore.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -326,20 +327,22 @@ namespace ParserawkaCore.PQL
 		
 		private PqlPatternCond Pattern()
 		{
-            return null;
-            // Zostawmy to na później
-            /*
-			switch(currentToken.Type)
-			{
-				case PqlTokenType.ASSIGN:
-					return Assign();
-				case PqlTokenType.WHILE:
-					return While();
-				case PqlTokenType.IF:
-					return If();
-				default:
-                    throw new Exception();
-			} */
-		}	
+
+            PqlToken id = currentToken;
+            Eat(PqlTokenType.IDENT);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument varRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            if(currentToken.Type == PqlTokenType.FLOOR)
+            {
+
+            }
+
+
+
+
+        }
+
+        
     }
 }
