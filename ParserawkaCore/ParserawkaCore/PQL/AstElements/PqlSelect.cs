@@ -13,9 +13,9 @@ namespace ParserawkaCore.PQL.AstElements
         public PqlResult Result;
         public List<PqlWith> WithClauses;
         public List<PqlSuchThat> SuchThatClauses;
-        public List<PqlPattern> PatternClauses;
+        public List<PqlPatternCond> PatternClauses;
 
-        public PqlSelect(IDeclarationList declarations, PqlResult result, List<PqlWith> withClauses, List<PqlSuchThat> suchThatClauses, List<PqlPattern> patternClauses) 
+        public PqlSelect(IDeclarationList declarations, PqlResult result, List<PqlWith> withClauses, List<PqlSuchThat> suchThatClauses, List<PqlPatternCond> patternClauses) 
         {
             Declarations = declarations;
             Result = result;

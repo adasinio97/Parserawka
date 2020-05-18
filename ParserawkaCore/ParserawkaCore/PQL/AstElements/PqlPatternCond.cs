@@ -6,7 +6,13 @@ using System.Threading.Tasks;
 
 namespace ParserawkaCore.PQL.AstElements
 {
-    public class PqlPatternCond : PqlAst
+    public class PqlPatternCond : PqlClause
     {
+        public List<PqlPatternNode> PatternNode;
+
+        public PqlPatternCond(List<PqlPatternNode> patternCond)
+        {
+            PatternNode = patternCond;
+        }
     }
 }

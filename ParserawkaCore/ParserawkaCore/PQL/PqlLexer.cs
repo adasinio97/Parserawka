@@ -136,18 +136,18 @@ namespace ParserawkaCore.PQL
             }
         }
 
-        //public PqlToken String()
-        //{
-        //    StringBuilder sb = new StringBuilder();
-        //    while (currentChar != '\0' && currentChar != '"')
-        //    {
-        //        sb.Append(currentChar);
-        //        Advance();
-        //    }
-        //    Advance();
+        public PqlToken String()
+        {
+            StringBuilder sb = new StringBuilder();
+            while (currentChar != '\0' && currentChar != '"')
+            {
+                sb.Append(currentChar);
+                Advance();
+            }
+            Advance();
 
-        //    return new PqlToken(PqlTokenType.STRING, sb.ToString());
-        //}
+            return new PqlToken(PqlTokenType.STRING, sb.ToString());
+        }
 
         public char Peek()
         {
@@ -181,8 +181,7 @@ namespace ParserawkaCore.PQL
 
                 if (currentChar == '"')
                 {
-                    Advance();
-                    return new PqlToken(PqlTokenType.QUOT,"\"");
+                    return String();
                 }
 
                 if (currentChar == '(')
@@ -243,5 +242,6 @@ namespace ParserawkaCore.PQL
             }
             return new PqlToken(PqlTokenType.EOF, null);
         }
+
     }
 }

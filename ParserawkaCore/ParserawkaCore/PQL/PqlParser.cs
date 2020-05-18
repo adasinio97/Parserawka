@@ -1,3 +1,4 @@
+using ParserawkaCore.Parser;
 using ParserawkaCore.PQL.AstElements;
 using ParserawkaCore.PQL.Interfaces;
 using ParserawkaCore.Utils;
@@ -105,7 +106,7 @@ namespace ParserawkaCore.PQL
 
             List<PqlWith> withClauses = new List<PqlWith>();
             List<PqlSuchThat> suchThatClauses = new List<PqlSuchThat>();
-            List<PqlPattern> patternClauses = new List<PqlPattern>();
+            List<PqlPatternCond> patternClauses = new List<PqlPatternCond>();
 
             while (currentToken.Type == PqlTokenType.SUCH
                 || currentToken.Type == PqlTokenType.WITH
@@ -196,10 +197,10 @@ namespace ParserawkaCore.PQL
 			return new PqlSuchThat(RelCond());
 		}
 		
-		private PqlPattern PatternCl()
+		private PqlPatternCond PatternCl()
 		{
 			Eat(PqlTokenType.PATTERN);
-			return new PqlPattern(PatternCond());
+			return new PqlPatternCond(PatternCond());
 		}
 		
 		private List<PqlCompare> AttrCond()
@@ -236,12 +237,10 @@ namespace ParserawkaCore.PQL
                 Eat(PqlTokenType.INTEGER);
                 return new PqlInteger(id);
             }
-            else if (currentToken.Type == PqlTokenType.QUOT)
+            else if (currentToken.Type == PqlTokenType.STRING)
             {
-                Eat(PqlTokenType.QUOT);
                 id = currentToken;
-                Eat(currentToken.Type);
-                Eat(PqlTokenType.QUOT);
+                Eat(PqlTokenType.STRING);
                 return new PqlString(id);
             }
             else if (currentToken.Type == PqlTokenType.FLOOR)
@@ -312,9 +311,9 @@ namespace ParserawkaCore.PQL
             return new PqlRelation(relationType, leftRef, rightRef);
         }
 		
-		private List<PqlPatternCond> PatternCond()
+		private List<PqlPatternNode> PatternCond()
 		{
-			List<PqlPatternCond> pattern = new List<PqlPatternCond>();
+			List<PqlPatternNode> pattern = new List<PqlPatternNode>();
 			pattern.Add(Pattern());
 			while (currentToken.Type == PqlTokenType.AND)
 			{
@@ -325,24 +324,45 @@ namespace ParserawkaCore.PQL
 			return pattern;
 		}
 		
-		private PqlPatternCond Pattern()
+		private PqlPatternNode Pattern()
 		{
-
             PqlToken id = currentToken;
             Eat(PqlTokenType.IDENT);
             Eat(PqlTokenType.LPAREN);
             PqlArgument varRef = Ref();
             Eat(PqlTokenType.COMMA);
-            if(currentToken.Type == PqlTokenType.FLOOR)
+            PqlAst expr = null;
+            if(currentToken.Type == PqlTokenType.STRING)
             {
-
+                expr = Expr();
             }
-
-
-
-
+            else if(currentToken.Type == PqlTokenType.FLOOR)
+            {
+                Eat(PqlTokenType.FLOOR);
+                if(currentToken.Type == PqlTokenType.STRING)
+                {
+                    expr = Expr();
+                    Eat(PqlTokenType.FLOOR);
+                }
+                else if(currentToken.Type == PqlTokenType.COMMA)
+                {
+                    Eat(PqlTokenType.COMMA);
+                    Eat(PqlTokenType.FLOOR);
+                }
+            }
+            Eat(PqlTokenType.RPAREN);
+            return new PqlPatternNode(id, varRef, expr);
         }
 
-        
+        private PqlAst Expr()
+        {
+            PqlExpr retVal = new PqlExpr();
+            string expr = currentToken.Value.ToString();
+            Eat(PqlTokenType.STRING);
+            Lexer lexer = new Lexer(expr);
+            Parser.Parser parser = new Parser.Parser(lexer);
+            retVal.ExprTree = parser.Parse();
+            return retVal;
+        }
     }
 }
