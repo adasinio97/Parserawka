@@ -11,6 +11,7 @@ namespace ParserawkaCore.Model
         public IStatementList Body { get; set; }
 
         public Attribute Attribute { get; set; }
+        public Attribute SecondaryAttribute { get; set; }
 
         public Procedure(string name)
         {

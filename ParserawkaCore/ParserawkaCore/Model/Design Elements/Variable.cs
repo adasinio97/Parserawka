@@ -1,6 +1,5 @@
 ﻿using ParserawkaCore.Interfaces;
 using ParserawkaCore.Parser;
-using ParserawkaCore.Parser.AstElements;
 
 namespace ParserawkaCore.Model
 {
@@ -13,6 +12,7 @@ namespace ParserawkaCore.Model
         public string AttributeValue => Name;
 
         public Attribute Attribute { get; set; }
+        public Attribute SecondaryAttribute { get; set; }
 
         public Variable(string name)
         {

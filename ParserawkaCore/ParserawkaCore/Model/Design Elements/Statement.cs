@@ -9,6 +9,7 @@ namespace ParserawkaCore.Model
         public int ProgramLine { get; set; }
 
         public Attribute Attribute { get; set; }
+        public virtual Attribute SecondaryAttribute { get; set; }
 
         public Statement(int programLine)
         {

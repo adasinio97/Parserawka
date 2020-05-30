@@ -171,6 +171,34 @@ namespace ParserawkaCore.Model
             return this;
         }
 
+        public IEntityList FilterBySecondaryAttribute(string attributeValue)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                IEntity entity = GetEntityByIndex(i);
+                if (entity.SecondaryAttribute == null || !entity.SecondaryAttribute.AttributeValue.Equals(attributeValue))
+                {
+                    RemoveEntity(entity);
+                    i--;
+                }
+            }
+            return this;
+        }
+
+        public IEntityList FilterBySecondaryAttributes(List<string> attributeValues)
+        {
+            for (int i = 0; i < list.Count; i++)
+            {
+                IEntity entity = GetEntityByIndex(i);
+                if (entity.SecondaryAttribute == null || !attributeValues.Contains(entity.SecondaryAttribute.AttributeValue))
+                {
+                    RemoveEntity(entity);
+                    i--;
+                }
+            }
+            return this;
+        }
+
         public virtual IEntityList CreateNewList()
         {
             return ImplementationFactory.CreateEntityList();

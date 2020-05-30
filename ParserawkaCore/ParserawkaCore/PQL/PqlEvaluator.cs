@@ -37,9 +37,9 @@ namespace ParserawkaCore.PQL
         {
             PqlSelect select = QueryTree as PqlSelect;
             ProcessDeclarations(select.Declarations);
+            ProcessTypes();
             foreach (PqlWith with in select.WithClauses)
                 ProcessWith(with);
-            ProcessTypes();
             if (resultBoolean)
             {
                 foreach (PqlSuchThat suchThat in select.SuchThatClauses)
@@ -86,15 +86,40 @@ namespace ParserawkaCore.PQL
                         attributeValue = (right as PqlString).Value;
                     else
                         attributeValue = (right as PqlInteger).Value;
-                    declaration.EntityList.FilterByAttribute(attributeValue);
+
+                    if (declaration.DesignEntity.Type == PqlTokenType.CALL &&
+                        right is PqlString)
+                        declaration.EntityList.FilterBySecondaryAttribute(attributeValue);
+                    else
+                        declaration.EntityList.FilterByAttribute(attributeValue);
                 }
-                else if (right is PqlAttrRef)
+                else if (right is PqlAttrRef || right is PqlSynonym)
                 {
                     List<string> attributeValues = new List<string>();
-                    PqlDeclaration argumentDeclaration = Declarations.GetDeclarationBySynonym((right as PqlAttrRef).SynonymName);
-                    foreach (IEntity entity in argumentDeclaration.EntityList)
-                        attributeValues.Add(entity.Attribute.AttributeValue);
-                    declaration.EntityList.FilterByAttributes(attributeValues);
+                    PqlDeclaration argumentDeclaration;
+                    if (right is PqlAttrRef)
+                        argumentDeclaration = Declarations.GetDeclarationBySynonym((right as PqlAttrRef).SynonymName);
+                    else
+                        argumentDeclaration = Declarations.GetDeclarationBySynonym((right as PqlSynonym).Name);
+
+                    if (right is PqlAttrRef &&
+                        argumentDeclaration.DesignEntity.Type == PqlTokenType.CALL &&
+                        (right as PqlAttrRef).AttributeName.Equals("procName"))
+                    {
+                        foreach (IEntity entity in argumentDeclaration.EntityList)
+                            attributeValues.Add(entity.SecondaryAttribute.AttributeValue);
+                    }
+                    else
+                    {
+                        foreach (IEntity entity in argumentDeclaration.EntityList)
+                            attributeValues.Add(entity.Attribute.AttributeValue);
+                    }
+
+                    if (declaration.DesignEntity.Type == PqlTokenType.CALL &&
+                        left.AttributeName.Equals("procName"))
+                        declaration.EntityList.FilterBySecondaryAttributes(attributeValues);
+                    else
+                        declaration.EntityList.FilterByAttributes(attributeValues);
                 }
 
                 if (declaration.EntityList.GetSize() == 0)

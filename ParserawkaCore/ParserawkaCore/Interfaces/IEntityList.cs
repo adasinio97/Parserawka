@@ -25,6 +25,8 @@ namespace ParserawkaCore.Interfaces
         IEntityList Sum(IEntityList otherEntityList);
         IEntityList FilterByType(Type type);
         IEntityList FilterByAttribute(string attributeValue);
+        IEntityList FilterBySecondaryAttribute(string attributeValue);
         IEntityList FilterByAttributes(List<string> attributeValues);
+        IEntityList FilterBySecondaryAttributes(List<string> attributeValues);
     }
 }
