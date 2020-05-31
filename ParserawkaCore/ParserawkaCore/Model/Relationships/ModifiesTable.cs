@@ -8,51 +8,36 @@ namespace ParserawkaCore.Model
 {
     class ModifiesTable : IModifiesTable
     {
-        private List<StatementModify> StatementModifyList = new List<StatementModify>();
-        private List<ProcedureModify> ProcedureModifyList = new List<ProcedureModify>();
-
         public IVariableList GetModifiedBy(Procedure procedure)
         {
-            List<ProcedureModify> list = ProcedureModifyList.Where(x => x.Procedure == procedure).ToList();
-            IVariableList variableList = ImplementationFactory.CreateVariableList();
-
-            foreach (ProcedureModify procedureModify in list)
-                variableList.AddVariable(procedureModify.Variable);
-
-            return variableList;
+            if (procedure != null)
+                return procedure.Modifying.Copy();
+            else
+                return ImplementationFactory.CreateVariableList();
         }
 
         public IVariableList GetModifiedBy(Statement statement)
         {
-            List<StatementModify> list = StatementModifyList.Where(x => x.Statement == statement).ToList();
-            IVariableList variableList = ImplementationFactory.CreateVariableList();
-
-            foreach (StatementModify statementModify in list)
-                variableList.AddVariable(statementModify.Variable);
-
-            return variableList;
+            if (statement != null)
+                return statement.Modifying.Copy();
+            else
+                return ImplementationFactory.CreateVariableList();
         }
 
         public IProcedureList GetModifiesProcedures(Variable variable)
         {
-            List<ProcedureModify> list = ProcedureModifyList.Where(x => x.Variable == variable).ToList();
-            IProcedureList procedureList = ImplementationFactory.CreateProcedureList();
-
-            foreach (ProcedureModify procedureModify in list)
-                procedureList.AddProcedure(procedureModify.Procedure);
-
-            return procedureList;
+            if (variable != null)
+                return variable.ModifiedByProcedures;
+            else
+                return ImplementationFactory.CreateProcedureList();
         }
 
         public IStatementList GetModifiesStatements(Variable variable)
         {
-            List<StatementModify> list = StatementModifyList.Where(x => x.Variable == variable).ToList();
-            IStatementList statementList = ImplementationFactory.CreateStatementList(); 
-
-            foreach (StatementModify statementModify in list)
-                statementList.AddStatement(statementModify.Statement);
-            
-            return statementList;
+            if (variable != null)
+                return variable.ModifiedByStatements;
+            else
+                return ImplementationFactory.CreateStatementList();
         }
         
         public bool IsModifies(Statement statement, Variable variable)
@@ -69,14 +54,14 @@ namespace ParserawkaCore.Model
 
         public void SetModifies(Procedure procedure, Variable variable)
         {
-            if (!IsModifies(procedure, variable))
-                ProcedureModifyList.Add(new ProcedureModify(procedure, variable));
+            procedure.Modifying.AddVariable(variable);
+            variable.ModifiedByProcedures.AddProcedure(procedure);
         }
 
         public void SetModifies(Statement statement, Variable variable)
         {
-            if (!IsModifies(statement, variable))
-                StatementModifyList.Add(new StatementModify(statement, variable));
+            statement.Modifying.AddVariable(variable);
+            variable.ModifiedByStatements.AddStatement(statement);
         }
     }
 }

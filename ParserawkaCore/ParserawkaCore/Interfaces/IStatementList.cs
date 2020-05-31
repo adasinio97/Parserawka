@@ -18,5 +18,6 @@ namespace ParserawkaCore.Interfaces
         bool Contains(int programLine);
  
         new IEnumerator<Statement> GetEnumerator();
+        new IStatementList Copy();
     }
 }

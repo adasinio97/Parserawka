@@ -77,12 +77,7 @@ namespace ParserawkaCore.Model
                     if (!(previousChild is If))
                         NextTable.SetNext(previousChild, child);
                     else
-                    {
-                        If ifChild = previousChild as If;
-                        NextTable.SetNext(ifChild.IfBody.GetLast(), child);
-                        if (ifChild.ElseBody != null)
-                            NextTable.SetNext(ifChild.ElseBody.GetLast(), child);
-                    }
+                        ExtractIfNext(previousChild as If, child);
                 }
 
                 IVariableList modifiedVariables = ModifiesTable.GetModifiedBy(child);
@@ -92,6 +87,24 @@ namespace ParserawkaCore.Model
                     ModifiesTable.SetModifies(procedure, variable);
                 foreach (Variable variable in usedVariables)
                     UsesTable.SetUses(procedure, variable);
+            }
+        }
+
+        private void ExtractIfNext(If check, Statement next)
+        {
+            Statement last1 = check.IfBody.GetLast();
+            if (last1 is If)
+                ExtractIfNext(last1 as If, next);
+            else
+                NextTable.SetNext(last1, next);
+
+            if (check.ElseBody != null)
+            {
+                Statement last2 = check.ElseBody.GetLast();
+                if (last2 is If)
+                    ExtractIfNext(last2 as If, next);
+                else
+                    NextTable.SetNext(last2, next);
             }
         }
         
@@ -117,12 +130,7 @@ namespace ParserawkaCore.Model
 
             NextTable.SetNext(loop, loop.Body.GetFirst());
             if (loop.Body.GetLast() is If)
-            {
-                If check = loop.Body.GetLast() as If;
-                NextTable.SetNext(check.IfBody.GetLast(), loop);
-                if (check.ElseBody != null)
-                    NextTable.SetNext(check.ElseBody.GetLast(), loop);
-            }
+                ExtractIfNext(loop.Body.GetLast() as If, loop);
             else
                 NextTable.SetNext(loop.Body.GetLast(), loop);
         }
@@ -157,12 +165,7 @@ namespace ParserawkaCore.Model
                     if (!(previousChild is If))
                         NextTable.SetNext(previousChild, child);
                     else
-                    {
-                        If ifChild = previousChild as If;
-                        NextTable.SetNext(ifChild.IfBody.GetLast(), child);
-                        if (ifChild.ElseBody != null)
-                            NextTable.SetNext(ifChild.ElseBody.GetLast(), child);
-                    }
+                        ExtractIfNext(previousChild as If, child);
                 }
 
                 IVariableList modifiedVariables = ModifiesTable.GetModifiedBy(child);
@@ -269,14 +272,17 @@ namespace ParserawkaCore.Model
                 Assign assignment = assignStatement as Assign;
                 Variable variable = ModifiesTable.GetModifiedBy(assignment).GetVariableByIndex(0);
 
-                IStatementList nextStatements = NextTable.GetNextT(assignStatement);
-                foreach (Statement nextStatement in nextStatements)
+                List<IStatementList> paths = NextTable.GetPathsFrom(assignStatement);
+                foreach (IStatementList path in paths)
                 {
-                    if (nextStatement is Assign && UsesTable.IsUses(nextStatement, variable))
-                        AffectsTable.SetAffects(assignment, nextStatement as Assign);
-                    if (nextStatement != assignStatement && (nextStatement is Assign || nextStatement is Call) && ModifiesTable.IsModifies(nextStatement, variable))
-                        break;
-                }
+                    foreach (Statement nextStatement in path)
+                    {
+                        if (nextStatement is Assign && UsesTable.IsUses(nextStatement, variable))
+                            AffectsTable.SetAffects(assignment, nextStatement as Assign);
+                        if (nextStatement != assignStatement && (nextStatement is Assign || nextStatement is Call) && ModifiesTable.IsModifies(nextStatement, variable))
+                            break;
+                    }
+                } 
             }
         }
     }

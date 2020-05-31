@@ -31,7 +31,7 @@ namespace ParserawkaCore.Model
 
         public override string ToString()
         {
-            return base.ToString() + " Call " + ProcedureName;
+            return base.ToString() + " call " + ProcedureName;
         }
     }
 }

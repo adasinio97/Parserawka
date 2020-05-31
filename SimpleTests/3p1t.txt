@@ -49,3 +49,18 @@ Select s1 such that Follows(s1, s2) and Affects(s3, s3)
 stmt s1, s2, s3;
 Select s2 such that Follows(s1, s2) and Affects(s1, s3)
 2, 3, 12, 20
+prog_line n;
+Select n such that Next* (1, n) and Next* (n, 17)
+2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+assign a; 
+Select a such that Affects (a, 3)
+1, 2
+prog_line n; stmt s;
+Select s such that Next* (26, n) and Parent* (s, n)
+23, 24
+prog_line n; assign a;
+Select a such that Affects* (a, n) and Next* (1, n) 
+1, 2, 11
+prog_line n; assign a;
+Select a such that Affects* (a, n) and Next* (26, n)
+25, 26

@@ -17,5 +17,6 @@ namespace ParserawkaCore.Interfaces
         new bool Contains(string name);
 
         new IEnumerator<Variable> GetEnumerator();
+        new IVariableList Copy();
     }
 }

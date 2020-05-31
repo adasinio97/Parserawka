@@ -13,11 +13,21 @@ namespace ParserawkaCore.Model
         public Attribute Attribute { get; set; }
         public Attribute SecondaryAttribute { get; set; }
 
+        public IVariableList Modifying { get; set; }
+        public IVariableList Using { get; set; }
+
+        public IProcedureList CalledBy { get; set; }
+        public IProcedureList Calling { get; set; }
+
         public Procedure(string name)
         {
             Name = name;
             Body = ImplementationFactory.CreateStatementList();
             Attribute = new Attribute("procName", Name);
+            Modifying = ImplementationFactory.CreateVariableList();
+            Using = ImplementationFactory.CreateVariableList();
+            CalledBy = ImplementationFactory.CreateProcedureList();
+            Calling = ImplementationFactory.CreateProcedureList();
         }
 
         public Procedure(string name, IStatementList body)
@@ -25,6 +35,10 @@ namespace ParserawkaCore.Model
             Name = name;
             Body = body;
             Attribute = new Attribute("procName", Name);
+            Modifying = ImplementationFactory.CreateVariableList();
+            Using = ImplementationFactory.CreateVariableList();
+            CalledBy = ImplementationFactory.CreateProcedureList();
+            Calling = ImplementationFactory.CreateProcedureList();
         }
 
         public override string ToString()

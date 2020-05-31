@@ -12,6 +12,7 @@ namespace ParserawkaCore.Interfaces
         IStatementList GetNextT(Statement statement);
         IStatementList GetNextedBy(Statement statement);
         IStatementList GetNextedByT(Statement statement);
+        List<IStatementList> GetPathsFrom(Statement statement);
         bool IsNext(Statement statement1, Statement statement2);
         bool IsNextT(Statement statement1, Statement statement2);
     }

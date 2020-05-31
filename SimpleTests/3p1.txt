@@ -40,7 +40,7 @@ procedure Triangle {
 			a = t * a + d + k * b; 
 		}
 	}
-	c = t + k + d; 
+	c = t + k + d;
 }
 
 procedure Hexagon {

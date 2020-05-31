@@ -65,5 +65,10 @@ namespace ParserawkaCore.Model
         {
             return base.GetIndex(variable);
         }
+
+        public new IVariableList Copy()
+        {
+            return base.Copy() as IVariableList;
+        }
     }
 }

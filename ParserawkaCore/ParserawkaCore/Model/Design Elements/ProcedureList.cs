@@ -66,5 +66,10 @@ namespace ParserawkaCore.Model
         {
             return GetEnumerator();
         }
+
+        public new IProcedureList Copy()
+        {
+            return base.Copy() as IProcedureList;
+        }
     }
 }
