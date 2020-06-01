@@ -1,0 +1,12 @@
+
+Select BOOLEAN such that Next (5, 15)
+true
+
+Select BOOLEAN such that Next (3, 6)
+false
+
+Select BOOLEAN such that Next* (5, 15)
+true
+
+Select BOOLEAN such that Next (3, 6)
+false
