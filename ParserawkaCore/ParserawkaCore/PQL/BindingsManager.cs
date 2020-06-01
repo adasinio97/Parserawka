@@ -18,7 +18,7 @@ namespace ParserawkaCore.PQL
             looseNodes = new List<BindingNode>();
         }
 
-        public void CreateMultipleBindings(IEntity entity1, IEntityList sourceList, IEntityList list1, IEntityList list2, PqlRelation relation)
+        public void CreateMultipleBindings(IEntity entity1, IEntityList sourceList, IEntityList list1, IEntityList list2)
         {
             BindingNode firstNode = GetNode(entity1, list1);
             if (firstNode == null)
@@ -38,6 +38,30 @@ namespace ParserawkaCore.PQL
                         looseNodes.Add(secondNode);
                     }
                     firstNode.Bind(secondNode);
+                }
+            }
+        }
+
+        public void CreateMultipleBindingsOneWay(IEntity entity1, IEntityList sourceList, IEntityList list1, IEntityList list2)
+        {
+            BindingNode firstNode = GetNode(entity1, list1);
+            if (firstNode == null)
+            {
+                firstNode = new BindingNode(entity1, list1);
+                looseNodes.Add(firstNode);
+            }
+
+            foreach (IEntity entity2 in sourceList)
+            {
+                if (entity2 != null && list2.Contains(entity2))
+                {
+                    BindingNode secondNode = GetNode(entity2, list2);
+                    if (secondNode == null)
+                    {
+                        secondNode = new BindingNode(entity2, list2);
+                        looseNodes.Add(secondNode);
+                    }
+                    firstNode.BindOneWay(secondNode);
                 }
             }
         }

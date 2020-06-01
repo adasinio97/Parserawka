@@ -139,6 +139,7 @@ namespace ParserawkaCore.PQL
         public PqlToken String()
         {
             StringBuilder sb = new StringBuilder();
+            Advance();
             while (currentChar != '\0' && currentChar != '"')
             {
                 sb.Append(currentChar);

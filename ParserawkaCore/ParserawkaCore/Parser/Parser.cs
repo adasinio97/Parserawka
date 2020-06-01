@@ -223,7 +223,7 @@ namespace ParserawkaCore.Parser
             return node;
         }
 
-        private Factor Expression()
+        public Factor Expression()
         {
             Factor node = Term();
             while (currentToken.Type == TokenType.PLUS

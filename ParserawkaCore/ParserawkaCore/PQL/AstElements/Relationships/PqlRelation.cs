@@ -61,7 +61,7 @@ namespace ParserawkaCore.PQL.AstElements
                     IEntity arg = LeftArgs[i];
                     IEntityList result = ProcessLeftSide(pkb, arg);
                     if (LeftRef is PqlSynonym && RightRef is PqlSynonym)
-                        bindingsManager.CreateMultipleBindings(arg, result, LeftArgs, RightArgs, this);
+                        bindingsManager.CreateMultipleBindings(arg, result, LeftArgs, RightArgs);
                     rightBounds.Sum(result);
                 }
                 RightArgs.Intersection(rightBounds, bindingsManager);
@@ -92,7 +92,7 @@ namespace ParserawkaCore.PQL.AstElements
                     IEntity arg = LeftArgs[i];
                     IEntityList result = ProcessLeftSide(pkb, arg);
                     if (LeftRef is PqlSynonym && RightRef is PqlSynonym)
-                        bindingsManager.CreateMultipleBindings(arg, result, LeftArgs, RightArgs, this);
+                        bindingsManager.CreateMultipleBindings(arg, result, LeftArgs, RightArgs);
                     rightBounds.Sum(result);
                 }
                 RightArgs.Intersection(rightBounds, bindingsManager);

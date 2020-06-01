@@ -328,13 +328,6 @@ namespace ParserawkaCore.PQL
             Eat(PqlTokenType.RPAREN);
             return new PqlParent(PqlTokenType.PARENT, leftRef, rightRef);
         }
-<<<<<<< HEAD
-		
-		private List<PqlPatternNode> PatternCond()
-||||||| 6dfc543
-		
-		private List<PqlPatternCond> PatternCond()
-=======
 
         private PqlParentT ParentT()
         {
@@ -457,8 +450,7 @@ namespace ParserawkaCore.PQL
             return new PqlAffectsT(PqlTokenType.AFFECTST, leftRef, rightRef);
         }
 
-        private List<PqlPatternCond> PatternCond()
->>>>>>> PQL
+        private List<PqlPatternNode> PatternCond()
 		{
 			List<PqlPatternNode> pattern = new List<PqlPatternNode>();
 			pattern.Add(Pattern());
@@ -474,41 +466,45 @@ namespace ParserawkaCore.PQL
 		private PqlPatternNode Pattern()
 		{
             PqlToken id = currentToken;
+            PqlSynonym synonym = new PqlSynonym(id);
+
             Eat(PqlTokenType.IDENT);
             Eat(PqlTokenType.LPAREN);
             PqlArgument varRef = Ref();
+
             Eat(PqlTokenType.COMMA);
-            PqlAst expr = null;
+
+            PqlExpr expr = null;
             if(currentToken.Type == PqlTokenType.STRING)
             {
-                expr = Expr();
+                expr = Expr(true);
             }
             else if(currentToken.Type == PqlTokenType.FLOOR)
             {
                 Eat(PqlTokenType.FLOOR);
                 if(currentToken.Type == PqlTokenType.STRING)
                 {
-                    expr = Expr();
+                    expr = Expr(false);
                     Eat(PqlTokenType.FLOOR);
                 }
-                else if(currentToken.Type == PqlTokenType.COMMA)
+                else if (currentToken.Type == PqlTokenType.COMMA)
                 {
                     Eat(PqlTokenType.COMMA);
                     Eat(PqlTokenType.FLOOR);
                 }
             }
             Eat(PqlTokenType.RPAREN);
-            return new PqlPatternNode(id, varRef, expr);
+            return new PqlPatternNode(synonym, varRef, expr);
         }
 
-        private PqlAst Expr()
+        private PqlExpr Expr(bool isExact)
         {
-            PqlExpr retVal = new PqlExpr();
+            PqlExpr retVal = new PqlExpr(isExact);
             string expr = currentToken.Value.ToString();
-            Eat(PqlTokenType.STRING);
             Lexer lexer = new Lexer(expr);
+            Eat(PqlTokenType.STRING);
             Parser.Parser parser = new Parser.Parser(lexer);
-            retVal.ExprTree = parser.Parse();
+            retVal.ExprTree = parser.Expression();
             return retVal;
         }
     }

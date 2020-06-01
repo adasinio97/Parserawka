@@ -11,7 +11,6 @@ namespace ParserawkaCore.Model
 {
     public class While : Container
     {
-        public Variable Condition { get; set; }
         public IStatementList Body { get; set; }
 
         public While(int programLine) : base(programLine)

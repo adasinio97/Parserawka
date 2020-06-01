@@ -13,12 +13,15 @@ namespace ParserawkaCore.PQL.Model
         public List<BindingNode> RightNodes { get; set; }
         public List<BindingNode> LeftNodes { get; set; }
 
+        public bool OneWay { get; set; }
+
         public BindingNode(IEntity entity, IEntityList entityList)
         {
             Entity = entity;
             EntityList = entityList;
             RightNodes = new List<BindingNode>();
             LeftNodes = new List<BindingNode>();
+            OneWay = false;
         }
 
         public void Bind(BindingNode nextNode)
@@ -27,6 +30,13 @@ namespace ParserawkaCore.PQL.Model
                 RightNodes.Add(nextNode);
             if (!nextNode.LeftNodes.Contains(this))
                 nextNode.LeftNodes.Add(this);
+        }
+
+        public void BindOneWay(BindingNode nextNode)
+        {
+            if (!LeftNodes.Contains(nextNode))
+                LeftNodes.Add(nextNode);
+            nextNode.OneWay = true;
         }
 
         public void RemoveNode()
@@ -41,14 +51,14 @@ namespace ParserawkaCore.PQL.Model
         public void RemoveLeftBindings(BindingNode node)
         {
             bool removed = RightNodes.Remove(node);
-            if (RightNodes.Count == 0 && removed)
+            if (RightNodes.Count == 0 && (removed || OneWay))
                 RemoveNode();
         }
 
         public void RemoveRightBindings(BindingNode node)
         {
             bool removed = LeftNodes.Remove(node);
-            if (LeftNodes.Count == 0 && removed)
+            if (LeftNodes.Count == 0)
                 RemoveNode();
         }
 

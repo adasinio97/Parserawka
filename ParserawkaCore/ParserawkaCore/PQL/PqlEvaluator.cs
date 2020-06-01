@@ -17,6 +17,7 @@ namespace ParserawkaCore.PQL
         private IProgramKnowledgeBase PKB { get; set; }
         private PqlAst QueryTree { get; set; }
         private bool resultBoolean;
+        private BindingsManager bindingsManager;
 
         public PqlOutput Output { get; private set; }
 
@@ -37,75 +38,38 @@ namespace ParserawkaCore.PQL
         {
             PqlSelect select = QueryTree as PqlSelect;
             ProcessDeclarations(select.Declarations);
-<<<<<<< HEAD
-
-||||||| 6dfc543
-=======
             ProcessTypes();
->>>>>>> PQL
+            bindingsManager = new BindingsManager();
+
             foreach (PqlWith with in select.WithClauses)
             {
                 ProcessWith(with);
-<<<<<<< HEAD
             }
 
-            ProcessTypes();
-
-            foreach (PqlSuchThat suchThat in select.SuchThatClauses)
-            {
-                ProcessSuchThat(suchThat);
-            }
-
-            foreach(PqlPatternCond patternCond in select.PatternClauses)
+            foreach (PqlPatternCond patternCond in select.PatternClauses)
             {
                 ProcessPattern(patternCond);
             }
-||||||| 6dfc543
-            ProcessTypes();
+
             foreach (PqlSuchThat suchThat in select.SuchThatClauses)
-                ProcessSuchThat(suchThat);
-=======
-            if (resultBoolean)
             {
-                foreach (PqlSuchThat suchThat in select.SuchThatClauses)
-                    ProcessSuchThat(suchThat);
+                ProcessSuchThat(suchThat);
             }
->>>>>>> PQL
             Output = ProcessResult(select.Result);
         }
 
         private void ProcessPattern(PqlPatternCond patternCond)
         {
-            foreach(PqlPatternNode pn in patternCond.PatternNode)
+            foreach (PqlPatternNode pn in patternCond.PatternNode)
             {
-                if (Declarations.GetDeclarationBySynonym(pn.Synonym.Value.ToString()).DeclarationType.IsAssignableFrom(typeof(Assign)))
+                pn.LoadArgs(PKB, Declarations);
+                pn.Process(PKB, bindingsManager);
+                if (pn.Args.GetSize() == 0)
                 {
-                    ProcessAssignPattern(pn);
-                }
-                else if (Declarations.GetDeclarationBySynonym(pn.Synonym.Value.ToString()).DeclarationType.IsAssignableFrom(typeof(While)))
-                {
-                    ProcessWhilePattern(pn);
-                }
-                else if (Declarations.GetDeclarationBySynonym(pn.Synonym.Value.ToString()).DeclarationType.IsAssignableFrom(typeof(If)))
-                {
-                    ProcessIfPattern(pn);
+                    resultBoolean = false;
+                    return;
                 }
             }
-        }
-
-        private void ProcessIfPattern(PqlPatternNode pn)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ProcessWhilePattern(PqlPatternNode pn)
-        {
-            throw new NotImplementedException();
-        }
-
-        private void ProcessAssignPattern(PqlPatternNode pn)
-        {
-            throw new NotImplementedException();
         }
 
         private void ProcessDeclarations(IDeclarationList declarations)
@@ -135,54 +99,10 @@ namespace ParserawkaCore.PQL
         {
             foreach (PqlCompare compare in with.AttrCond)
             {
-                PqlAttrRef left = compare.LeftRef;
-                PqlArgument right = compare.RightRef;
-                PqlDeclaration declaration = Declarations.GetDeclarationBySynonym(left.SynonymName);
+                compare.LoadArgs(PKB, Declarations);
+                compare.Process(PKB, bindingsManager);
 
-                if (right is PqlString || right is PqlInteger)
-                {
-                    string attributeValue = null;
-                    if (right is PqlString)
-                        attributeValue = (right as PqlString).Value;
-                    else
-                        attributeValue = (right as PqlInteger).Value;
-
-                    if (declaration.DesignEntity.Type == PqlTokenType.CALL &&
-                        right is PqlString)
-                        declaration.EntityList.FilterBySecondaryAttribute(attributeValue);
-                    else
-                        declaration.EntityList.FilterByAttribute(attributeValue);
-                }
-                else if (right is PqlAttrRef || right is PqlSynonym)
-                {
-                    List<string> attributeValues = new List<string>();
-                    PqlDeclaration argumentDeclaration;
-                    if (right is PqlAttrRef)
-                        argumentDeclaration = Declarations.GetDeclarationBySynonym((right as PqlAttrRef).SynonymName);
-                    else
-                        argumentDeclaration = Declarations.GetDeclarationBySynonym((right as PqlSynonym).Name);
-
-                    if (right is PqlAttrRef &&
-                        argumentDeclaration.DesignEntity.Type == PqlTokenType.CALL &&
-                        (right as PqlAttrRef).AttributeName.Equals("procName"))
-                    {
-                        foreach (IEntity entity in argumentDeclaration.EntityList)
-                            attributeValues.Add(entity.SecondaryAttribute.AttributeValue);
-                    }
-                    else
-                    {
-                        foreach (IEntity entity in argumentDeclaration.EntityList)
-                            attributeValues.Add(entity.Attribute.AttributeValue);
-                    }
-
-                    if (declaration.DesignEntity.Type == PqlTokenType.CALL &&
-                        left.AttributeName.Equals("procName"))
-                        declaration.EntityList.FilterBySecondaryAttributes(attributeValues);
-                    else
-                        declaration.EntityList.FilterByAttributes(attributeValues);
-                }
-
-                if (declaration.EntityList.GetSize() == 0)
+                if (compare.LeftArgs.GetSize() == 0)
                 {
                     resultBoolean = false;
                     return;
@@ -198,7 +118,6 @@ namespace ParserawkaCore.PQL
 
         private void ProcessSuchThat(PqlSuchThat suchThat)
         {
-            BindingsManager bindingsManager = new BindingsManager();
             foreach (PqlRelation relation in suchThat.RelCond)
             {
                 relation.LoadArgs(PKB, Declarations);
@@ -210,12 +129,6 @@ namespace ParserawkaCore.PQL
                     return;
                 }
             }
-        }
-
-        private void ProcessPattern(PqlPattern pattern)
-        {
-            // TODO
-            throw new NotImplementedException();
         }
 
         private PqlOutput ProcessResult(PqlResult result)
