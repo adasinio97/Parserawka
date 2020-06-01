@@ -1,0 +1,45 @@
+assign a;
+Select a pattern a ("x3", _)
+36, 152
+assign a;
+Select a pattern a ("x5", _)
+57, 64, 154
+assign a;
+Select a pattern a ("x2", _)
+8, 21, 74, 121, 139, 167, 168, 175, 186, 246, 254
+assign a;
+Select a pattern a ("b", _)
+111
+assign a;
+Select a pattern a ("tmp", _)
+4, 17, 48, 60, 81, 90, 96, 133, 137, 149, 188
+assign a;
+Select a pattern a ("length", _)
+46, 50, 52, 53
+assign a; while w; prog_line n;
+Select a such that Parent* (w, a) and Next* (176, n) with a.stmt# = n
+none
+assign a; while w; prog_line n;
+Select a such that Parent* (w, a) and Next* (178, n) with a.stmt# = n
+none
+assign a; while w; prog_line n;
+Select a such that Parent* (w, a) and Next* (156, n) with a.stmt# = n
+none
+assign a; while w; prog_line n;
+Select a such that Parent* (w, a) and Next* (106, n) with a.stmt# = n
+7, 8, 9, 10, 11, 13, 17, 19, 20, 21, 24, 25, 27, 28, 30, 31, 32, 35, 36, 37, 39, 40, 43, 46, 48, 49, 50, 52, 53, 56, 57, 58, 60, 61, 64, 65, 67, 68, 70, 71, 73, 74, 75, 77, 81, 82, 85, 88, 90, 91, 93, 94, 96, 98, 99, 100, 102, 104, 106, 110, 111, 112, 115, 116
+assign a; while w; prog_line n;
+Select a such that Parent* (w, a) and Next* (99, n) with a.stmt# = n
+7, 8, 9, 10, 11, 13, 17, 19, 20, 21, 24, 25, 27, 28, 30, 31, 32, 35, 36, 37, 39, 40, 43, 46, 48, 49, 50, 52, 53, 56, 57, 58, 60, 61, 64, 65, 67, 68, 70, 71, 73, 74, 75, 77, 81, 82, 85, 88, 90, 91, 93, 94, 96, 98, 99, 100, 102, 104, 106, 110, 111, 112, 115, 116
+assign a; while w; prog_line n;
+Select a such that Parent* (w, a) and Next* (54, n) with a.stmt# = n
+7, 8, 9, 10, 11, 13, 17, 19, 20, 21, 24, 25, 27, 28, 30, 31, 32, 35, 36, 37, 39, 40, 43, 46, 48, 49, 50, 52, 53, 56, 57, 58, 60, 61, 64, 65, 67, 68, 70, 71, 73, 74, 75, 77, 81, 82, 85, 88, 90, 91, 93, 94, 96, 98, 99, 100, 102, 104, 106, 110, 111, 112, 115, 116
+assign a; prog_line n;
+Select a such that Next* (106, n) with a.stmt# = n
+7, 8, 9, 10, 11, 13, 17, 19, 20, 21, 24, 25, 27, 28, 30, 31, 32, 35, 36, 37, 39, 40, 43, 46, 48, 49, 50, 52, 53, 56, 57, 58, 60, 61, 64, 65, 67, 68, 70, 71, 73, 74, 75, 77, 81, 82, 85, 88, 90, 91, 93, 94, 96, 98, 99, 100, 102, 104, 106, 110, 111, 112, 115, 116
+assign a; prog_line n;
+Select a such that Next* (99, n) with a.stmt# = n
+7, 8, 9, 10, 11, 13, 17, 19, 20, 21, 24, 25, 27, 28, 30, 31, 32, 35, 36, 37, 39, 40, 43, 46, 48, 49, 50, 52, 53, 56, 57, 58, 60, 61, 64, 65, 67, 68, 70, 71, 73, 74, 75, 77, 81, 82, 85, 88, 90, 91, 93, 94, 96, 98, 99, 100, 102, 104, 106, 110, 111, 112, 115, 116
+assign a; prog_line n;
+Select a such that Next* (54, n) with a.stmt# = n
+7, 8, 9, 10, 11, 13, 17, 19, 20, 21, 24, 25, 27, 28, 30, 31, 32, 35, 36, 37, 39, 40, 43, 46, 48, 49, 50, 52, 53, 56, 57, 58, 60, 61, 64, 65, 67, 68, 70, 71, 73, 74, 75, 77, 81, 82, 85, 88, 90, 91, 93, 94, 96, 98, 99, 100, 102, 104, 106, 110, 111, 112, 115, 116

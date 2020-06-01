@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace ParserawkaCore.PQL.AstElements
 {
-    public class PqlAttrRef : PqlElem
+    public class PqlAttrRef : PqlElem, PqlArgument
     {
         public PqlToken Synonym;
         public PqlToken AttrName;

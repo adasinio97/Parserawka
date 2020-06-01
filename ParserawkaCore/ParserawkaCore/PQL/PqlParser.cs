@@ -1,9 +1,11 @@
+using ParserawkaCore.Parser;
 using ParserawkaCore.PQL.AstElements;
 using ParserawkaCore.PQL.Interfaces;
 using ParserawkaCore.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -104,7 +106,7 @@ namespace ParserawkaCore.PQL
 
             List<PqlWith> withClauses = new List<PqlWith>();
             List<PqlSuchThat> suchThatClauses = new List<PqlSuchThat>();
-            List<PqlPattern> patternClauses = new List<PqlPattern>();
+            List<PqlPatternCond> patternClauses = new List<PqlPatternCond>();
 
             while (currentToken.Type == PqlTokenType.SUCH
                 || currentToken.Type == PqlTokenType.WITH
@@ -195,10 +197,10 @@ namespace ParserawkaCore.PQL
 			return new PqlSuchThat(RelCond());
 		}
 		
-		private PqlPattern PatternCl()
+		private PqlPatternCond PatternCl()
 		{
 			Eat(PqlTokenType.PATTERN);
-			return new PqlPattern(PatternCond());
+			return new PqlPatternCond(PatternCond());
 		}
 		
 		private List<PqlCompare> AttrCond()
@@ -228,6 +230,13 @@ namespace ParserawkaCore.PQL
             if (currentToken.Type == PqlTokenType.IDENT)
             {
                 Eat(PqlTokenType.IDENT);
+                if (currentToken.Type == PqlTokenType.DOT)
+                {
+                    Eat(PqlTokenType.DOT);
+                    PqlToken attrRef = currentToken;
+                    Eat(PqlTokenType.ATTRIBUTE);
+                    return new PqlAttrRef(id, attrRef);
+                }
                 return new PqlSynonym(id);
             }
             else if (currentToken.Type == PqlTokenType.INTEGER)
@@ -235,12 +244,10 @@ namespace ParserawkaCore.PQL
                 Eat(PqlTokenType.INTEGER);
                 return new PqlInteger(id);
             }
-            else if (currentToken.Type == PqlTokenType.QUOT)
+            else if (currentToken.Type == PqlTokenType.STRING)
             {
-                Eat(PqlTokenType.QUOT);
                 id = currentToken;
-                Eat(currentToken.Type);
-                Eat(PqlTokenType.QUOT);
+                Eat(PqlTokenType.STRING);
                 return new PqlString(id);
             }
             else if (currentToken.Type == PqlTokenType.FLOOR)
@@ -283,37 +290,169 @@ namespace ParserawkaCore.PQL
 			switch (currentToken.Type)
             {
 				case PqlTokenType.MODIFIES:
+                    return Modifies();
 				case PqlTokenType.USES:
+                    return Uses();
 				case PqlTokenType.CALLS:
+                    return Calls();
 				case PqlTokenType.CALLST:
+                    return CallsT();
 				case PqlTokenType.PARENT:
+                    return Parent();
 				case PqlTokenType.PARENTT:
+                    return ParentT();
 				case PqlTokenType.FOLLOWS:
+                    return Follows();
 				case PqlTokenType.FOLLOWST:
+                    return FollowsT();
 				case PqlTokenType.NEXT:
+                    return Next();
 				case PqlTokenType.NEXTT:
+                    return NextT();
 				case PqlTokenType.AFFECTS:
+                    return Affects();
 				case PqlTokenType.AFFECTST:
-                    return Relation(currentToken.Type);
+                    return AffectsT();
                 default:
                     throw new Exception();
             }
 		}
 
-        private PqlRelation Relation(PqlTokenType relationType)
+        private PqlParent Parent()
         {
-            Eat(relationType);
+            Eat(PqlTokenType.PARENT);
             Eat(PqlTokenType.LPAREN);
             PqlArgument leftRef = Ref();
             Eat(PqlTokenType.COMMA);
             PqlArgument rightRef = Ref();
             Eat(PqlTokenType.RPAREN);
-            return new PqlRelation(relationType, leftRef, rightRef);
+            return new PqlParent(PqlTokenType.PARENT, leftRef, rightRef);
         }
-		
-		private List<PqlPatternCond> PatternCond()
+
+        private PqlParentT ParentT()
+        {
+            Eat(PqlTokenType.PARENTT);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlParentT(PqlTokenType.PARENTT, leftRef, rightRef);
+        }
+
+        private PqlCalls Calls()
+        {
+            Eat(PqlTokenType.CALLS);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlCalls(PqlTokenType.CALLS, leftRef, rightRef);
+        }
+
+        private PqlCallsT CallsT()
+        {
+            Eat(PqlTokenType.CALLST);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlCallsT(PqlTokenType.CALLST, leftRef, rightRef);
+        }
+
+        private PqlFollows Follows()
+        {
+            Eat(PqlTokenType.FOLLOWS);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlFollows(PqlTokenType.FOLLOWS, leftRef, rightRef);
+        }
+
+        private PqlFollowsT FollowsT()
+        {
+            Eat(PqlTokenType.FOLLOWST);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlFollowsT(PqlTokenType.FOLLOWST, leftRef, rightRef);
+        }
+
+        private PqlModifies Modifies()
+        {
+            Eat(PqlTokenType.MODIFIES);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlModifies(PqlTokenType.MODIFIES, leftRef, rightRef);
+        }
+
+        private PqlUses Uses()
+        {
+            Eat(PqlTokenType.USES);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlUses(PqlTokenType.USES, leftRef, rightRef);
+        }
+
+        private PqlNext Next()
+        {
+            Eat(PqlTokenType.NEXT);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlNext(PqlTokenType.NEXT, leftRef, rightRef);
+        }
+
+        private PqlNextT NextT()
+        {
+            Eat(PqlTokenType.NEXTT);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlNextT(PqlTokenType.NEXTT, leftRef, rightRef);
+        }
+
+        private PqlAffects Affects()
+        {
+            Eat(PqlTokenType.AFFECTS);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlAffects(PqlTokenType.AFFECTS, leftRef, rightRef);
+        }
+
+        private PqlAffectsT AffectsT()
+        {
+            Eat(PqlTokenType.AFFECTST);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument leftRef = Ref();
+            Eat(PqlTokenType.COMMA);
+            PqlArgument rightRef = Ref();
+            Eat(PqlTokenType.RPAREN);
+            return new PqlAffectsT(PqlTokenType.AFFECTST, leftRef, rightRef);
+        }
+
+        private List<PqlPatternNode> PatternCond()
 		{
-			List<PqlPatternCond> pattern = new List<PqlPatternCond>();
+			List<PqlPatternNode> pattern = new List<PqlPatternNode>();
 			pattern.Add(Pattern());
 			while (currentToken.Type == PqlTokenType.AND)
 			{
@@ -324,22 +463,49 @@ namespace ParserawkaCore.PQL
 			return pattern;
 		}
 		
-		private PqlPatternCond Pattern()
+		private PqlPatternNode Pattern()
 		{
-            return null;
-            // Zostawmy to na później
-            /*
-			switch(currentToken.Type)
-			{
-				case PqlTokenType.ASSIGN:
-					return Assign();
-				case PqlTokenType.WHILE:
-					return While();
-				case PqlTokenType.IF:
-					return If();
-				default:
-                    throw new Exception();
-			} */
-		}	
+            PqlToken id = currentToken;
+            PqlSynonym synonym = new PqlSynonym(id);
+
+            Eat(PqlTokenType.IDENT);
+            Eat(PqlTokenType.LPAREN);
+            PqlArgument varRef = Ref();
+
+            Eat(PqlTokenType.COMMA);
+
+            PqlExpr expr = null;
+            if(currentToken.Type == PqlTokenType.STRING)
+            {
+                expr = Expr(true);
+            }
+            else if(currentToken.Type == PqlTokenType.FLOOR)
+            {
+                Eat(PqlTokenType.FLOOR);
+                if(currentToken.Type == PqlTokenType.STRING)
+                {
+                    expr = Expr(false);
+                    Eat(PqlTokenType.FLOOR);
+                }
+                else if (currentToken.Type == PqlTokenType.COMMA)
+                {
+                    Eat(PqlTokenType.COMMA);
+                    Eat(PqlTokenType.FLOOR);
+                }
+            }
+            Eat(PqlTokenType.RPAREN);
+            return new PqlPatternNode(synonym, varRef, expr);
+        }
+
+        private PqlExpr Expr(bool isExact)
+        {
+            PqlExpr retVal = new PqlExpr(isExact);
+            string expr = currentToken.Value.ToString();
+            Lexer lexer = new Lexer(expr);
+            Eat(PqlTokenType.STRING);
+            Parser.Parser parser = new Parser.Parser(lexer);
+            retVal.ExprTree = parser.Expression();
+            return retVal;
+        }
     }
 }

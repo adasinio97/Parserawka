@@ -15,6 +15,7 @@ namespace ParserawkaCore.Interfaces
         IUsesTable UsesTable { get; }
         ICallsTable CallsTable { get; }
         INextTable NextTable { get; }
+        IAffectsTable AffectsTable { get; }
         void LoadData(string programCode);
     }
 }

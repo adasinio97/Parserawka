@@ -10,11 +10,10 @@ namespace ParserawkaCore.Model
 {
     public class If : Container
     {
-        public Variable Condition { get; set; }
         public IStatementList IfBody { get; set; }
         public IStatementList ElseBody { get; set; }
 
-        public If(Variable condition, IStatementList ifBody, IStatementList elseBody, int programLine) : base(programLine)
+        public If (Variable condition, IStatementList ifBody, IStatementList elseBody, int programLine) : base(programLine)
         {
             Condition = condition;
             IfBody = ifBody;

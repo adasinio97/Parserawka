@@ -74,6 +74,11 @@ namespace ParserawkaCore.Utils
             return new NextTable();
         }
 
+        public static IAffectsTable CreateAffectsTable()
+        {
+            return new AffectsTable();
+        }
+
         public static IDeclarationList CreateDeclarationList()
         {
             return new DeclarationList();

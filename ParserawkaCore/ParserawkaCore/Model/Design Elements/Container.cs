@@ -8,6 +8,8 @@ namespace ParserawkaCore.Model
 {
     public abstract class Container : Statement
     {
+        public Variable Condition { get; set; }
+
         public Container(int programLine) : base(programLine) { }
     }
 }

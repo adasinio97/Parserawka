@@ -18,6 +18,7 @@ namespace ParserawkaCore.PQL.AstElements
         public EntityList EntityList { get; set; }
 
         public Attribute Attribute { get; set; }
+        public Attribute SecondaryAttribute { get; set; }
 
         public PqlDeclaration(PqlToken designEntity, PqlSynonym synonym)
         {

@@ -11,6 +11,7 @@ namespace ParserawkaCore.PQL
         //podstawa
         IDENT,
         INTEGER,
+        STRING,
 
         //operatory
         PROCEDURE,
