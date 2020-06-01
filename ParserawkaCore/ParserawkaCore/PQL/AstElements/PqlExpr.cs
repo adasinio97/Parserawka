@@ -7,6 +7,6 @@ namespace ParserawkaCore.PQL.AstElements
 {
     public class PqlExpr : PqlAst
     {
-        AST ExprTree { get; set; }
+        public AST ExprTree { get; set; }
     }
 }
