@@ -37,12 +37,58 @@ namespace ParserawkaCore.PQL
         {
             PqlSelect select = QueryTree as PqlSelect;
             ProcessDeclarations(select.Declarations);
+
             foreach (PqlWith with in select.WithClauses)
+            {
                 ProcessWith(with);
+            }
+
             ProcessTypes();
+
             foreach (PqlSuchThat suchThat in select.SuchThatClauses)
+            {
                 ProcessSuchThat(suchThat);
+            }
+
+            foreach(PqlPatternCond patternCond in select.PatternClauses)
+            {
+                ProcessPattern(patternCond);
+            }
             Output = ProcessResult(select.Result);
+        }
+
+        private void ProcessPattern(PqlPatternCond patternCond)
+        {
+            foreach(PqlPatternNode pn in patternCond.PatternNode)
+            {
+                if (Declarations.GetDeclarationBySynonym(pn.Synonym.Value.ToString()).DeclarationType.IsAssignableFrom(typeof(Assign)))
+                {
+                    ProcessAssignPattern(pn);
+                }
+                else if (Declarations.GetDeclarationBySynonym(pn.Synonym.Value.ToString()).DeclarationType.IsAssignableFrom(typeof(While)))
+                {
+                    ProcessWhilePattern(pn);
+                }
+                else if (Declarations.GetDeclarationBySynonym(pn.Synonym.Value.ToString()).DeclarationType.IsAssignableFrom(typeof(If)))
+                {
+                    ProcessIfPattern(pn);
+                }
+            }
+        }
+
+        private void ProcessIfPattern(PqlPatternNode pn)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ProcessWhilePattern(PqlPatternNode pn)
+        {
+            throw new NotImplementedException();
+        }
+
+        private void ProcessAssignPattern(PqlPatternNode pn)
+        {
+            throw new NotImplementedException();
         }
 
         private void ProcessDeclarations(IDeclarationList declarations)
