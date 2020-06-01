@@ -9,38 +9,68 @@ namespace ParserawkaCore.Model
 {
     public class NextTable : INextTable
     {
-        private List<Next> nextList = new List<Next>();
-
         public IStatementList GetNext(Statement statement)
         {
-            List<Next> list = nextList.Where(x => x.FirstStatement == statement).ToList();
-            IStatementList statementList = ImplementationFactory.CreateStatementList();
-
-            foreach (Next next in list)
-                statementList.AddStatement(next.SecondStatement);
-
-            return statementList;
+            if (statement != null)
+                return statement.NextedBy.Copy();
+            else
+                return ImplementationFactory.CreateStatementList();
         }
 
         public IStatementList GetNextedBy(Statement statement)
         {
-            List<Next> list = nextList.Where(x => x.SecondStatement == statement).ToList();
-            IStatementList statementList = ImplementationFactory.CreateStatementList();
-
-            foreach (Next next in list)
-                statementList.AddStatement(next.FirstStatement);
-
-            return statementList;
+            if (statement != null)
+                return statement.Nexting.Copy();
+            else
+                return ImplementationFactory.CreateStatementList();
         }
 
         public IStatementList GetNextedByT(Statement statement)
         {
-            return new RecursionContext(this).GetNextedByT(statement);
+            IStatementList nexted = GetNextedBy(statement);
+            for (int i = 0; i < nexted.GetSize(); i++)
+                nexted.Sum(GetNextedBy(nexted[i]));
+            return nexted;
         }
 
         public IStatementList GetNextT(Statement statement)
         {
-            return new RecursionContext(this).GetNextT(statement);
+            IStatementList nexting = GetNext(statement);
+            for (int i = 0; i < nexting.GetSize(); i++)
+                nexting.Sum(GetNext(nexting[i]));
+            return nexting;
+        }
+
+        public List<IStatementList> GetPathsFrom(Statement statement)
+        {
+            List<IStatementList> paths = new List<IStatementList>();
+            IStatementList newPath = ImplementationFactory.CreateStatementList();
+            BuildPath(paths, newPath, statement);
+            return paths;
+        }
+
+        private void BuildPath(List<IStatementList> paths, IStatementList path, Statement lastElement)
+        {
+            Statement element = path.GetSize() > 0 ? path.GetLast() : lastElement;
+            if (path.GetSize() == 0 || element != lastElement)
+            {
+                IStatementList nexting = GetNext(element);
+                if (nexting.GetSize() > 0)
+                {
+                    if (nexting.GetLast() != nexting.GetFirst())
+                    {
+                        IStatementList newPath = path.Copy();
+                        newPath.AddStatement(nexting.GetLast());
+                        BuildPath(paths, newPath, element);
+                    }
+                    path.AddStatement(nexting.GetFirst());
+                    BuildPath(paths, path, element);
+                }
+                else
+                    paths.Add(path);
+            }
+            else
+                paths.Add(path);
         }
 
         public bool IsNext(Statement statement1, Statement statement2)
@@ -57,58 +87,8 @@ namespace ParserawkaCore.Model
 
         public void SetNext(Statement statement1, Statement statement2)
         {
-            if (!IsNext(statement1, statement2))
-                nextList.Add(new Next(statement1, statement2));
-        }
-
-        private class RecursionContext
-        {
-            private IStatementList statementList;
-            private NextTable outer;
-
-            public RecursionContext(NextTable outer)
-            {
-                statementList = ImplementationFactory.CreateStatementList();
-                this.outer = outer;
-            }
-
-            public IStatementList GetNextT(Statement statement)
-            {
-                IStatementList nextList = outer.GetNext(statement);
-                if (nextList != null)
-                {
-                    foreach (Statement nextStatement in nextList)
-                    {
-                        if (statementList.Contains(nextStatement))
-                            continue;
-                        else
-                        {
-                            statementList.AddStatement(nextStatement);
-                            GetNextT(nextStatement);
-                        }
-                    }
-                }
-                return statementList;
-            }
-
-            public IStatementList GetNextedByT(Statement statement)
-            {
-                IStatementList nextedList = outer.GetNextedBy(statement);
-                if (nextedList != null)
-                {
-                    foreach (Statement nextedStatement in nextedList)
-                    {
-                        if (statementList.Contains(nextedStatement))
-                            continue;
-                        else
-                        {
-                            statementList.AddStatement(nextedStatement);
-                            GetNextedByT(nextedStatement);
-                        }
-                    }
-                }
-                return statementList;
-            }
+            statement1.NextedBy.AddStatement(statement2);
+            statement2.Nexting.AddStatement(statement1);
         }
     }
 }

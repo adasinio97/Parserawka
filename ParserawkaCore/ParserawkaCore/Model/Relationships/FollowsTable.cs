@@ -8,26 +8,34 @@ namespace ParserawkaCore.Model
 {
     class FollowsTable : IFollowsTable
     {
-        private List<Follows> followsList = new List<Follows>();
-
         public Statement GetFollowedBy(Statement statement)
         {
-            return followsList.Where(x => x.SecondStatement == statement).FirstOrDefault()?.FirstStatement;
+            return statement?.Following;
         }
 
         public IStatementList GetFollowedByT(Statement statement)
         {
-            return new RecursionContext(this).GetFollowedByT(statement);
+            IStatementList followed = ImplementationFactory.CreateStatementList();
+            Statement followedStatement = GetFollowedBy(statement);
+            followed.AddStatement(followedStatement);
+            for (int i = 0; i < followed.GetSize(); i++)
+                followed.AddStatement(GetFollowedBy(followed[i]));
+            return followed;
         }
 
         public Statement GetFollows(Statement statement)
         {
-            return followsList.Where(x => x.FirstStatement == statement).FirstOrDefault()?.SecondStatement;
+            return statement?.FollowedBy;
         }
 
         public IStatementList GetFollowsT(Statement statement)
         {
-            return new RecursionContext(this).GetFollowsT(statement);
+            IStatementList following = ImplementationFactory.CreateStatementList();
+            Statement followingStatement = GetFollows(statement);
+            following.AddStatement(followingStatement);
+            for (int i = 0; i < following.GetSize(); i++)
+                following.AddStatement(GetFollows(following[i]));
+            return following;
         }
 
         public bool IsFollows(Statement firstStatement, Statement secondStatement)
@@ -43,42 +51,8 @@ namespace ParserawkaCore.Model
 
         public void SetFollows(Statement firstStatement, Statement secondStatement)
         {
-            followsList.Add(new Follows(firstStatement, secondStatement));
-        }
-
-        /* Klasa do rekursji - przetrzymuje aktualną listę */
-        private class RecursionContext
-        {
-            private IStatementList statementList;
-            private FollowsTable outer;
-
-            public RecursionContext(FollowsTable outer)
-            {
-                statementList = ImplementationFactory.CreateStatementList();
-                this.outer = outer;
-            }
-
-            public IStatementList GetFollowedByT(Statement statement)
-            {
-                Statement followedStatement = outer.GetFollowedBy(statement);
-                if (followedStatement != null)
-                {
-                    GetFollowedByT(followedStatement);
-                    statementList.AddStatement(followedStatement);
-                }
-                return statementList;
-            }
-
-            public IStatementList GetFollowsT(Statement statement)
-            {
-                Statement followingStatement = outer.GetFollows(statement);
-                if (followingStatement != null)
-                {
-                    GetFollowsT(followingStatement);
-                    statementList.AddStatement(followingStatement);
-                }
-                return statementList;
-            }
+            firstStatement.FollowedBy = secondStatement;
+            secondStatement.Following = firstStatement;
         }
     }
 }

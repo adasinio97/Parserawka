@@ -15,6 +15,7 @@ namespace ParserawkaCore.Model
         public Token Token { get; set; }
 
         public Attribute Attribute { get; set; }
+        public Attribute SecondaryAttribute { get; set; }
 
         public Constant(Token token)
         {

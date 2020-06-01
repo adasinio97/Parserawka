@@ -7,5 +7,6 @@ namespace ParserawkaCore.Interfaces
     public interface IEntity
     {
         Attribute Attribute { get; set; }
+        Attribute SecondaryAttribute { get; set; }
     }
 }

@@ -73,5 +73,10 @@ namespace ParserawkaCore.Model
         {
             return list[list.Count - 1] as Statement;
         }
+
+        public new IStatementList Copy()
+        {
+            return base.Copy() as IStatementList;
+        }
     }
 }

@@ -1,0 +1,73 @@
+procedure Proc1 {
+	a = 5;
+	b = a + 7;
+	c = 8;
+	d = a + b + c;
+	while a {
+		d = 5;
+		c = a;
+	}
+	if d then {
+		c = 2;
+	}
+	else {
+		c = d;
+	}
+	call Proc2;
+}
+
+procedure Proc2 {
+	a = b + 7;
+	b = 8;
+	if b then {
+		b = 6;
+	}
+	else {
+		call Proc3;
+	}
+}
+
+procedure Proc3 {
+	while k {
+		if d then {
+			c = a * b + 2;
+			d = 1;
+		}
+		else {
+			d = t;
+		}
+	}
+}
+
+procedure Proc4 {
+	while p {
+		p = 5;
+	}
+}
+
+procedure Proc5 {
+	p = 2;
+	while p {
+		if j then {
+			while x {
+				while y {
+					x = 7;
+					k = 5;
+				}
+				if k then {
+					m = m + 1;
+				}
+				else {
+					m = m - 1;
+				}
+			}
+		}
+		else {
+			e = k * 2;
+		}
+		while m {
+			k = m + 2;
+		}
+	}
+	k = 3;	
+}

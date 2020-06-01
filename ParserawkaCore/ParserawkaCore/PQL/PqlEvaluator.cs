@@ -3,7 +3,6 @@ using ParserawkaCore.Model;
 using ParserawkaCore.PQL.AstElements;
 using ParserawkaCore.PQL.Interfaces;
 using ParserawkaCore.PQL.Model;
-using ParserawkaCore.Utils;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -25,6 +24,7 @@ namespace ParserawkaCore.PQL
         {
             PKB = pkb;
             QueryTree = queryTree;
+            resultBoolean = true;
         }
 
         public PqlOutput Evaluate()
@@ -37,10 +37,16 @@ namespace ParserawkaCore.PQL
         {
             PqlSelect select = QueryTree as PqlSelect;
             ProcessDeclarations(select.Declarations);
+<<<<<<< HEAD
 
+||||||| 6dfc543
+=======
+            ProcessTypes();
+>>>>>>> PQL
             foreach (PqlWith with in select.WithClauses)
             {
                 ProcessWith(with);
+<<<<<<< HEAD
             }
 
             ProcessTypes();
@@ -54,6 +60,17 @@ namespace ParserawkaCore.PQL
             {
                 ProcessPattern(patternCond);
             }
+||||||| 6dfc543
+            ProcessTypes();
+            foreach (PqlSuchThat suchThat in select.SuchThatClauses)
+                ProcessSuchThat(suchThat);
+=======
+            if (resultBoolean)
+            {
+                foreach (PqlSuchThat suchThat in select.SuchThatClauses)
+                    ProcessSuchThat(suchThat);
+            }
+>>>>>>> PQL
             Output = ProcessResult(select.Result);
         }
 
@@ -120,15 +137,56 @@ namespace ParserawkaCore.PQL
             {
                 PqlAttrRef left = compare.LeftRef;
                 PqlArgument right = compare.RightRef;
-                string attributeValue = null;
-
-                if (right is PqlString)
-                    attributeValue = (right as PqlString).Value;
-                else if (right is PqlInteger)
-                    attributeValue = (right as PqlInteger).Value;
-
                 PqlDeclaration declaration = Declarations.GetDeclarationBySynonym(left.SynonymName);
-                declaration.EntityList.FilterByAttribute(attributeValue);
+
+                if (right is PqlString || right is PqlInteger)
+                {
+                    string attributeValue = null;
+                    if (right is PqlString)
+                        attributeValue = (right as PqlString).Value;
+                    else
+                        attributeValue = (right as PqlInteger).Value;
+
+                    if (declaration.DesignEntity.Type == PqlTokenType.CALL &&
+                        right is PqlString)
+                        declaration.EntityList.FilterBySecondaryAttribute(attributeValue);
+                    else
+                        declaration.EntityList.FilterByAttribute(attributeValue);
+                }
+                else if (right is PqlAttrRef || right is PqlSynonym)
+                {
+                    List<string> attributeValues = new List<string>();
+                    PqlDeclaration argumentDeclaration;
+                    if (right is PqlAttrRef)
+                        argumentDeclaration = Declarations.GetDeclarationBySynonym((right as PqlAttrRef).SynonymName);
+                    else
+                        argumentDeclaration = Declarations.GetDeclarationBySynonym((right as PqlSynonym).Name);
+
+                    if (right is PqlAttrRef &&
+                        argumentDeclaration.DesignEntity.Type == PqlTokenType.CALL &&
+                        (right as PqlAttrRef).AttributeName.Equals("procName"))
+                    {
+                        foreach (IEntity entity in argumentDeclaration.EntityList)
+                            attributeValues.Add(entity.SecondaryAttribute.AttributeValue);
+                    }
+                    else
+                    {
+                        foreach (IEntity entity in argumentDeclaration.EntityList)
+                            attributeValues.Add(entity.Attribute.AttributeValue);
+                    }
+
+                    if (declaration.DesignEntity.Type == PqlTokenType.CALL &&
+                        left.AttributeName.Equals("procName"))
+                        declaration.EntityList.FilterBySecondaryAttributes(attributeValues);
+                    else
+                        declaration.EntityList.FilterByAttributes(attributeValues);
+                }
+
+                if (declaration.EntityList.GetSize() == 0)
+                {
+                    resultBoolean = false;
+                    return;
+                }
             }
         }
 
@@ -140,73 +198,24 @@ namespace ParserawkaCore.PQL
 
         private void ProcessSuchThat(PqlSuchThat suchThat)
         {
-            PqlRelationProcessor rel = new PqlRelationProcessor(PKB);
+            BindingsManager bindingsManager = new BindingsManager();
             foreach (PqlRelation relation in suchThat.RelCond)
             {
-                PqlArgument leftArgDef = relation.LeftRef;
-                PqlArgument rightArgDef = relation.RightRef;
-                IEntityList leftArgs, rightArgs;
+                relation.LoadArgs(PKB, Declarations);
+                relation.Process(PKB, bindingsManager);
 
-                if (leftArgDef is PqlInteger || leftArgDef is PqlString)
-                {
-                    IEntity leftArg = rel.SelectEntityFromPKBLeft(relation.RelationType, leftArgDef);
-                    leftArgs = ImplementationFactory.CreateEntityList();
-                    leftArgs.AddEntity(leftArg);
-                }
-                else if (leftArgDef is PqlEmptyArg)
-                    leftArgs = rel.SelectListFromPKBLeft(relation.RelationType);
-                else
-                {
-                    PqlDeclaration declaration = Declarations.GetDeclarationBySynonym((leftArgDef as PqlSynonym).Name);
-                    leftArgs = declaration.EntityList;
-                }
-
-                if (rightArgDef is PqlInteger || rightArgDef is PqlString)
-                {
-                    IEntity rightArg = rel.SelectEntityFromPKBRight(relation.RelationType, rightArgDef);
-                    rightArgs = ImplementationFactory.CreateEntityList();
-                    rightArgs.AddEntity(rightArg);
-                }
-                else if (rightArgDef is PqlEmptyArg)
-                    rightArgs = rel.SelectListFromPKBRight(relation.RelationType);
-                else
-                {
-                    PqlDeclaration declaration = Declarations.GetDeclarationBySynonym((rightArgDef as PqlSynonym).Name);
-                    rightArgs = declaration.EntityList;
-                }
-
-                if (leftArgs.GetSize() < rightArgs.GetSize())
-                {
-                    IEntityList rightBounds = ImplementationFactory.CreateEntityList();
-                    for (int i = 0; i < leftArgs.GetSize(); i++)
-                        rightBounds.Sum(rel.RelationLeft(relation.RelationType, leftArgs[i]));
-                    rightArgs.Intersection(rightBounds);
-
-                    IEntityList leftBounds = ImplementationFactory.CreateEntityList();
-                    for (int i = 0; i < rightArgs.GetSize(); i++)
-                        leftBounds.Sum(rel.RelationRight(relation.RelationType, rightArgs[i]));
-                    leftArgs.Intersection(leftBounds);
-                }
-                else
-                {
-                    IEntityList leftBounds = ImplementationFactory.CreateEntityList();
-                    for (int i = 0; i < rightArgs.GetSize(); i++)
-                        leftBounds.Sum(rel.RelationRight(relation.RelationType, rightArgs[i]));
-                    leftArgs.Intersection(leftBounds);
-
-                    IEntityList rightBounds = ImplementationFactory.CreateEntityList();
-                    for (int i = 0; i < leftArgs.GetSize(); i++)
-                        rightBounds.Sum(rel.RelationLeft(relation.RelationType, leftArgs[i]));
-                    rightArgs.Intersection(rightBounds);
-                }
-
-                if (leftArgs.GetSize() == 0 || rightArgs.GetSize() == 0)
+                if (relation.LeftArgs.GetSize() == 0 || relation.RightArgs.GetSize() == 0)
                 {
                     resultBoolean = false;
                     return;
                 }
             }
-            resultBoolean = true;
+        }
+
+        private void ProcessPattern(PqlPattern pattern)
+        {
+            // TODO
+            throw new NotImplementedException();
         }
 
         private PqlOutput ProcessResult(PqlResult result)
@@ -215,17 +224,20 @@ namespace ParserawkaCore.PQL
                 return new PqlBooleanOutput(resultBoolean);
             else
             {
-                PqlTuple tuple = result as PqlTuple;
                 PqlTupleOutput output = new PqlTupleOutput();
-                foreach (PqlElem elem in tuple.Elems)
+                if (resultBoolean)
                 {
-                    string synonym;
-                    if (elem is PqlAttrRef)
-                        synonym = (elem as PqlAttrRef).SynonymName;
-                    else
-                        synonym = (elem as PqlSynonym).Name;
-                    PqlDeclaration declaration = Declarations.GetDeclarationBySynonym(synonym);
-                    output.Declarations.AddDeclaration(declaration);
+                    PqlTuple tuple = result as PqlTuple;
+                    foreach (PqlElem elem in tuple.Elems)
+                    {
+                        string synonym;
+                        if (elem is PqlAttrRef)
+                            synonym = (elem as PqlAttrRef).SynonymName;
+                        else
+                            synonym = (elem as PqlSynonym).Name;
+                        PqlDeclaration declaration = Declarations.GetDeclarationBySynonym(synonym);
+                        output.Declarations.AddDeclaration(declaration);
+                    }
                 }
                 return output;
             }

@@ -7,33 +7,35 @@ namespace ParserawkaCore.Model
 {
     class ParentTable : IParentTable
     {
-        private List<Parent> parentList = new List<Parent>();
-
         public Statement GetParent(Statement statement)
         {
-            return parentList.Where(x => x.ChildStatement == statement).FirstOrDefault()?.ParentStatement;
+            return statement?.Parent;
         }
 
         public IStatementList GetParentedBy(Statement statement)
         {
-            List<Parent> list = parentList.Where(x => x.ParentStatement == statement).ToList();
-            IStatementList statements = ImplementationFactory.CreateStatementList();
-
-            foreach (Parent parentPair in list)
-            {
-                statements.AddStatement(parentPair.ChildStatement);
-            }
-            return statements;
+            if (statement != null)
+                return statement.Children.Copy();
+            else
+                return ImplementationFactory.CreateStatementList();
         }
 
         public IStatementList GetParentedByT(Statement statement)
         {
-            return new RecursionContext(this).GetParentedByT(statement);
+            IStatementList parented = GetParentedBy(statement);
+            for (int i = 0; i < parented.GetSize(); i++)
+                parented.Sum(GetParentedBy(parented[i]));
+            return parented;
         }
 
         public IStatementList GetParentT(Statement statement)
         {
-            return new RecursionContext(this).GetParentT(statement);
+            IStatementList parents = ImplementationFactory.CreateStatementList();
+            Statement parentStatement = GetParent(statement);
+            parents.AddStatement(parentStatement);
+            for (int i = 0; i < parents.GetSize(); i++)
+                parents.AddEntity(GetParent(parents[i]));
+            return parents;
         }
 
         public bool IsParent(Statement firstStatement, Statement secondStatement)
@@ -49,44 +51,8 @@ namespace ParserawkaCore.Model
 
         public void SetParent(Statement firstStatement, Statement secondStatement)
         {
-            parentList.Add(new Parent(firstStatement, secondStatement));
-        }
-
-        private class RecursionContext
-        {
-            private ParentTable outer;
-            private IStatementList statementList;
-
-            public RecursionContext(ParentTable outer)
-            {
-                statementList = ImplementationFactory.CreateStatementList();
-                this.outer = outer;
-            }
-
-            public IStatementList GetParentedByT(Statement statement)
-            {
-                IStatementList parentedList = outer.GetParentedBy(statement);
-                if (parentedList != null)
-                {
-                    foreach (Statement parentedStatement in parentedList)
-                    {
-                        GetParentedByT(parentedStatement);
-                        statementList.AddStatement(parentedStatement);
-                    }
-                }
-                return statementList;
-            }
-
-            public IStatementList GetParentT(Statement statement)
-            {
-                Statement parent = outer.GetParent(statement);
-                if (parent != null)
-                {
-                    GetParentT(parent);
-                    statementList.AddStatement(parent);
-                }
-                return statementList;
-            }
+            firstStatement.Children.AddStatement(secondStatement);
+            secondStatement.Parent = firstStatement;
         }
     }
 }

@@ -7,38 +7,36 @@ namespace ParserawkaCore.Model
 {
     public class CallsTable : ICallsTable
     {
-        private List<Calls> callsList = new List<Calls>();
-
         public IProcedureList GetCalledBy(Procedure procedure)
         {
-            List<Calls> list = callsList.Where(x => x.FirstProcedure == procedure).ToList();
-            IProcedureList procedureList = ImplementationFactory.CreateProcedureList();
-
-            foreach (Calls calls in list)
-                procedureList.AddProcedure(calls.SecondProcedure);
-
-            return procedureList;
+            if (procedure != null)
+                return procedure.Calling.Copy();
+            else
+                return ImplementationFactory.CreateProcedureList();
         }
 
         public IProcedureList GetCalledByT(Procedure procedure)
         {
-            return new RecursionContext(this).GetCalledByT(procedure);
+            IProcedureList called = GetCalledBy(procedure);
+            for (int i = 0; i < called.GetSize(); i++)
+                called.Sum(GetCalledBy(called[i]));
+            return called;
         }
 
         public IProcedureList GetCalling(Procedure procedure)
         {
-            List<Calls> list = callsList.Where(x => x.SecondProcedure == procedure).ToList();
-            IProcedureList procedureList = ImplementationFactory.CreateProcedureList();
-
-            foreach (Calls calls in list)
-                procedureList.AddProcedure(calls.FirstProcedure);
-
-            return procedureList;
+            if (procedure != null)
+                return procedure.CalledBy.Copy();
+            else
+                return ImplementationFactory.CreateProcedureList();
         }
 
         public IProcedureList GetCallingT(Procedure procedure)
         {
-            return new RecursionContext(this).GetCallingT(procedure);
+            IProcedureList calling = GetCalling(procedure);
+            for (int i = 0; i < calling.GetSize(); i++)
+                calling.Sum(GetCalling(calling[i]));
+            return calling;
         }
 
         public bool IsCalls(Procedure procedure1, Procedure procedure2)
@@ -55,48 +53,8 @@ namespace ParserawkaCore.Model
 
         public void SetCalls(Procedure procedure1, Procedure procedure2)
         {
-            if (!IsCalls(procedure1, procedure2))
-                callsList.Add(new Calls(procedure1, procedure2));
-        }
-
-        private class RecursionContext
-        {
-            private IProcedureList procedureList;
-            private CallsTable outer;
-
-            public RecursionContext(CallsTable outer)
-            {
-                procedureList = ImplementationFactory.CreateProcedureList();
-                this.outer = outer;
-            }
-
-            public IProcedureList GetCalledByT(Procedure procedure)
-            {
-                IProcedureList calledList = outer.GetCalledBy(procedure);
-                if (calledList != null)
-                {
-                    foreach (Procedure calledProcedure in calledList)
-                    {
-                        GetCalledByT(calledProcedure);
-                        procedureList.AddProcedure(calledProcedure);
-                    }
-                }
-                return procedureList;
-            }
-
-            public IProcedureList GetCallingT(Procedure procedure)
-            {
-                IProcedureList callingList = outer.GetCalling(procedure);
-                if (callingList != null)
-                {
-                    foreach (Procedure callingProcedure in callingList)
-                    {
-                        GetCallingT(callingProcedure);
-                        procedureList.AddProcedure(callingProcedure);
-                    }
-                }
-                return procedureList;
-            }
+            procedure1.Calling.AddProcedure(procedure2);
+            procedure2.CalledBy.AddProcedure(procedure1);
         }
     }
 }
