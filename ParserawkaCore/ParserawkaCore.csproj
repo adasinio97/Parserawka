@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{52FC4D18-B2B8-493C-AB3E-072542E9E716}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>ParserawkaCore</RootNamespace>
+    <AssemblyName>ParserawkaCore</AssemblyName>
+    <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Interfaces\IAffectsTable.cs" />
+    <Compile Include="Interfaces\ICallsTable.cs" />
+    <Compile Include="Interfaces\IConstantList.cs" />
+    <Compile Include="Interfaces\IDesignExtractor.cs" />
+    <Compile Include="Interfaces\IEntity.cs" />
+    <Compile Include="Interfaces\IEntityList.cs" />
+    <Compile Include="Interfaces\IFollowsTable.cs" />
+    <Compile Include="Interfaces\IModifiesTable.cs" />
+    <Compile Include="Interfaces\INextTable.cs" />
+    <Compile Include="Interfaces\IParentTable.cs" />
+    <Compile Include="Interfaces\IParser.cs" />
+    <Compile Include="Interfaces\IProcedureList.cs" />
+    <Compile Include="Interfaces\IProgramKnowledgeBase.cs" />
+    <Compile Include="Interfaces\IQueryProcessor.cs" />
+    <Compile Include="Interfaces\IStatementList.cs" />
+    <Compile Include="Interfaces\IUsesTable.cs" />
+    <Compile Include="Interfaces\IVariableList.cs" />
+    <Compile Include="Model\Design Elements\Assign.cs" />
+    <Compile Include="Model\Design Elements\Attribute.cs" />
+    <Compile Include="Model\Design Elements\Call.cs" />
+    <Compile Include="Model\Design Elements\Constant.cs" />
+    <Compile Include="Model\Design Elements\ConstantList.cs" />
+    <Compile Include="Model\Design Elements\Container.cs" />
+    <Compile Include="Model\Design Elements\EntityList.cs" />
+    <Compile Include="Model\Design Elements\Expression.cs" />
+    <Compile Include="Model\Design Elements\Factor.cs" />
+    <Compile Include="Model\Design Elements\If.cs" />
+    <Compile Include="Model\Design Elements\Procedure.cs" />
+    <Compile Include="Model\Design Elements\ProcedureList.cs" />
+    <Compile Include="Model\Design Elements\Statement.cs" />
+    <Compile Include="Model\Design Elements\StatementList.cs" />
+    <Compile Include="Model\Design Elements\Variable.cs" />
+    <Compile Include="Model\Design Elements\VariableList.cs" />
+    <Compile Include="Model\Design Elements\While.cs" />
+    <Compile Include="Model\DesignExtractor.cs" />
+    <Compile Include="Model\ProgramKnowledgeBase.cs" />
+    <Compile Include="Model\Relationships\AffectsTable.cs" />
+    <Compile Include="Model\Relationships\CallsTable.cs" />
+    <Compile Include="Model\Relationships\FollowsTable.cs" />
+    <Compile Include="Model\Relationships\ModifiesTable.cs" />
+    <Compile Include="Model\Relationships\NextTable.cs" />
+    <Compile Include="Model\Relationships\ParentTable.cs" />
+    <Compile Include="Model\Relationships\UsesTable.cs" />
+    <Compile Include="Parser\AstElements\AST.cs" />
+    <Compile Include="Parser\Exceptions\LexerException.cs" />
+    <Compile Include="Parser\Exceptions\ParserException.cs" />
+    <Compile Include="Parser\Exceptions\TreeBuildingException.cs" />
+    <Compile Include="Parser\Lexer.cs" />
+    <Compile Include="Parser\Parser.cs" />
+    <Compile Include="Parser\Token.cs" />
+    <Compile Include="PQL\AstElements\PqlArgument.cs" />
+    <Compile Include="PQL\AstElements\PqlAst.cs" />
+    <Compile Include="PQL\AstElements\PqlAttrRef.cs" />
+    <Compile Include="PQL\AstElements\PqlBoolean.cs" />
+    <Compile Include="PQL\AstElements\PqlClause.cs" />
+    <Compile Include="PQL\AstElements\PqlCompare.cs" />
+    <Compile Include="PQL\AstElements\PqlDeclaration.cs" />
+    <Compile Include="PQL\AstElements\PqlElem.cs" />
+    <Compile Include="PQL\AstElements\PqlEmptyArg.cs" />
+    <Compile Include="PQL\AstElements\PqlExpr.cs" />
+    <Compile Include="PQL\AstElements\PqlInteger.cs" />
+    <Compile Include="PQL\AstElements\PqlPatternCond.cs" />
+    <Compile Include="PQL\AstElements\PqlPatternNode.cs" />
+    <Compile Include="PQL\AstElements\PqlResult.cs" />
+    <Compile Include="PQL\AstElements\PqlSelect.cs" />
+    <Compile Include="PQL\AstElements\PqlString.cs" />
+    <Compile Include="PQL\AstElements\PqlSuchThat.cs" />
+    <Compile Include="PQL\AstElements\PqlSynonym.cs" />
+    <Compile Include="PQL\AstElements\PqlTuple.cs" />
+    <Compile Include="PQL\AstElements\PqlWith.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlAffects.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlAffectsT.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlCalls.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlCallsT.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlFollows.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlFollowsT.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlModifies.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlNext.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlNextT.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlParent.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlParentT.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlRelation.cs" />
+    <Compile Include="PQL\AstElements\Relationships\PqlUses.cs" />
+    <Compile Include="PQL\BindingsManager.cs" />
+    <Compile Include="PQL\Interfaces\IDeclarationList.cs" />
+    <Compile Include="PQL\Model\BindingNode.cs" />
+    <Compile Include="PQL\Model\DeclarationList.cs" />
+    <Compile Include="PQL\Model\PqlBooleanOutput.cs" />
+    <Compile Include="PQL\Model\PqlOutput.cs" />
+    <Compile Include="PQL\Model\PqlTupleOutput.cs" />
+    <Compile Include="PQL\PqlEvaluator.cs" />
+    <Compile Include="PQL\PqlLexer.cs" />
+    <Compile Include="PQL\PqlParser.cs" />
+    <Compile Include="PQL\PqlToken.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Utils\ImplementationFactory.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>

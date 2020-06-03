@@ -1,15 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2048
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30128.74
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserawkaWPF", "ParserawkaWPF\ParserawkaWPF.csproj", "{EEA765D9-41B7-4EA1-BA68-E5B0E032AA22}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserawkaWPF_Tests", "ParserawkaWPF_Tests\ParserawkaWPF_Tests.csproj", "{A2700F84-9252-4DED-BA03-F377D11B3FD0}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserawkaConsole", "..\ParserawkaConsole\ParserawkaConsole.csproj", "{54D13580-1528-4599-9AC5-1DC6E547B842}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserawkaCore", "..\ParserawkaCore\ParserawkaCore\ParserawkaCore.csproj", "{A51ADE54-F5E8-4524-A5ED-80154E477B2E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserawkaConsole", "..\ParserawkaConsole\ParserawkaConsole\ParserawkaConsole.csproj", "{CF7D49D5-BA63-4C1E-B756-B1FCB5FF486A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ParserawkaCore", "..\ParserawkaCore\ParserawkaCore.csproj", "{52FC4D18-B2B8-493C-AB3E-072542E9E716}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,18 +19,14 @@ Global
 		{EEA765D9-41B7-4EA1-BA68-E5B0E032AA22}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EEA765D9-41B7-4EA1-BA68-E5B0E032AA22}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EEA765D9-41B7-4EA1-BA68-E5B0E032AA22}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A2700F84-9252-4DED-BA03-F377D11B3FD0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A2700F84-9252-4DED-BA03-F377D11B3FD0}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A2700F84-9252-4DED-BA03-F377D11B3FD0}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A2700F84-9252-4DED-BA03-F377D11B3FD0}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A51ADE54-F5E8-4524-A5ED-80154E477B2E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A51ADE54-F5E8-4524-A5ED-80154E477B2E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A51ADE54-F5E8-4524-A5ED-80154E477B2E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A51ADE54-F5E8-4524-A5ED-80154E477B2E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{CF7D49D5-BA63-4C1E-B756-B1FCB5FF486A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{CF7D49D5-BA63-4C1E-B756-B1FCB5FF486A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{CF7D49D5-BA63-4C1E-B756-B1FCB5FF486A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{CF7D49D5-BA63-4C1E-B756-B1FCB5FF486A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{54D13580-1528-4599-9AC5-1DC6E547B842}.Debug|Any CPU.ActiveCfg = Release|Any CPU
+		{54D13580-1528-4599-9AC5-1DC6E547B842}.Debug|Any CPU.Build.0 = Release|Any CPU
+		{54D13580-1528-4599-9AC5-1DC6E547B842}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{54D13580-1528-4599-9AC5-1DC6E547B842}.Release|Any CPU.Build.0 = Release|Any CPU
+		{52FC4D18-B2B8-493C-AB3E-072542E9E716}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{52FC4D18-B2B8-493C-AB3E-072542E9E716}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{52FC4D18-B2B8-493C-AB3E-072542E9E716}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{52FC4D18-B2B8-493C-AB3E-072542E9E716}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
