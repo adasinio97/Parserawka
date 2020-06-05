@@ -83,12 +83,12 @@ namespace ParserawkaCore.PQL.AstElements
                     Assign assignment = Args.GetEntityByIndex(i) as Assign;
                     if (assignment == null)
                     {
-                        Args.RemoveEntity(assignment);
+                        bindingsManager.RemoveBoundEntity(assignment, Args);
                         i--;
                     }
                     else
                     {
-                        bool match = Expr.IsExact ? CompareTrees(assignment.Right, Expr.ExprTree, true) : FindTree(assignment.Right, Expr.ExprTree);
+                        bool match = Expr.IsExact ? CompareTrees(assignment.Right, Expr.ExprTree) : FindTree(assignment.Right, Expr.ExprTree);
                         if (!match)
                         {
                             bindingsManager.RemoveBoundEntity(assignment, Args);
@@ -99,7 +99,7 @@ namespace ParserawkaCore.PQL.AstElements
             }
         }
 
-        private bool CompareTrees(Factor node1, Factor node2, bool exact)
+        private bool CompareTrees(Factor node1, Factor node2)
         {
             if (node1 is Variable && node2 is Variable)
             {
@@ -117,10 +117,11 @@ namespace ParserawkaCore.PQL.AstElements
             {
                 Expression expression1 = node1 as Expression;
                 Expression expression2 = node2 as Expression;
-                return CompareTrees(expression1.Left, expression2.Left, exact) && CompareTrees(expression1.Right, expression2.Right, exact);
+                if (expression1.Operation.Value.ToString().Equals(expression2.Operation.Value.ToString()))
+                    return CompareTrees(expression1.Left, expression2.Left) && CompareTrees(expression1.Right, expression2.Right);
+                else
+                    return false;
             }
-            else if (node2 == null)
-                return !exact;
             else
                 return false;
         }
@@ -129,7 +130,7 @@ namespace ParserawkaCore.PQL.AstElements
         {
             if (parent != null)
             {
-                if (CompareTrees(parent, child, false))
+                if (CompareTrees(parent, child))
                     return true;
                 else if (parent is Expression && child is Expression)
                 {
