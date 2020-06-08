@@ -62,6 +62,11 @@ namespace ParserawkaCore.PQL.Model
                 RemoveNode();
         }
 
+        public bool IsBound(BindingNode otherNode)
+        {
+            return LeftNodes.Contains(otherNode) || RightNodes.Contains(otherNode);
+        }
+
         public override string ToString()
         {
             return Entity.ToString() + " list: " + " " + EntityList.ToString();

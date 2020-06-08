@@ -6,6 +6,5 @@ namespace ParserawkaCore.PQL.Model
 {
     public abstract class PqlOutput
     {
-        public abstract string ToString(bool forConsole);
     }
 }

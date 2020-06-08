@@ -15,6 +15,8 @@ namespace ParserawkaCore.PQL.AstElements
 
         public string AttributeValue => Synonym.Name;
 
+        public bool IsSecondaryAttribute { get; set; }
+
         public EntityList EntityList { get; set; }
 
         public Attribute Attribute { get; set; }
@@ -24,6 +26,7 @@ namespace ParserawkaCore.PQL.AstElements
         {
             DesignEntity = designEntity;
             Synonym = synonym;
+            IsSecondaryAttribute = false;
             
             switch (DesignEntity.Type)
             {

@@ -1,6 +1,7 @@
 ﻿using ParserawkaCore.Interfaces;
 using ParserawkaCore.Model;
 using ParserawkaCore.PQL.Interfaces;
+using ParserawkaCore.Utils;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -14,6 +15,8 @@ namespace ParserawkaCore.PQL.AstElements
         public PqlExpr Expr { get; set; } //Jeśli pattern jest typu if albo while to będzie tu null
 
         public IEntityList Args { get; set; }
+        public IEntityList LeftArgs { get; set; }
+
         private PqlTokenType Type { get; set; }
 
         public PqlPatternNode(PqlSynonym syn, PqlArgument varRef, PqlExpr expr)
@@ -29,6 +32,21 @@ namespace ParserawkaCore.PQL.AstElements
             Args = declaration.EntityList;
             Args.ListName = Synonym.Name;
             Type = declaration.DesignEntity.Type;
+
+            if (VarRef is PqlString)
+            {
+                LeftArgs = ImplementationFactory.CreateVariableList();
+                Variable variable = pkb.Variables.GetVariableByName((VarRef as PqlString).Value);
+                LeftArgs.AddEntity(variable);
+            }
+            else if (VarRef is PqlSynonym || VarRef is PqlAttrRef)
+            {
+                string synonym = VarRef is PqlSynonym ? (VarRef as PqlSynonym).Name : (VarRef as PqlAttrRef).SynonymName;
+                PqlDeclaration leftDeclaration = declarations.GetDeclarationBySynonym(synonym);
+                LeftArgs = leftDeclaration.EntityList;
+            }
+            else
+                LeftArgs = ImplementationFactory.CreateVariableList();
         }
 
         public void Process(IProgramKnowledgeBase pkb, BindingsManager bindingsManager)
@@ -41,6 +59,7 @@ namespace ParserawkaCore.PQL.AstElements
 
         private void ProcessContainerPattern(IProgramKnowledgeBase pkb, BindingsManager bindingsManager)
         {
+            /*
             PqlArgument leftRef = VarRef;
             if (leftRef is PqlString)
             {
@@ -54,7 +73,24 @@ namespace ParserawkaCore.PQL.AstElements
                         i--;
                     }
                 }
+            } */
+            if (!(VarRef is PqlEmptyArg))
+            {
+                for (int i = 0; i < Args.GetSize(); i++)
+                {
+                    Container container = Args.GetEntityByIndex(i) as Container;
+                    Variable variable = container.Condition;
+                    Variable leftVariable = LeftArgs.GetEntityByAttribute(variable.Name) as Variable;
+                    if (leftVariable != null && (VarRef is PqlSynonym || VarRef is PqlAttrRef))
+                        bindingsManager.CreateBindingOneWay(leftVariable, container, LeftArgs, Args);
+                    if (leftVariable == null)
+                    {
+                        bindingsManager.RemoveBoundEntity(container, Args);
+                        i--;
+                    }
+                }
             }
+            
         }
 
         private void ProcessAssignPattern(IProgramKnowledgeBase pkb, BindingsManager bindingsManager)
@@ -62,13 +98,16 @@ namespace ParserawkaCore.PQL.AstElements
             PqlArgument leftRef = VarRef;
             PqlExpr rightRef = Expr;
 
-            if (leftRef is PqlString)
+            if (!(VarRef is PqlEmptyArg))
             {
-                Variable variable = pkb.Variables.GetVariableByName((leftRef as PqlString).Value);
                 for (int i = 0; i < Args.GetSize(); i++)
                 {
                     Assign assignment = Args.GetEntityByIndex(i) as Assign;
-                    if (assignment == null || !assignment.Left.Name.Equals(variable.Name))
+                    Variable variable = assignment.Left;
+                    Variable leftVariable = LeftArgs.GetEntityByAttribute(variable.Name) as Variable;
+                    if (leftVariable != null && (VarRef is PqlSynonym || VarRef is PqlAttrRef))
+                        bindingsManager.CreateBindingOneWay(leftVariable, assignment, LeftArgs, Args);
+                    if (leftVariable == null)
                     {
                         bindingsManager.RemoveBoundEntity(assignment, Args);
                         i--;
@@ -132,7 +171,7 @@ namespace ParserawkaCore.PQL.AstElements
             {
                 if (CompareTrees(parent, child))
                     return true;
-                else if (parent is Expression && child is Expression)
+                else if (parent is Expression)
                 {
                     Expression parentExpression = parent as Expression;
                     return FindTree(parentExpression.Left, child) || FindTree(parentExpression.Right, child);

@@ -48,7 +48,7 @@ namespace ParserawkaCore.PQL.AstElements
                 else
                     result.AddEntity(pkb.Statements.GetEntityByAttribute(attributeValue));
 
-                if (RightRef is PqlSynonym)
+                if (RightRef is PqlSynonym || RightRef is PqlAttrRef)
                     bindingsManager.CreateMultipleBindingsOneWay(arg, result, RightArgs, LeftArgs);
                 leftBounds.Sum(result);
             }

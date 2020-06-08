@@ -137,18 +137,26 @@ namespace ParserawkaCore.PQL
                 return new PqlBooleanOutput(resultBoolean);
             else
             {
-                PqlTupleOutput output = new PqlTupleOutput();
+                PqlTupleOutput output = new PqlTupleOutput(bindingsManager);
                 if (resultBoolean)
                 {
                     PqlTuple tuple = result as PqlTuple;
                     foreach (PqlElem elem in tuple.Elems)
                     {
-                        string synonym;
+                        PqlDeclaration declaration;
                         if (elem is PqlAttrRef)
-                            synonym = (elem as PqlAttrRef).SynonymName;
+                        {
+                            PqlAttrRef attrRef = elem as PqlAttrRef;
+                            string synonym = attrRef.SynonymName;
+                            declaration = Declarations.GetDeclarationBySynonym(synonym);
+                            if (declaration.DesignEntity.Type == PqlTokenType.CALL && attrRef.AttributeName == "procName")
+                                declaration.IsSecondaryAttribute = true;
+                        }
                         else
-                            synonym = (elem as PqlSynonym).Name;
-                        PqlDeclaration declaration = Declarations.GetDeclarationBySynonym(synonym);
+                        {
+                            string synonym = (elem as PqlSynonym).Name;
+                            declaration = Declarations.GetDeclarationBySynonym(synonym);
+                        }
                         output.Declarations.AddDeclaration(declaration);
                     }
                 }

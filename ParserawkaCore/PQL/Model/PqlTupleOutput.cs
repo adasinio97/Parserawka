@@ -11,55 +11,59 @@ namespace ParserawkaCore.PQL.Model
     public class PqlTupleOutput : PqlOutput
     {
         public IDeclarationList Declarations { get; set; }
+        private BindingsManager bindingsManager;
 
-        public PqlTupleOutput()
+        public PqlTupleOutput(BindingsManager bindingsManager)
         {
             Declarations = ImplementationFactory.CreateDeclarationList();
+            this.bindingsManager = bindingsManager;
         }
 
         public override string ToString()
         {
-            string s = "";
-            foreach (PqlDeclaration declaration in Declarations)
+            if (Declarations.GetSize() > 0)
             {
+                string result = "";
                 string separator = "";
-                foreach (IEntity entity in declaration.EntityList)
+                List<string> tuples = new List<string>();
+                List<BindingNode> firstNodes = bindingsManager.GetListNodes(Declarations[0].EntityList);
+                BuildTuples(tuples, "", firstNodes, 0);
+                foreach (string tuple in tuples)
                 {
-                    s += separator;
-                    s += declaration.DesignEntity.Value.ToString();
-                    s += " ";
-                    s += entity.Attribute.AttributeValue.ToString();
-                    separator = ", ";
+                    result += separator;
+                    result += tuple;
+                    separator = ",";
                 }
-                s += "\n";
+                result = result.TrimStart();
+                return result;
             }
-            return s;
+            return "none";
         }
-        public override string ToString(bool forConsole)
+
+        private void BuildTuples(List<string> tuples, string tuple, List<BindingNode> nodes, int declarationIndex)
         {
-            if(!forConsole)
+            if (declarationIndex < Declarations.GetSize())
             {
-                return ToString();
+                foreach (BindingNode node in nodes)
+                {
+                    string newTuple = string.Copy(tuple);
+                    PqlDeclaration currentDeclaration = Declarations[declarationIndex];
+                    string attribute = currentDeclaration.IsSecondaryAttribute ? node.Entity.SecondaryAttribute.AttributeValue : node.Entity.Attribute.AttributeValue;
+
+                    newTuple += " " + attribute;
+                    List<BindingNode> nextNodes = null;
+                    if (declarationIndex + 1 < Declarations.GetSize())
+                    {
+                        PqlDeclaration nextDeclaration = Declarations[declarationIndex + 1];
+                        nextNodes = bindingsManager.GetBoundNodes(node, nextDeclaration.EntityList);
+                    }
+                    BuildTuples(tuples, newTuple, nextNodes, declarationIndex + 1);
+                }
+                if (nodes.Count == 0)
+                    tuples.Add(tuple);
             }
             else
-            {
-                string s = "";
-                foreach (PqlDeclaration declaration in Declarations)
-                {
-                    string separator = "";
-                    foreach (IEntity entity in declaration.EntityList)
-                    {
-                        s += separator;
-                        s += entity.Attribute.AttributeValue.ToString();
-                        separator = ",";
-                    }
-                }
-                if(String.IsNullOrEmpty(s))
-                {
-                    return "none";
-                }
-                return s;
-            }
+                tuples.Add(tuple);
         }
     }
 }

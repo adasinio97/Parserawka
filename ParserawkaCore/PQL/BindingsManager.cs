@@ -66,6 +66,23 @@ namespace ParserawkaCore.PQL
             }
         }
 
+        public void CreateBindingOneWay(IEntity entity1, IEntity entity2, IEntityList list1, IEntityList list2)
+        {
+            BindingNode firstNode = GetNode(entity1, list1);
+            if (firstNode == null)
+            {
+                firstNode = new BindingNode(entity1, list1);
+                looseNodes.Add(firstNode);
+            }
+            BindingNode secondNode = GetNode(entity2, list2);
+            if (secondNode == null)
+            {
+                secondNode = new BindingNode(entity2, list2);
+                looseNodes.Add(secondNode);
+            }
+            firstNode.BindOneWay(secondNode);
+        }
+
         public void CreateBinding(IEntity entity1, IEntity entity2, IEntityList list1, IEntityList list2)
         {
             BindingNode firstNode = GetNode(entity1, list1);
@@ -86,6 +103,24 @@ namespace ParserawkaCore.PQL
         private BindingNode GetNode(IEntity entity, IEntityList entityList)
         {
             return looseNodes.Where(x => x.Entity == entity && x.EntityList == entityList).FirstOrDefault();
+        }
+
+        public List<BindingNode> GetBoundNodes(BindingNode node, IEntityList foreignList)
+        {
+            return looseNodes.Where(x => x.EntityList == foreignList && x.IsBound(node)).ToList();
+        }
+
+        public List<BindingNode> GetListNodes(IEntityList entityList)
+        {
+            List<BindingNode> result = new List<BindingNode>();
+            foreach (IEntity entity in entityList)
+            {
+                BindingNode node = GetNode(entity, entityList);
+                if (node == null)
+                    node = new BindingNode(entity, entityList);
+                result.Add(node);
+            }
+            return result;
         }
 
         public void RemoveBoundEntity(IEntity entity, IEntityList entityList)

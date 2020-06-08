@@ -72,7 +72,7 @@ namespace ParserawkaConsole
                     PqlAst pqlAst = parser.Parse();
                     PqlEvaluator pqlEvaluator = new PqlEvaluator(PKB, pqlAst);
                     PqlOutput pqlOutput = pqlEvaluator.Evaluate();
-                    Console.WriteLine(pqlOutput.ToString(forConsole: true));
+                    Console.WriteLine(pqlOutput.ToString());
                 }
                 catch (Exception e)
                 {
