@@ -35,6 +35,7 @@ namespace ParserawkaCore.PQL.Model
                     separator = ",";
                 }
                 result = result.TrimStart();
+                result = string.IsNullOrEmpty(result) ? "none" : result;
                 return result;
             }
             return "none";
